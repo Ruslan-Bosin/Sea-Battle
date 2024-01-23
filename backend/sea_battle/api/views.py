@@ -24,9 +24,10 @@ class WorkCheck(APIView):
         return Response({"message": "it works"})
 
     def post(self, request, *args, **kwargs):
-        resp = request.__dict__()
+        resp = request.data
         resp["message"] = "works"
-        return Response({resp})
+        print(resp)
+        return Response(resp)
 
 
 

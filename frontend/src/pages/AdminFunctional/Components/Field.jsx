@@ -18,6 +18,13 @@ function Field() {
 		axios.get(baseURL).then((response) => {
 		  console.log(response.data);
 		});
+
+    axios.post(baseURL, {
+        title: "Hello World!",
+        body: "This is a new post."
+      }).then((response) => {
+        console.log(response.data);
+      });
 	  }, []);
 
 	return (
