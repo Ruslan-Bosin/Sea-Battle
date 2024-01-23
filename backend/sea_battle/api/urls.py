@@ -16,5 +16,6 @@ urlpatterns = [
     # path("get_created_games", views.GetAdminsGames.as_view()),
     path("token", views.CustomObtainTokenPairView.as_view()),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('register', views.CreateUserView.as_view())
+    path('register', views.CreateUserView.as_view()),
+    path("work_check", views.WorkCheck.as_view()),
 ]

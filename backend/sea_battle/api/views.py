@@ -16,6 +16,20 @@ import game.models
 import auth_users.models
 
 
+class WorkCheck(APIView):
+
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "it works"})
+
+    def post(self, request, *args, **kwargs):
+        resp = request.__dict__()
+        resp["message"] = "works"
+        return Response({resp})
+
+
+
 
 class CreateUserView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):

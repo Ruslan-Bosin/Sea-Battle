@@ -1,4 +1,9 @@
 import React from "react";
+import { useEffect } from "react";
+import axios from "axios";
+
+const baseURL = "http://127.0.0.1:8000/api/work_check";
+
 
 // Styles
 const body_div = {
@@ -8,6 +13,13 @@ const body_div = {
 }
 
 function Field() {
+
+	useEffect(() => {
+		axios.get(baseURL).then((response) => {
+		  console.log(response.data);
+		});
+	  }, []);
+
 	return (
 		<div style={body_div}>
 
