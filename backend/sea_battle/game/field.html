@@ -1,0 +1,19 @@
+<!-- field.html -->
+
+<table>
+  {% for i in range n %}
+    <tr>
+      {% for j in range n %}
+        <td class="cell" id="{{ i }}-{{ j }}"></td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+</table>
+
+<script>
+  document.querySelectorAll('.cell').forEach(cell => {
+    cell.addEventListener('click', () => {
+      cell.style.backgroundColor = 'red';
+    });
+  });
+</script>

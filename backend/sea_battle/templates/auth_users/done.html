@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% for alert in alerts %}
+	<div class="alert alert-{{ alert.type }}">
+		{{ alert.text }}
+	</div>
+{% endfor %}
+{{ message|safe }}
+{% endblock %}
