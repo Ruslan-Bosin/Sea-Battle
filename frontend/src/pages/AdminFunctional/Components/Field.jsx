@@ -1,8 +1,5 @@
 import React from "react";
-import { useEffect } from "react";
-import axios from "axios";
-
-const baseURL = "http://127.0.0.1:8000/api/work_check";
+import { useRef } from "react";
 
 
 // Styles
@@ -14,22 +11,24 @@ const body_div = {
 
 function Field() {
 
-	useEffect(() => {
-		axios.get(baseURL).then((response) => {
-		  console.log(response.data);
-		});
+	const webSocket = useRef(null);
+  webSocket.current = new WebSocket("ws://127.0.0.1:8000/ws/cell_update");
 
-    axios.post(baseURL, {
-        title: "Hello World!",
-        body: "This is a new post."
-      }).then((response) => {
-        console.log(response.data);
-      });
-	  }, []);
+  const sendMessage = () => {
+    console.log("BUHTA");
+    if (webSocket.current.readyState === WebSocket.OPEN) {
+      const message = {
+        type: "test",
+        message: "test_message"
+      }
+      webSocket.current.send(JSON.stringify(message));
+      console.log("MESSAGE SENT");
+    }
+  };
 
 	return (
 		<div style={body_div}>
-
+      <button onClick={sendMessage}>SEND</button>
 		</div>
 	);
 }
