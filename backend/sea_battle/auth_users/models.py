@@ -6,7 +6,6 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 
 import secrets
 
-
 class User(AbstractUser):
     """
     Extended User model from AbstractUser
@@ -56,9 +55,6 @@ class Admins(models.Model):
         verbose_name = _("Админ")
         verbose_name_plural = _("Админы")
 
-# In your models.py
-from django.db import models
-from django.contrib.auth.models import User
 
 class UserActivityToken(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -70,8 +66,8 @@ class UserActivityToken(models.Model):
             # Generate a unique token
             self.token = generate_unique_token()
         super().save(*args, **kwargs)
-
 def generate_unique_token():
-    # Здесь должна быть логика пороля
+    #Необходимо нам тут сделать логичку создания токена. Как вариант снизу
     token = secrets.token_urlsafe(32)
     return token
+    pass

@@ -3,6 +3,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 from . import views
+from .views import PasswordResetRequestView
 
 urlpatterns = [
     path("get_shots/", views.GetShots.as_view()),
@@ -18,4 +19,5 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('register', views.CreateUserView.as_view()),
     path("work_check", views.WorkCheck.as_view()),
+    path('reset-password/request/', PasswordResetRequestView.as_view(), name='password_reset_request'),
 ]
