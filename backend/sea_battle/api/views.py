@@ -8,6 +8,11 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.shortcuts import get_object_or_404
+
 
 
 
@@ -244,3 +249,28 @@ class SendEmailView(APIView):
         from_email = settings.DEFAULT_FROM_EMAIL
         send_mail(subject, text, from_email, recipient_list)
         return Response({"message": "Ok"}, status=status.HTTP_200_OK)
+
+
+class PasswordResetRequestView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        user = get_object_or_404(auth_users.models.User, email=email)
+
+        # Generate a password reset token
+        token = default_token_generator.make_token(user)
+
+        # Build the reset link
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+        reset_url = f"http://yourfrontenddomain.com/reset-password/{uidb64}/{token}/"
+
+        # Send reset link to user's email
+        # Use your email sending mechanism (e.g., Django's send_mail)
+        send_mail(
+            'Password Reset',
+            f'Click the following link to reset your password: {reset_url}',
+            'from@example.com',
+            [user.email],
+            fail_silently=False,
+        )
+
+        return Response({'message': 'Password reset link sent successfully.'})
