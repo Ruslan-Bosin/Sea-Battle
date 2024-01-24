@@ -5,6 +5,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
+from django.db.models import Count, Q
+from rest_framework import generics
 from rest_framework import status
 from django.core.mail import send_mail
 from django.conf import settings
@@ -92,46 +94,25 @@ class CustomObtainTokenPairView(TokenObtainPairView):
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class GetGamesFromUser(APIView):
+
+class AdminCreatedGamesView(APIView):
     permission_classes = [AllowAny]
 
-    def get(sefl, request, *args, **kwargs):
-        user_id = request.GET.get("user_id")
-        user = auth_users.models.User.objects.prefetch_related('games').filter(id=user_id).only('games__id',
-                                                                                                'games__size').first()
-        print(user)
-        if user is None:
-            return Response({'error': "Could not find user with this id"})
-        # print(user.)
-        # print(user.__dict__)
-        queryset = user.games.all()
-        serializer_for_queryset = api.serializers.GameSerializer(
-            instance=queryset,  # Передаём набор записей
-            many=True,  # На вход подается именно набор, а не одна запись
+    def get(self, request, *args, **kwargs):
+        admin_id = request.GET.get("admin_id")
+        user = auth_users.models.User.objects.filter(id=admin_id).first()
+        try:
+            admin = user.admin
+        except:
+            return Response({"error": "Could not find admin with this id"})
+        created = admin.created_games.all().prefetch_related('cells').annotate(
+            cell_count_with_condition=Count('cells', filter=Q(cells__used=True, cells__is_prize=True))
+        ).only('id', 'size')
+        resp = api.serializers.GameSerializer(
+            instance=created,
+            many=True
         )
-        return Response(serializer_for_queryset.data)
-
-
-# class GetAdminsGames(APIView):
-
-#     permission_classes = [AllowAny]
-
-#     def get(self, request, *args, **kwargs):
-#         admin_id = request.GET.get("admin_id")
-#         user = auth_users.models.User.objects.filter(id=admin_id).first()
-#         try:
-#             admin = user.admin
-#         except:
-#             return Response({"error": "Could not find admin with this id"})
-#         queryset = admin.created_games.all().only('id', 'size')
-#         print(queryset)
-#         # Создаём сериалайзер для извлечённого наборa записей
-#         serializer_for_queryset = api.serializers.GameSerializer(
-#             instance=queryset,  # Передаём набор записей
-#             many=True,  # На вход подается именно набор, а не одна запись
-#         )
-#         print(serializer_for_queryset)
-#         return Response(serializer_for_queryset)
+        return Response(resp.data)
 
 
 class GetShots(APIView):

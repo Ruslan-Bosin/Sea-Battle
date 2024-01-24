@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 import auth_users.models
+import game.models
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -52,3 +53,12 @@ class DeletePrizeSerializer(serializers.Serializer):
 class GameSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     size = serializers.IntegerField()
+    cell_count_with_condition = serializers.IntegerField()
+
+    # class Meta:
+    #     model = game.models.Game
+    #     fields = ['id', 'size', 'cell_count_with_condition']
+
+    # def get_cell_count_with_condition(self, game):
+    #     # Здесь реализуйте логику подсчета клеток с нужным параметром для каждой игры
+    #     return game.cells.filter(your_condition=True).count()

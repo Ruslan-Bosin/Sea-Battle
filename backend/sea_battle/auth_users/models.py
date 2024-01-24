@@ -36,7 +36,7 @@ class User(AbstractUser):
 
     games = models.ManyToManyField(
         "game.Game",
-        related_name=_("игры"),
+        related_name="users",
         help_text=_("игры в которых участвует пользователь"),
         blank=True
     )
@@ -70,4 +70,3 @@ def generate_unique_token():
     #Необходимо нам тут сделать логичку создания токена. Как вариант снизу
     token = secrets.token_urlsafe(32)
     return token
-    pass

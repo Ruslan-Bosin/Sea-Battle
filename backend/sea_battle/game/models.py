@@ -23,9 +23,8 @@ class Game(models.Model):
 
     def save(self, *args, **kwargs) -> None:
         super().save(*args, **kwargs)
-        for i in range(self.size):
-            for j in range(self.size):
-                Cell.objects.create(game=self, row=i, column=j)
+        for i in range(1, self.size ** 2 + 1):
+                Cell.objects.create(game=self, coord=i)
 
     class Meta:
         verbose_name = _("игра")
@@ -92,13 +91,10 @@ class Cell(models.Model):
         related_name="cells",
         on_delete=models.CASCADE,
     )
-    row = models.IntegerField(
-        verbose_name=_("строка"),
-        help_text=_("координата строки на которой расположена клетка"),
-    )
-    column = models.IntegerField(
-        verbose_name=_("столбец"),
-        help_text=_("координата столбца на котором расположена клетка"),
+
+    coord = models.IntegerField(
+        verbose_name=_("номер"),
+        help_text=_("номер клетки на поле")
     )
     is_prize = models.BooleanField(
         verbose_name=_("приз"), help_text=_("есть ли на клетке приз?"), default=False
