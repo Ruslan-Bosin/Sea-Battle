@@ -4,6 +4,8 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import EmailValidator
 from django.contrib.auth.validators import UnicodeUsernameValidator
 
+import secrets
+
 
 class User(AbstractUser):
     """
@@ -54,3 +56,22 @@ class Admins(models.Model):
         verbose_name = _("Админ")
         verbose_name_plural = _("Админы")
 
+# In your models.py
+from django.db import models
+from django.contrib.auth.models import User
+
+class UserActivityToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.token:
+            # Generate a unique token
+            self.token = generate_unique_token()
+        super().save(*args, **kwargs)
+
+def generate_unique_token():
+    # Здесь должна быть логика пороля
+    token = secrets.token_urlsafe(32)
+    return token
