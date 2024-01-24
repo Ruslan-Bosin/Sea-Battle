@@ -38,7 +38,8 @@ class CellConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         print("receive")
-        print(self.scope.get("user").id)
+        # print(self.scope.get("user").id)
+        print("NEW PRINT: ", text_data)
         message = json.loads(text_data)
         cell_id = message["cellId"]
         if message["type"] == "update_cell":
