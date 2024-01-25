@@ -268,8 +268,10 @@ class PasswordResetRequestView(APIView):
 
 class GetUserFromPassToken(APIView):
 
-    def get(self, request, *args, **kwargs):
-        token = request.GET.get("token")
+    def post(self, request, *args, **kwargs):
+        token = request.get("token")
+        request_user_id = int(request.get("user_id"))
+        new_password = request.get("password")
         activ_token_obj = auth_users.models.UserActivityToken.objects.filter(token=token).first()
         if activ_token_obj is None:
             return Response({"error": "token does not exists"})
@@ -277,5 +279,11 @@ class GetUserFromPassToken(APIView):
         if (time - activ_token_obj.created_at) // 3600 < settings.PASSWORD_RESET_TIME:
             return Response({"error": "The token has expired"})
         user_id = activ_token_obj.user.id
+        if int(user_id) != request_user_id:
+            return Response({"error": "Wrong user"})
+        
+        user = activ_token_obj.user
+        user.password = make_password(new_password)
+        user.save()
 
-        return Response({"user_id": user_id})
+        return Response({"message": "done"})
