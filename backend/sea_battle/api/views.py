@@ -269,9 +269,11 @@ class PasswordResetRequestView(APIView):
 class GetUserFromPassToken(APIView):
 
     def post(self, request, *args, **kwargs):
-        token = request.get("token")
-        request_user_id = int(request.get("user_id"))
-        new_password = request.get("password")
+        token = request.data.get("token")
+        request_user_id = int(request.data.get("user_id"))
+        new_password = request.data.get("password")
+        if token is None or request_user_id is None or new_password:
+            return Response({'error': 'Bad request'}, status.HTTP_400_BAD_REQUEST)
         activ_token_obj = auth_users.models.UserActivityToken.objects.filter(token=token).first()
         if activ_token_obj is None:
             return Response({"error": "token does not exists"})
