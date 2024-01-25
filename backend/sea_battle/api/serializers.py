@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -48,6 +49,46 @@ class DeletePrizeSerializer(serializers.Serializer):
     row = serializers.IntegerField()
     column = serializers.IntegerField()
     game_id = serializers.IntegerField()
+
+
+class GameSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    size = serializers.IntegerField()
+
+
+
+User = get_user_model()
+class UserSerializer(TokenObtainPairSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'avatar']
+
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        try:
+            admin = user.admin
+            token['role'] = 'admin'
+        except:
+            token['role'] = 'user'
+
+        token['user_id'] = user.id
+        print(token['role'])
+        return token
+
+
+class PrizeSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    avatar = serializers.ImageField()
+
+    def create(self, validated_data):
+        return game.models.Prize.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+
+        instance.avatar = validated_data.get('avatar', instance.avatar)
+        instance.save()
+        return instance
 
 
 class GameSerializer(serializers.Serializer):

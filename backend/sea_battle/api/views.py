@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.hashers import check_password, make_password
@@ -10,6 +11,17 @@ from rest_framework import status
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
+from PIL import Image
+from django.core.files.base import ContentFile
+from io import BytesIO
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import UserSerializer, PrizeSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -26,6 +38,7 @@ class CheckToken(APIView):
 
 
 class WorkCheck(APIView):
+
     permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
@@ -36,6 +49,8 @@ class WorkCheck(APIView):
         resp["message"] = "works"
         print(resp)
         return Response(resp)
+
+
 
 
 class CreateUserView(TokenObtainPairView):
@@ -50,8 +65,9 @@ class CreateUserView(TokenObtainPairView):
 
         if len(auth_users.models.User.objects.filter(email=email)) != 0:
             return Response({'error': 'user with this email is already exists'})
-
+        
         password = make_password(password)
+        
 
         if admin_code == settings.ADMIN_CODE:
             user = auth_users.models.User.objects.create(username=username, email=email, password=password)
@@ -77,6 +93,7 @@ class CreateUserView(TokenObtainPairView):
 
 
 class CustomObtainTokenPairView(TokenObtainPairView):
+
     serializer_class = api.serializers.CustomTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
@@ -99,6 +116,7 @@ class CustomObtainTokenPairView(TokenObtainPairView):
 
 
 
+
 class AdminCreatedGamesView(APIView):
     permission_classes = [AllowAny]
 
@@ -117,6 +135,7 @@ class AdminCreatedGamesView(APIView):
             many=True
         )
         return Response(resp.data)
+
 
 class GetUserGames(APIView):
     permission_classes = [AllowAny]
@@ -137,6 +156,7 @@ class GetUserGames(APIView):
 
         return Response(serializer_for_queryset.data)
 
+
 class GetShots(APIView):
     def get(self, request):
         # Извлекаем набор всех записей из таблицы Capital
@@ -155,7 +175,6 @@ class GetShots(APIView):
 
 class GetCellsFromGame(APIView):
     permission_classes = [AllowAny]
-
     def get(self, request):
         print(request.GET)
         game_id = int(request.GET.get("game"))
@@ -233,6 +252,7 @@ class DeletePrize(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
 class SendEmailView(APIView):
     permission_classes = [AllowAny]
 
@@ -268,6 +288,57 @@ class PasswordResetRequestView(APIView):
         )
 
         return Response({'message': 'Password reset link sent successfully.'})
+
+
+
+class UploadAvatarView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def upload_avatar(self, instance, image_data):
+        if not image_data:
+            return Response({'error': 'No image data provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Пример изменения размера изображения до 300x300
+        img = Image.open(BytesIO(image_data.read()))
+        img = img.resize((300, 300), Image.ANTIALIAS)
+
+        # Сохранение изображения
+        image_name = f'{instance.id}_avatar.jpg'
+        instance.avatar.save(image_name, ContentFile(img.tobytes()))
+
+        return Response({'message': 'Avatar uploaded successfully'}, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        image_data = request.data.get('avatar')
+        self.upload_avatar(user, image_data)
+
+        # Обновление JWT-токена после загрузки аватара
+        refresh = RefreshToken.for_user(user)
+        access_token = UserSerializer.get_token(user)
+        response_data = {
+            'access_token': str(access_token),
+            'refresh_token': str(refresh),
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
+
+class PrizeUploadView(APIView):
+    permission_classes = [AllowAny]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, *args, **kwargs):
+        print(1)
+        print(request.data)
+        serializer = PrizeSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetUserFromPassToken(APIView):

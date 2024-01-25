@@ -3,7 +3,10 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import EmailValidator
 from django.contrib.auth.validators import UnicodeUsernameValidator
+import os
 
+def user_avatar_upload_path(instance, filename):
+    return os.path.join("user_avatars", filename)
 import secrets
 
 class User(AbstractUser):
@@ -40,6 +43,7 @@ class User(AbstractUser):
         help_text=_("игры в которых участвует пользователь"),
         blank=True
     )
+    avatar = models.ImageField(_("Avatar"), upload_to=user_avatar_upload_path, blank=True, null=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
