@@ -66,14 +66,15 @@ function AccountButton() {
   }
 
   // src={<img src={url} alt="avatar" />} for Avatar icon
-  // <Text>Сздесь написать имя фамилия или название</Text>
-  // 
+  
+  //
   return (
     <Dropdown menu={{items, onClick,}} trigger={['click']}>
       <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} >
         <Space>
             <Avatar icon={<UserOutlined/>} style={icon}/>
               <Skeleton.Input active size="small"/>
+              {/* <Text>Сздесь написать имя фамилия или название</Text> */}
           </Space>
       </div>
     </Dropdown>

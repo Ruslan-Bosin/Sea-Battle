@@ -1,7 +1,7 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.hashers import check_password, make_password
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
@@ -18,6 +18,11 @@ from django.shortcuts import get_object_or_404
 import api.serializers
 import game.models
 import auth_users.models
+
+
+class CheckToken(APIView):
+    def get(sel, request, *args, **kwargs):
+        return Response({"message": "done"})
 
 
 class WorkCheck(APIView):
@@ -43,8 +48,7 @@ class CreateUserView(TokenObtainPairView):
         if username is None or email is None or password is None:
             return Response({'error': 'This url have 3 required params: username, email, password'})
 
-        if len(auth_users.models.User.objects.filter(email=email)) != 0 or len(
-                auth_users.models.User.objects.filter(email=email)) != 0:
+        if len(auth_users.models.User.objects.filter(email=email)) != 0:
             return Response({'error': 'user with this email is already exists'})
 
         password = make_password(password)
@@ -289,3 +293,11 @@ class GetUserFromPassToken(APIView):
         user.save()
 
         return Response({"message": "done"})
+    
+
+
+class GetUserFromToken(APIView):
+
+    # permission_classes = [Is]
+
+    pass

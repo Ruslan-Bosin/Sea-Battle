@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HeaderTab from "./HeaderTab";
 import AccountButton from "./AccountButton";
 import LogoSpace from "./LogoSpace"; 
@@ -16,6 +16,22 @@ const body_div = {
 }
 
 function Header(props) {
+
+  useEffect(() => {
+    // Получение всех ключей Local Storage
+    const keys = Object.keys(localStorage);
+
+    // Создание объекта для хранения данных
+    const data = {};
+
+    // Перебор ключей и получение соответствующих значений
+    keys.forEach(key => {
+      data[key] = localStorage.getItem(key);
+    });
+
+    // Установка данных в состояние
+    console.log(data);
+  }, []);
 
   return (
     <div style={body_div}>
