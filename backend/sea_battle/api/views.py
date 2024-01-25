@@ -3,6 +3,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
+from rest_framework import status
 from django.core.mail import send_mail
 from django.conf import settings
 from PIL import Image
@@ -16,6 +20,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserSerializer, PrizeSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.shortcuts import get_object_or_404
 
 import api.serializers
 import game.models
@@ -47,8 +55,9 @@ class CreateUserView(TokenObtainPairView):
 
         if username is None or email is None or password is None:
             return Response({'error': 'This url have 3 required params: username, email, password'})
-        
-        if len(auth_users.models.User.objects.filter(email=email)) != 0 or len(auth_users.models.User.objects.filter(email=email)) != 0:
+
+        if len(auth_users.models.User.objects.filter(email=email)) != 0 or len(
+                auth_users.models.User.objects.filter(email=email)) != 0:
             return Response({'error': 'user with this email is already exists'})
         
         password = make_password(password)
@@ -80,6 +89,7 @@ class CreateUserView(TokenObtainPairView):
 class CustomObtainTokenPairView(TokenObtainPairView):
 
     serializer_class = api.serializers.CustomTokenObtainPairSerializer
+
     def post(self, request, *args, **kwargs):
         email = request.data.get('email', None)
         password = request.data.get('password', None)
@@ -106,8 +116,9 @@ class GetGamesFromUser(APIView):
 
     def get(sefl, request, *args, **kwargs):
         user_id = request.GET.get("user_id")
-        user = auth_users.models.User.objects.prefetch_related('games').filter(id=user_id).only('games__id', 'games__size').first()
-        print(user)
+        user = auth_users.models.User.objects.prefetch_related('games').filter(id=user_id).only('games__id',
+                                                                                                'games__size').first()
+
         if user is None:
             return Response({'error': "Could not find user with this id"})
         # print(user.)
@@ -251,6 +262,30 @@ class SendEmailView(APIView):
         send_mail(subject, text, from_email, recipient_list)
         return Response({"message": "Ok"}, status=status.HTTP_200_OK)
 
+
+class PasswordResetRequestView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        user = get_object_or_404(auth_users.models.User, email=email)
+
+        # Generate a password reset token
+        token = default_token_generator.make_token(user)
+
+        # Build the reset link
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+        reset_url = f"http://yourfrontenddomain.com/reset-password/{uidb64}/{token}/"
+
+        # Send reset link to user's email
+        # Use your email sending mechanism (e.g., Django's send_mail)
+        send_mail(
+            'Password Reset',
+            f'Click the following link to reset your password: {reset_url}',
+            'from@example.com',
+            [user.email],
+            fail_silently=False,
+        )
+
+        return Response({'message': 'Password reset link sent successfully.'})
 
 
 

@@ -7,6 +7,7 @@ import os
 
 def user_avatar_upload_path(instance, filename):
     return os.path.join("user_avatars", filename)
+import secrets
 
 class User(AbstractUser):
     """
@@ -47,7 +48,6 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username']
 
 
-
 class Admins(models.Model):
     user = models.OneToOneField(
         to=User,
@@ -59,3 +59,19 @@ class Admins(models.Model):
         verbose_name = _("Админ")
         verbose_name_plural = _("Админы")
 
+
+class UserActivityToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.token:
+            # Generate a unique token
+            self.token = generate_unique_token()
+        super().save(*args, **kwargs)
+def generate_unique_token():
+    #Необходимо нам тут сделать логичку создания токена. Как вариант снизу
+    token = secrets.token_urlsafe(32)
+    return token
+    pass
