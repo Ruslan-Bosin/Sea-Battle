@@ -33,6 +33,8 @@ DEBUG = utils.conventer(os.getenv("DEBUG", "False"))
 
 ADMIN_CODE = os.getenv("ADMIN_CODE", "admin")
 
+PASSWORD_RESET_TIME = os.getenv("PASSWORD_RESET_TIME", 5)
+
 AUTH_USER_MODEL = "auth_users.User"
 
 AUTHENTICATION_BACKENDS = (

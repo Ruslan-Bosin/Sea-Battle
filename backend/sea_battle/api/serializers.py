@@ -56,10 +56,6 @@ class GameSerializer(serializers.Serializer):
     size = serializers.IntegerField()
 
 
-# Update serializers.py
-from rest_framework import serializers
-
-
 
 User = get_user_model()
 class UserSerializer(TokenObtainPairSerializer):
@@ -93,3 +89,15 @@ class PrizeSerializer(serializers.Serializer):
         instance.avatar = validated_data.get('avatar', instance.avatar)
         instance.save()
         return instance
+
+
+class GameSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    size = serializers.IntegerField()
+    cell_count_with_condition = serializers.IntegerField()
+
+
+class UserGameSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    size = serializers.IntegerField()
+    shots_quantity = serializers.IntegerField()

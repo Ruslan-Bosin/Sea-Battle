@@ -2,11 +2,13 @@ from django.http import JsonResponse
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.hashers import check_password, make_password
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
+from django.db.models import Count, Q, Sum
 from rest_framework import status
+from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
 from PIL import Image
@@ -28,6 +30,11 @@ from django.shortcuts import get_object_or_404
 import api.serializers
 import game.models
 import auth_users.models
+
+
+class CheckToken(APIView):
+    def get(sel, request, *args, **kwargs):
+        return Response({"message": "done"})
 
 
 class WorkCheck(APIView):
@@ -56,8 +63,7 @@ class CreateUserView(TokenObtainPairView):
         if username is None or email is None or password is None:
             return Response({'error': 'This url have 3 required params: username, email, password'})
 
-        if len(auth_users.models.User.objects.filter(email=email)) != 0 or len(
-                auth_users.models.User.objects.filter(email=email)) != 0:
+        if len(auth_users.models.User.objects.filter(email=email)) != 0:
             return Response({'error': 'user with this email is already exists'})
         
         password = make_password(password)
@@ -110,49 +116,45 @@ class CustomObtainTokenPairView(TokenObtainPairView):
 
 
 
-class GetGamesFromUser(APIView):
 
+class AdminCreatedGamesView(APIView):
     permission_classes = [AllowAny]
 
-    def get(sefl, request, *args, **kwargs):
-        user_id = request.GET.get("user_id")
-        user = auth_users.models.User.objects.prefetch_related('games').filter(id=user_id).only('games__id',
-                                                                                                'games__size').first()
-
-        if user is None:
-            return Response({'error': "Could not find user with this id"})
-        # print(user.)
-        # print(user.__dict__)
-        queryset = user.games.all()
-        serializer_for_queryset = api.serializers.GameSerializer(
-            instance=queryset,  # Передаём набор записей
-            many=True,  # На вход подается именно набор, а не одна запись
+    def get(self, request, *args, **kwargs):
+        admin_id = request.GET.get("admin_id")
+        user = auth_users.models.User.objects.filter(id=admin_id).first()
+        try:
+            admin = user.admin
+        except:
+            return Response({"error": "Could not find admin with this id"})
+        created = admin.created_games.all().prefetch_related('cells').annotate(
+            cell_count_with_condition=Count('cells', filter=Q(cells__used=True, cells__is_prize=True))
+        ).only('id', 'size')
+        resp = api.serializers.GameSerializer(
+            instance=created,
+            many=True
         )
+        return Response(resp.data)
+
+
+class GetUserGames(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        user_id = request.GET.get("user_id")
+        user = auth_users.models.User.objects.filter(pk=user_id).first()
+        if user is None:
+            return Response({"errror": "user does not exists"})
+        select_related_fields = [field.name for field in user.games.all().first()._meta.get_fields() if field.is_relation and field.related_model]
+        print(select_related_fields)
+        user_games = user.games.prefetch_related('shots').annotate(shots_quantity=Sum('shots__quanity', default=0))
+
+        serializer_for_queryset = api.serializers.UserGameSerializer(
+            instance=user_games,
+            many=True
+        )
+
         return Response(serializer_for_queryset.data)
-
-
-
-# class GetAdminsGames(APIView):
-
-#     permission_classes = [AllowAny]
-
-#     def get(self, request, *args, **kwargs):
-#         admin_id = request.GET.get("admin_id")
-#         user = auth_users.models.User.objects.filter(id=admin_id).first()
-#         try:
-#             admin = user.admin
-#         except:
-#             return Response({"error": "Could not find admin with this id"})
-#         queryset = admin.created_games.all().only('id', 'size')
-#         print(queryset)
-#         # Создаём сериалайзер для извлечённого наборa записей
-#         serializer_for_queryset = api.serializers.GameSerializer(
-#             instance=queryset,  # Передаём набор записей
-#             many=True,  # На вход подается именно набор, а не одна запись
-#         )
-#         print(serializer_for_queryset)
-#         return Response(serializer_for_queryset)
-
 
 
 class GetShots(APIView):
@@ -310,32 +312,6 @@ class UploadAvatarView(APIView):
         user = request.user
         image_data = request.data.get('avatar')
         self.upload_avatar(user, image_data)
-        return Response({'message': 'User avatar uploaded successfully'}, status=status.HTTP_200_OK)
-
-
-
-
-class UploadAvatarView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def upload_avatar(self, instance, image_data):
-        if not image_data:
-            return Response({'error': 'No image data provided'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Пример изменения размера изображения до 300x300
-        img = Image.open(BytesIO(image_data.read()))
-        img = img.resize((300, 300), Image.ANTIALIAS)
-
-        # Сохранение изображения
-        image_name = f'{instance.id}_avatar.jpg'
-        instance.avatar.save(image_name, ContentFile(img.tobytes()))
-
-        return Response({'message': 'Avatar uploaded successfully'}, status=status.HTTP_200_OK)
-
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        image_data = request.data.get('avatar')
-        self.upload_avatar(user, image_data)
 
         # Обновление JWT-токена после загрузки аватара
         refresh = RefreshToken.for_user(user)
@@ -363,3 +339,36 @@ class PrizeUploadView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetUserFromPassToken(APIView):
+
+    def post(self, request, *args, **kwargs):
+        token = request.data.get("token")
+        request_user_id = int(request.data.get("user_id"))
+        new_password = request.data.get("password")
+        if token is None or request_user_id is None or new_password:
+            return Response({'error': 'Bad request'}, status.HTTP_400_BAD_REQUEST)
+        activ_token_obj = auth_users.models.UserActivityToken.objects.filter(token=token).first()
+        if activ_token_obj is None:
+            return Response({"error": "token does not exists"})
+        time = timezone.now()
+        if (time - activ_token_obj.created_at) // 3600 < settings.PASSWORD_RESET_TIME:
+            return Response({"error": "The token has expired"})
+        user_id = activ_token_obj.user.id
+        if int(user_id) != request_user_id:
+            return Response({"error": "Wrong user"})
+        
+        user = activ_token_obj.user
+        user.password = make_password(new_password)
+        user.save()
+
+        return Response({"message": "done"})
+    
+
+
+class GetUserFromToken(APIView):
+
+    # permission_classes = [Is]
+
+    pass
