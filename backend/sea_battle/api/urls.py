@@ -17,5 +17,7 @@ urlpatterns = [
     path('register', views.CreateUserView.as_view()),
     path("work_check", views.WorkCheck.as_view()),
     path('reset-password/request/', PasswordResetRequestView.as_view(), name='password_reset_request'),
-    path("get_admin_created_games", views.AdminCreatedGamesView.as_view())
+    path("get_admin_created_games", views.AdminCreatedGamesView.as_view()),
+    path("get_user_games", views.GetUserGames.as_view()),
+    path("pass_reset_get_user_id", views.GetUserFromPassToken.as_view())
 ]

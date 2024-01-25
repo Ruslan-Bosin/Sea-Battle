@@ -5,9 +5,9 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
-from django.db.models import Count, Q
-from rest_framework import generics
+from django.db.models import Count, Q, Sum
 from rest_framework import status
+from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
@@ -114,6 +114,24 @@ class AdminCreatedGamesView(APIView):
         )
         return Response(resp.data)
 
+class GetUserGames(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        user_id = request.GET.get("user_id")
+        user = auth_users.models.User.objects.filter(pk=user_id).first()
+        if user is None:
+            return Response({"errror": "user does not exists"})
+        select_related_fields = [field.name for field in user.games.all().first()._meta.get_fields() if field.is_relation and field.related_model]
+        print(select_related_fields)
+        user_games = user.games.prefetch_related('shots').annotate(shots_quantity=Sum('shots__quanity', default=0))
+
+        serializer_for_queryset = api.serializers.UserGameSerializer(
+            instance=user_games,
+            many=True
+        )
+
+        return Response(serializer_for_queryset.data)
 
 class GetShots(APIView):
     def get(self, request):
@@ -246,3 +264,18 @@ class PasswordResetRequestView(APIView):
         )
 
         return Response({'message': 'Password reset link sent successfully.'})
+
+
+class GetUserFromPassToken(APIView):
+
+    def get(self, request, *args, **kwargs):
+        token = request.GET.get("token")
+        activ_token_obj = auth_users.models.UserActivityToken.objects.filter(token=token).first()
+        if activ_token_obj is None:
+            return Response({"error": "token does not exists"})
+        time = timezone.now()
+        if (time - activ_token_obj.created_at) // 3600 < settings.PASSWORD_RESET_TIME:
+            return Response({"error": "The token has expired"})
+        user_id = activ_token_obj.user.id
+
+        return Response({"user_id": user_id})
