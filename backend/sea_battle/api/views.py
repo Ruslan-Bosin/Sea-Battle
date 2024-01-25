@@ -33,8 +33,21 @@ import auth_users.models
 
 
 class CheckToken(APIView):
-    def get(sel, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         return Response({"message": "done"})
+
+
+
+class GetUserFromToken(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        resp = api.serializers.UserSerializer(
+            instance=user
+        )
+        return Response(resp.data)
+
 
 
 class WorkCheck(APIView):
@@ -118,18 +131,20 @@ class CustomObtainTokenPairView(TokenObtainPairView):
 
 
 class AdminCreatedGamesView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        admin_id = request.GET.get("admin_id")
+        admin_id = request.user.id
         user = auth_users.models.User.objects.filter(id=admin_id).first()
         try:
             admin = user.admin
         except:
             return Response({"error": "Could not find admin with this id"})
         created = admin.created_games.all().prefetch_related('cells').annotate(
-            cell_count_with_condition=Count('cells', filter=Q(cells__used=True, cells__is_prize=True))
-        ).only('id', 'size')
+            prizes_out=Count('cells', filter=Q(cells__used=True, cells__is_prize=True)),
+            prizes_max=Count('cells', filter=Q(cells__is_prize=True)),
+            players=Count('users')
+        ).only('id', 'size', 'name')
         resp = api.serializers.GameSerializer(
             instance=created,
             many=True
@@ -364,11 +379,3 @@ class GetUserFromPassToken(APIView):
         user.save()
 
         return Response({"message": "done"})
-    
-
-
-class GetUserFromToken(APIView):
-
-    # permission_classes = [Is]
-
-    pass

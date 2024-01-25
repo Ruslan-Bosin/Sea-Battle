@@ -43,15 +43,15 @@ const additional_info = {
 }
 
 
-function FieldCard() {
+function FieldCard({FieldName, Players, GiftOut, GiftMax}) {
   return (
       <div style={body_div}>
         <Card hoverable bodyStyle={card_body_style}>
           <Image style={image} preview={false} src="" width="200px" height="200px" fallback={img_fallback}/>
-          <Title style={title} level={5} maxLength="2">Название поля</Title>
-          <Text type="secondary" style={text} >Количество игроков</Text>
+          <Title style={title} level={5} maxLength="2">{ FieldName }</Title>
+          <Text type="secondary" style={text} >Количество игроков: { Players }</Text>
           <div style={additional_info}>
-            Выбито: 3 из 10<GiftOutlined/>
+            Выбито: {GiftOut} из {GiftMax}<GiftOutlined/>
           </div>
         </Card>
       </div>

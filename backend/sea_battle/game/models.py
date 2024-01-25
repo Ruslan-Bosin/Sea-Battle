@@ -9,6 +9,11 @@ import os
 
 
 class Game(models.Model):
+    name = models.CharField(
+        verbose_name=_("название"),
+        help_text=_("название поля"),
+        max_length=16
+    )
     size = models.IntegerField(
         verbose_name=_("размер"),
         help_text=_("размер поля"),

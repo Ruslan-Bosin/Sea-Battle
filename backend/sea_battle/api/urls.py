@@ -21,5 +21,6 @@ urlpatterns = [
     path("get_admin_created_games", views.AdminCreatedGamesView.as_view()),
     path("get_user_games", views.GetUserGames.as_view()),
     path("pass_reset", views.GetUserFromPassToken.as_view()),
-    path("token_check", views.CheckToken.as_view())
+    path("token_check", views.CheckToken.as_view()),
+    path("get_user", views.GetUserFromToken.as_view())
 ]

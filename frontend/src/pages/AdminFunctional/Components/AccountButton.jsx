@@ -1,7 +1,8 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, Typography, Skeleton, Space, Dropdown, message } from "antd"
 import { UserOutlined, IdcardOutlined, MessageOutlined, LogoutOutlined } from "@ant-design/icons"
+import axios from 'axios';
 const { Text } = Typography;
 
 
@@ -15,6 +16,23 @@ const icon = {
 
 function AccountButton() {
 
+  const get_user_url = "http://127.0.0.1:8000/api/get_user";
+  const [username, setUsername] = useState("");
+  useEffect (() => {
+    const access_token = (localStorage.getItem("accessToken") || "");
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + access_token,
+    };
+    axios.get(get_user_url, {headers}).then(response => {
+      const response_data = response.data;
+      console.log(response);
+      console.log(response_data);
+      setUsername(response_data.username);
+    }).catch(error => {
+      console.log(error);
+    })
+  })
   const [isHover, setIsHover] = useState(false);
   const handleMouseEnter = () => {setIsHover(true);};
   const handleMouseLeave = () => {setIsHover(false);};
@@ -73,8 +91,8 @@ function AccountButton() {
       <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} >
         <Space>
             <Avatar icon={<UserOutlined/>} style={icon}/>
-              <Skeleton.Input active size="small"/>
-              {/* <Text>Сздесь написать имя фамилия или название</Text> */}
+              {/* <Skeleton.Input active size="small"/> */}
+              {<Text>Hello, { username }</Text>}
           </Space>
       </div>
     </Dropdown>

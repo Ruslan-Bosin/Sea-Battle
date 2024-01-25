@@ -2,6 +2,7 @@ import React from "react";
 import Header from "../Components/Header";
 import NoFields from "../Components/NoFields";
 import FieldCard from "../Components/FieldCard";
+import { useEffect, useState } from "react";
 
 //Styles
 const body_div = {
@@ -29,8 +30,23 @@ const space_fill = {
 }
 
 function AllFieldsPage() {
+  const [fieldsData, setFieldsData] = useState([]);
 
-  const fieldsNumber = 3;
+  const created_by_admin_url = "http://127.0.0.1:8000/api/get_admin_created_games";
+  const access_token = (localStorage.getItem("accessToken"));
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + access_token,
+  };
+  useEffect(() => {
+
+    fetch(created_by_admin_url, {headers})
+      .then((response) => response.json())
+      .then((data) => setFieldsData(data))
+      .catch((error) => console.error('Error fetching data:', error));
+  }, []);
+
+  const fieldsNumber = fieldsData.length;
 
   return (
     <div style={body_div}>
@@ -38,16 +54,15 @@ function AllFieldsPage() {
       {(fieldsNumber === 0) ? (<NoFields/>) : (
         <div style={all_fields_block}>
           
-          <FieldCard/>
-          <FieldCard/>
-          <FieldCard/>
-          <FieldCard/>
-          <FieldCard/>
-          <FieldCard/>
-          <FieldCard/>
-          <FieldCard/>
-          <FieldCard/>
-          <FieldCard/>
+          {fieldsData.map((field) => (
+            <FieldCard
+              key={field.id} // Убедитесь, что каждая карточка имеет уникальный ключ
+              FieldName={field.name} // Замените на свои данные из API
+              Players={field.players} // Замените на свои данные из API
+              GiftOut={field.prizes_out} // Замените на свои данные из API
+              GiftMax={field.prizes_max} // Замените на свои данные из API
+            />
+          ))}
 
           <div style={space_fill}></div>
           <div style={space_fill}></div>
