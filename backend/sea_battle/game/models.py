@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 import auth_users.models
 import game.managers
+import os
 
 
 class Game(models.Model):
@@ -32,6 +33,11 @@ class Game(models.Model):
         verbose_name_plural = _("игры")
 
 
+
+def prize_avatar_upload_path(instance, filename):
+    return os.path.join("prize_avatars", filename)
+
+
 class Prize(models.Model):
     objects = game.managers.PrizesManager()
 
@@ -52,6 +58,7 @@ class Prize(models.Model):
         on_delete=models.SET_NULL,
         null=True,
     )
+    avatar = models.ImageField(_("Avatar"), upload_to=prize_avatar_upload_path, blank=True, null=True)
 
     class Meta:
         verbose_name = _("приз")

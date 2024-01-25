@@ -1,15 +1,21 @@
+from django.http import JsonResponse
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.views import APIView
-from rest_framework import status
 from django.core.mail import send_mail
 from django.conf import settings
-
-
+from PIL import Image
+from django.core.files.base import ContentFile
+from io import BytesIO
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import UserSerializer, PrizeSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 
 import api.serializers
 import game.models
@@ -244,3 +250,81 @@ class SendEmailView(APIView):
         from_email = settings.DEFAULT_FROM_EMAIL
         send_mail(subject, text, from_email, recipient_list)
         return Response({"message": "Ok"}, status=status.HTTP_200_OK)
+
+
+
+
+class UploadAvatarView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def upload_avatar(self, instance, image_data):
+        if not image_data:
+            return Response({'error': 'No image data provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Пример изменения размера изображения до 300x300
+        img = Image.open(BytesIO(image_data.read()))
+        img = img.resize((300, 300), Image.ANTIALIAS)
+
+        # Сохранение изображения
+        image_name = f'{instance.id}_avatar.jpg'
+        instance.avatar.save(image_name, ContentFile(img.tobytes()))
+
+        return Response({'message': 'Avatar uploaded successfully'}, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        image_data = request.data.get('avatar')
+        self.upload_avatar(user, image_data)
+        return Response({'message': 'User avatar uploaded successfully'}, status=status.HTTP_200_OK)
+
+
+
+
+class UploadAvatarView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def upload_avatar(self, instance, image_data):
+        if not image_data:
+            return Response({'error': 'No image data provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Пример изменения размера изображения до 300x300
+        img = Image.open(BytesIO(image_data.read()))
+        img = img.resize((300, 300), Image.ANTIALIAS)
+
+        # Сохранение изображения
+        image_name = f'{instance.id}_avatar.jpg'
+        instance.avatar.save(image_name, ContentFile(img.tobytes()))
+
+        return Response({'message': 'Avatar uploaded successfully'}, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        image_data = request.data.get('avatar')
+        self.upload_avatar(user, image_data)
+
+        # Обновление JWT-токена после загрузки аватара
+        refresh = RefreshToken.for_user(user)
+        access_token = UserSerializer.get_token(user)
+        response_data = {
+            'access_token': str(access_token),
+            'refresh_token': str(refresh),
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
+
+class PrizeUploadView(APIView):
+    permission_classes = [AllowAny]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, *args, **kwargs):
+        print(1)
+        print(request.data)
+        serializer = PrizeSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

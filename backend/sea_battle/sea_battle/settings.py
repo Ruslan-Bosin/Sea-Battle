@@ -58,11 +58,14 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',  # Добавлено для обработки мультимедийных данных
+        'rest_framework.parsers.FormParser',
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ],
+
 }
 
 SIMPLE_JWT = {
@@ -218,3 +221,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "seabattleverify@gmail.com"
 EMAIL_HOST_PASSWORD = "dvaopwmmnfdhfxuo"
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+CORS_ALLOW_ALL_ORIGINS = True
