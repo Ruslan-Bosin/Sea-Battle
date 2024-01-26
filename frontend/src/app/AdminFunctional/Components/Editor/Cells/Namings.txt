@@ -1,6 +1,7 @@
 Editable field:
  - Empty: 
  - Prize: 
+ - Forbidden:
 
  Uneditable field:
  - Missed
