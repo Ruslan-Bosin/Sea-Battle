@@ -1,8 +1,8 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import Header from "../Components/Header";
-import Field from "../Components/Field";
-import InfoViewer from "../Components/InfoViewer";
+import Header from "../Components/Header/Header";
+import Field from "../Components/Editor/Field";
+import InfoViewer from "../Components/Editor/InfoViewer";
 
 // Styles
 const body_div = {
@@ -21,7 +21,8 @@ const edit_field_block = {
   justifyContent: "center",
   alignItems: "center",
   gap: "2%",
-  flexWrap: "wrap"
+  flexWrap: "wrap",
+  overflowY: "scroll"
 }
 
 function EditFieldPage() {
@@ -33,7 +34,7 @@ function EditFieldPage() {
     <div style={body_div}>
       <Header selectedTab={3} showEditorTab={true}/>
       <div style={edit_field_block}>
-        <Field/>
+        <Field fieldID={fieldID}/>
         <InfoViewer/>
       </div>
       
