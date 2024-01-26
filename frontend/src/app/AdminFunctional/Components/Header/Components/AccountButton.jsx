@@ -1,8 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { Avatar, Typography, Space, Dropdown, message } from "antd"
-import { useState } from "react";
-import { Avatar, Typography, Space, Dropdown, message } from "antd"
 import { UserOutlined, IdcardOutlined, MessageOutlined, LogoutOutlined } from "@ant-design/icons"
 import axios from 'axios';
 const { Text } = Typography;
