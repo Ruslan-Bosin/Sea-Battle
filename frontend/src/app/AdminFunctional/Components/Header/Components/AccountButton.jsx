@@ -1,10 +1,9 @@
 import React from "react";
 import { useState } from "react";
-import { Avatar, Typography, Space, Dropdown, message } from "antd"
+import { Avatar, Typography, Space, Dropdown } from "antd"
 import { UserOutlined, IdcardOutlined, MessageOutlined, LogoutOutlined } from "@ant-design/icons"
+import { useNavigate } from "react-router-dom";
 const { Text } = Typography;
-
-
 
 //Styles
 const icon = {
@@ -14,6 +13,8 @@ const icon = {
 }
 
 function AccountButton() {
+
+  const navigate = useNavigate();
 
   const [isHover, setIsHover] = useState(false);
   const handleMouseEnter = () => { setIsHover(true); };
@@ -43,7 +44,9 @@ function AccountButton() {
   ];
 
   const onClick = ({ key }) => {
-    message.info(`Click on item ${key}`);
+    if (key === '1') {
+      navigate("/admin/settings");
+    }
   };
 
   //Styles with State

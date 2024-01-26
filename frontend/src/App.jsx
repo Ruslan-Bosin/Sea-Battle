@@ -10,30 +10,34 @@ import AllFieldsPage from "./app/AdminFunctional/Tabs/AllFieldsPage";
 import CreateFieldPage from "./app/AdminFunctional/Tabs/CreateFieldPage";
 import EditFieldPage from "./app/AdminFunctional/Tabs/EditFieldPage";
 import AdminMainPage from "./app/AdminFunctional/AdminMainPage";
+import AdminSettings from "./app/AdminFunctional/Tabs/AdminSettings";
+
 
 function App() {
   return (
     <Routes>
 
-      <Route element={<AuthRequired/>}>
-        <Route path="/" element={<Primary/>}/>
+      <Route element={<AuthRequired />}>
+        <Route path="/" element={<Primary />} />
 
-        <Route element={<AdminMainPage/>}>
-          <Route path="/admin/createField" element={<CreateFieldPage/>}/>
-          <Route path="/admin/allfields" element={<AllFieldsPage/>}/>
-          <Route path="/admin/editField/:fieldID" element={<EditFieldPage/>}/>
+        <Route element={<AdminMainPage />}>
+          <Route path="/admin/createField" element={<CreateFieldPage />} />
+          <Route path="/admin/allfields" element={<AllFieldsPage />} />
+          <Route path="/admin/editField/:fieldID" element={<EditFieldPage />} />
+
+          <Route path="/admin/settings" element={<AdminSettings />} />
         </Route>
 
       </Route>
 
-      <Route element={<UserAuth/>}>
-        <Route path="/userauth/login" element={<LoginForm/>}/>
-        <Route path="/userauth/register" element={<RegisterForm/>}/>
+      <Route element={<UserAuth />}>
+        <Route path="/userauth/login" element={<LoginForm />} />
+        <Route path="/userauth/register" element={<RegisterForm />} />
       </Route>
 
-      <Route path="/adminauth" element={<AdminAuth/>}/>
-      
-      <Route path="/*" element={<NotFound/>}/>
+      <Route path="/adminauth" element={<AdminAuth />} />
+
+      <Route path="/*" element={<NotFound />} />
 
     </Routes>
   );
