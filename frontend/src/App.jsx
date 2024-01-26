@@ -1,15 +1,15 @@
 import { Routes, Route } from "react-router-dom"
-import Primary from './pages/Primary';
-import UserAuth from './pages/UserAuth';
-import AdminAuth from './pages/AdminAuth';
-import NotFound from './pages/NotFound';
-import AuthRequired from './pages/AuthRequired';
-import LoginForm from './pages/UserAuthForms/LoginForm';
-import RegisterForm from "./pages/UserAuthForms/RegisterForm"
-import AllFieldsPage from "./pages/AdminFunctional/Tabs/AllFieldsPage";
-import CreateFieldPage from "./pages/AdminFunctional/Tabs/CreateFieldPage";
-import EditFieldPage from "./pages/AdminFunctional/Tabs/EditFieldPage";
-import AdminMainPage from "./pages/AdminFunctional/AdminMainPage";
+import Primary from './app/UtilitarianPages/Primary';
+import UserAuth from './app/Auth/UserAuth';
+import AdminAuth from "./app/Auth/AdminAuth"
+import NotFound from './app/UtilitarianPages/NotFound';
+import AuthRequired from './app/Auth/AuthRequired';
+import LoginForm from './app/Auth/UserAuthForms/LoginForm';
+import RegisterForm from "./app/Auth/UserAuthForms/RegisterForm"
+import AllFieldsPage from "./app/AdminFunctional/Tabs/AllFieldsPage";
+import CreateFieldPage from "./app/AdminFunctional/Tabs/CreateFieldPage";
+import EditFieldPage from "./app/AdminFunctional/Tabs/EditFieldPage";
+import AdminMainPage from "./app/AdminFunctional/AdminMainPage";
 
 function App() {
   return (

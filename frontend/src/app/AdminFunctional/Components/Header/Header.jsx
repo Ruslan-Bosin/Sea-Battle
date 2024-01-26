@@ -1,7 +1,7 @@
 import React from "react";
-import HeaderTab from "./HeaderTab";
-import AccountButton from "./AccountButton";
-import LogoSpace from "./LogoSpace"; 
+import HeaderTab from "./Components/HeaderTab";
+import AccountButton from "./Components/AccountButton";
+import LogoSpace from "./Components/LogoSpace"; 
 
 
 //Styles

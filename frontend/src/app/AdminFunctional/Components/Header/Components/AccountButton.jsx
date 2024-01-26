@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Avatar, Typography, Skeleton, Space, Dropdown, message } from "antd"
+import { Avatar, Typography, Space, Dropdown, message } from "antd"
 import { UserOutlined, IdcardOutlined, MessageOutlined, LogoutOutlined } from "@ant-design/icons"
 const { Text } = Typography;
 
@@ -16,19 +16,19 @@ const icon = {
 function AccountButton() {
 
   const [isHover, setIsHover] = useState(false);
-  const handleMouseEnter = () => {setIsHover(true);};
-  const handleMouseLeave = () => {setIsHover(false);};
+  const handleMouseEnter = () => { setIsHover(true); };
+  const handleMouseLeave = () => { setIsHover(false); };
 
   const items = [
     {
       key: '1',
       label: "Настройки",
-      icon: <IdcardOutlined/>
+      icon: <IdcardOutlined />
     },
     {
       key: '2',
       label: "Поддержка",
-      icon: <MessageOutlined/>,
+      icon: <MessageOutlined />,
       disabled: true,
     },
     {
@@ -37,7 +37,7 @@ function AccountButton() {
     {
       key: '3',
       label: "Выход",
-      icon: <LogoutOutlined/>,
+      icon: <LogoutOutlined />,
       danger: true,
     },
   ];
@@ -45,7 +45,7 @@ function AccountButton() {
   const onClick = ({ key }) => {
     message.info(`Click on item ${key}`);
   };
-  
+
   //Styles with State
   const body_div = {
     margin: "8px",
@@ -66,15 +66,13 @@ function AccountButton() {
   }
 
   // src={<img src={url} alt="avatar" />} for Avatar icon
-  // <Text>Сздесь написать имя фамилия или название</Text>
-  // 
   return (
-    <Dropdown menu={{items, onClick,}} trigger={['click']}>
+    <Dropdown menu={{ items, onClick, }} trigger={['click']}>
       <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} >
         <Space>
-            <Avatar icon={<UserOutlined/>} style={icon}/>
-              <Skeleton.Input active size="small"/>
-          </Space>
+          <Avatar icon={<UserOutlined />} style={icon} />
+          <Text>Название</Text>
+        </Space>
       </div>
     </Dropdown>
   );

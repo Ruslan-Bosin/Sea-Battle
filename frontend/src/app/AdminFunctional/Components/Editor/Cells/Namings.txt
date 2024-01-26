@@ -1,0 +1,10 @@
+Editable field:
+ - Empty: 
+ - Prize: 
+
+ Uneditable field:
+ - Missed
+ - Untouched
+ - Unwon
+ - Won
+ 

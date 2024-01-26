@@ -1,7 +1,7 @@
 import React from "react";
-import Header from "../Components/Header";
-import NoFields from "../Components/NoFields";
-import FieldCard from "../Components/FieldCard";
+import Header from "../Components/Header/Header";
+import NoFields from "../Components/FieldsViewer/NoFields";
+import FieldCard from "../Components/FieldsViewer/FieldCard";
 
 //Styles
 const body_div = {
@@ -30,7 +30,7 @@ const space_fill = {
 
 function AllFieldsPage() {
 
-  const fieldsNumber = 3;
+  const fieldsNumber = 1;
 
   return (
     <div style={body_div}>
