@@ -191,23 +191,47 @@ class GetShots(APIView):
 class GetCellsFromGame(APIView):
     permission_classes = [AllowAny]
     def get(self, request):
-        print(request.GET)
-        game_id = int(request.GET.get("game"))
-        if request.GET.get("shooted") == "True":
-            shooted = True
-        elif request.GET.get("shooted") == "False":
-            shooted = False
-        else:
-            return Response(
-                {"message": "Error in shooted par, it must be 'True' or 'False'"}
-            )
-        queryset = game.models.Cell.objects.filter(game=game_id, used=shooted)
-        serializer_for_queryset = api.serializers.CellSerializer(
-            instance=queryset, many=True
-        )
-        print(queryset)
-        return Response(serializer_for_queryset.data)
+        game_id = request.GET.get('game')
+        try:
+            game_instance = game.models.Game.objects.get(id=game_id)
+            cells_queryset = game.models.Cell.objects.filter(game=game_instance)
+        except game.models.Game.DoesNotExist:
+            return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = api.serializers.PlacementSerializer(cells_queryset, context={'editable': game_instance.editable, 'size': game_instance.size})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+class GetPrizesFromGame(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request):
+        game_id = request.GET.get('game')
+        try:
+            game_instance = game.models.Game.objects.get(id=game_id)
+            prizes_queryset = game.models.Prize.objects.prefetch_related("cell").filter(cell__game=game_instance)
+            print(prizes_queryset.values())
+        except game.models.Game.DoesNotExist:
+            return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = api.serializers.PrizesSerializer(instance=prizes_queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class GetUsersFromGame(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        game_id = request.GET.get('game')
+        try:
+            game_instance = game.models.Game.objects.get(id=game_id)
+            users_queryset = game_instance.users.prefetch_related("shots").annotate(shots_quantity=Sum('shots__quanity', default=0))
+        except game.models.Game.DoesNotExist:
+            return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+        serializer = api.serializers.UserForAdminSerializer(
+            instance=users_queryset,
+            many=True
+        )
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class MakeShot(APIView):
     def get(self, request):

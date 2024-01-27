@@ -43,7 +43,7 @@ function InfoViewer(props) {
   };
 
 
-  const collapse_items = [
+  const collapse_items = useState([
     {
       key: '1',
       label: 'Пользователи',
@@ -54,7 +54,8 @@ function InfoViewer(props) {
       label: 'Призы',
       children: <PrizesList fieldID={fieldID} />,
     },
-  ]
+  ]);
+  
 
   return (
     <div style={body_div}>
@@ -67,7 +68,7 @@ function InfoViewer(props) {
         <Progress style={progress} strokeColor="#ff4d4f" percent={10} status="active" />
         <Text type="secondary" style={progress_title}>Выиграно: 3</Text>
         <Progress style={progress} percent={80} status="active" />
-        <Text type="secondary" style={progress_title}>Целых: 7</Text>
+        <Text type="secondary" style={progress_title}>Осталось: 7</Text>
       </Card>
       <Collapse style={alert} accordion items={collapse_items} />
       <Button style={button} type="dashed" onClick={showModal}>Добавить пользователя</Button>

@@ -11,6 +11,8 @@ urlpatterns = [
     path("delete_prize", views.DeletePrize.as_view()),
     path("send_email", views.SendEmailView.as_view()),
     path("get_cells_from_game", views.GetCellsFromGame.as_view()),
+    path("get_prizes_from_game", views.GetPrizesFromGame.as_view()),
+    path("get_users_from_game", views.GetUsersFromGame.as_view()),
     path("token", views.CustomObtainTokenPairView.as_view()),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('register', views.CreateUserView.as_view()),

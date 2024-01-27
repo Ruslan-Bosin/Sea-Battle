@@ -26,29 +26,78 @@ class ShotsSerializer(serializers.Serializer):
     game_id = serializers.IntegerField()
 
 
-# class PrizesSerializer(serializers.Serializer):
-#     id = serializers.IntegerField()
-#     row = serializers.IntegerField()
-#     column = serializers.IntegerField()
-#     user_id = serializers.IntegerField()
-#     game_id = serializers.IntegerField()
-#     created_by_id = serializers.IntegerField()
+class GameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = game.models.Game
+        fields = ['id', 'name', 'editable', 'size']  # Include any other fields you need
 
 
-class CellSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    # game = serializers.IntegerField()
-    # user_id = serializers.In()
-    row = serializers.IntegerField()
-    column = serializers.IntegerField()
-    is_prize = serializers.IntegerField()
-    used = serializers.IntegerField()
+class CellSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = game.models.Cell
+        fields = ['id', 'game', 'coord', 'is_prize', 'used', 'forbidden']
+    
+    def to_representation(self, instance):
+        res = {"coordinate": instance.coord}
+        if instance.game.editable:
+            if instance.forbidden:
+                res["status"] = "Forbidden"
+            elif instance.is_prize:
+                res["status"] = "Prize"
+            elif not instance.is_prize:
+                res["status"] = "Empty"
+        else:
+            if instance.is_prize and instance.used:
+                res["status"] = "Won"
+            elif instance.is_prize and not instance.used:
+                res["status"] = "Unwon"
+            elif instance.used:
+                res["status"] = "Missed"
+            elif not instance.used:
+                res["status"] = "Untouched"
+        return res
 
+class PlacementSerializer(serializers.Serializer):
+    placements = CellSerializer(many=True)
+    editable = serializers.BooleanField()
+    size = serializers.IntegerField()
+
+    def to_representation(self, queryset):
+        # Assuming queryset is a list of Cell instances
+        game_instance = queryset.first().game  # Assuming all cells belong to the same game
+        return {
+            'placements': [CellSerializer(cell).data for cell in queryset],
+            'editable': game_instance.editable,
+            'size': game_instance.size,
+        }
+
+
+class PrizesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = game.models.Prize
+        fields = ['id', 'name', 'avatar']
+
+    def to_representation(self, instance):
+        res = {"id": instance.id, "title": instance.name, "image_url": instance.avatar if instance.avatar else "", "won": instance.cell.first().used}
+        return res
+    
+
+class UserForAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = game.models.Prize
+        fields = ['id', 'username', 'avatar']
+    
+    def to_representation(self, instance):
+        res = {"id": "id" + str(instance.id), "name": instance.username, "image_url": instance.avatar if instance.avatar else "", "shots_number": instance.shots_quantity}
+        return res
 
 class DeletePrizeSerializer(serializers.Serializer):
     row = serializers.IntegerField()
     column = serializers.IntegerField()
     game_id = serializers.IntegerField()
+
+
 
 
 class GameSerializer(serializers.Serializer):

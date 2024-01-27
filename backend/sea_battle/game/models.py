@@ -25,6 +25,11 @@ def update_cells(cell, forbidden=True):
                 forbidden_cell.save()
 
 class Game(models.Model):
+    editable = models.BooleanField(
+        verbose_name=_("редактирование"),
+        help_text=_("можно ли поле редактировать"),
+        default=True,
+    )
     name = models.CharField(
         verbose_name=_("название"),
         help_text=_("название поля"),
@@ -175,11 +180,6 @@ class Cell(LifecycleModel):
                 update_cells(self, forbidden=False)
             self._hook_called = True
             self.save()
-
-
-
-
-
 
 
     class Meta:

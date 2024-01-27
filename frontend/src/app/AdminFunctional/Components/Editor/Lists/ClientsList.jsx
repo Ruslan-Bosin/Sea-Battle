@@ -1,7 +1,8 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { List, Avatar, Modal, InputNumber } from "antd"
 import { PlusSquareOutlined, UserOutlined } from "@ant-design/icons"
+import axios from "axios"
 
 // Styles
 const icon = {
@@ -12,7 +13,7 @@ const icon = {
 
 function ClientList(props) {
 
-  // const fieldID = props.fieldID;
+  const fieldID = props.fieldID;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentClientId, setCurrentClientId] = useState(-1);
@@ -29,7 +30,7 @@ function ClientList(props) {
     setCurrentClientId(-1);
   };
 
-  const clients_data = [
+  const [clients_data, setClients_data] = useState([
     {
       id: "id1",
       name: 'Имя клииента',
@@ -54,8 +55,26 @@ function ClientList(props) {
       image_url: "",
       shots_number: 1
     },
-  ];
+  ]);
 
+  const user_info_url = "http://127.0.0.1:8000/api/get_users_from_game";
+  useEffect(() => {
+    const access_token = (localStorage.getItem("accessToken") || "");
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + access_token,
+    };
+    const params = {
+      'game': fieldID
+    }
+    axios.get(user_info_url, {params, headers})
+    .then((response) => {
+      const data = response.data;
+      setClients_data(data);
+      console.log(data);
+    })
+    .catch((error) => console.error('Error fetching data:', error));
+    }, [])
   return (
     <div>
       <List itemLayout="horizontal" dataSource={clients_data} renderItem={(item, index) => (
