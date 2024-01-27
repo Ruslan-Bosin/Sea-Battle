@@ -1,16 +1,32 @@
 import { Routes, Route } from "react-router-dom"
-import Primary from './app/UtilitarianPages/Primary';
-import UserAuth from './app/Auth/UserAuth';
-import AdminAuth from "./app/Auth/AdminAuth"
-import NotFound from './app/UtilitarianPages/NotFound';
+
+// Auth - user
 import AuthRequired from './app/Auth/AuthRequired';
-import LoginForm from './app/Auth/UserAuthForms/LoginForm';
-import RegisterForm from "./app/Auth/UserAuthForms/RegisterForm"
-import AllFieldsPage from "./app/AdminFunctional/Tabs/AllFieldsPage";
-import CreateFieldPage from "./app/AdminFunctional/Tabs/CreateFieldPage";
-import EditFieldPage from "./app/AdminFunctional/Tabs/EditFieldPage";
+
+import UserAuth from './app/Auth/User/UserAuth';
+import UserLoginForm from './app/Auth/User/UserAuthForms/UserLoginForm';
+import UserRegisterForm from "./app/Auth/User/UserAuthForms/UserRegisterForm"
+import UserForgotPassword from "./app/Auth/User/UserForgotPassword";
+
+// Auth - admin
+import AdminAuth from "./app/Auth/Admin/AdminAuth"
+import AdminLoginForm from "./app/Auth/Admin/AdminAuthForms/AdminLoginForm"
+import AdminRegisterForm from "./app/Auth/Admin/AdminAuthForms/AdminRegisterForm"
+import AdminForgotPassword from "./app/Auth/Admin/AdminForgotPassword"
+
+// Utilitarian
+import Primary from './app/UtilitarianPages/Primary';
+import NotFound from './app/UtilitarianPages/NotFound';
+
+// Admin Functional
 import AdminMainPage from "./app/AdminFunctional/AdminMainPage";
+
+import CreateFieldPage from "./app/AdminFunctional/Tabs/CreateFieldPage";
+import AllFieldsPage from "./app/AdminFunctional/Tabs/AllFieldsPage";
+import EditFieldPage from "./app/AdminFunctional/Tabs/EditFieldPage";
+
 import AdminSettings from "./app/AdminFunctional/Tabs/AdminSettings";
+import AdminSupport from "./app/AdminFunctional/Tabs/AdminSupport";
 
 
 function App() {
@@ -26,16 +42,24 @@ function App() {
           <Route path="/admin/editField/:fieldID" element={<EditFieldPage />} />
 
           <Route path="/admin/settings" element={<AdminSettings />} />
+          <Route path="/admin/support" element={<AdminSupport />} />
         </Route>
 
       </Route>
 
       <Route element={<UserAuth />}>
-        <Route path="/userauth/login" element={<LoginForm />} />
-        <Route path="/userauth/register" element={<RegisterForm />} />
+        <Route path="/userauth/login" element={<UserLoginForm />} />
+        <Route path="/userauth/register" element={<UserRegisterForm />} />
       </Route>
 
-      <Route path="/adminauth" element={<AdminAuth />} />
+      <Route path="/userauth/forgotpassword" element={<UserForgotPassword />} />
+
+      <Route element={<AdminAuth />} >
+        <Route path="/adminauth/login" element={<AdminLoginForm />} />
+        <Route path="/adminauth/register" element={<AdminRegisterForm />} />
+      </Route>
+
+      <Route path="/adminauth/forgotpassword" element={<AdminForgotPassword />} />
 
       <Route path="/*" element={<NotFound />} />
 

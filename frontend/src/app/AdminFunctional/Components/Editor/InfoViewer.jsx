@@ -26,6 +26,44 @@ const button = { width: "90%", margin: "0% 5%", marginBottom: "5%" }
 
 function InfoViewer(props) {
 
+  /*
+  Запрос через сокет (c token-ом)
+  { fieldId }
+  -> (пример) {
+    editable: true,
+    statistics: {
+      shootsNumber: 2,
+      missedCount: 1,
+      prizesCount: 3,
+      wonCount: 1,
+      unwonCount: 2
+    },
+    clientsNumber: 1,
+    clients: [
+      {
+        id: 123,
+        name: "Abacaba",
+        image: "https//asfasgasg.png"
+        shootsCount: 3
+      }
+    ],
+    prizesNumber: 1,
+    prizes: [
+      {
+        id: 321,
+        title: "Lamborgine",
+        immage: "https//dbklajgjadg.png",
+        won: flase
+      }
+    ]
+  }
+
+
+  Запрос POST (c token-ом)
+  { fieldId, userEmail }
+  -> { message } - добавление 
+  */
+
   const editable = true;
   const fieldID = props.fieldID;
 

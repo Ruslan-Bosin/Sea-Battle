@@ -35,7 +35,7 @@ function EditFieldPage() {
       <Header selectedTab={3} showEditorTab={true}/>
       <div style={edit_field_block}>
         <Field fieldID={fieldID}/>
-        <InfoViewer/>
+        <InfoViewer fieldID={fieldID}/>
       </div>
       
     </div>

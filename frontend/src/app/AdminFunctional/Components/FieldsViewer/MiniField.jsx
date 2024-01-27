@@ -1,23 +1,20 @@
 import React from "react";
 import { useState } from "react";
-import FieldCell from "./FieldCell";
+import MiniFieldCell from "./MiniFieldCell";
 
 // Styles
 const body_div = {
   background: "white",
-  borderRadius: "20px",
+  borderRadius: "10px",
   aspectRatio: "1 / 1",
-  height: "100%",
-  boxShadow: "0 0px 20px 3px rgba(0, 0, 0, 0.1)"
+  height: "200px",
+  border: "2px solid #F5F5F5FF"
 }
 
-function Field(props) {
+function MiniField(props) {
 
   const fieldID = props.fieldID;
 
-  /* Запрос через сокет (c token-ом)
-  { fieldID }
-  -> json как в fieldData и message */
   const [fieldData, setFieldData] = useState(
     {
       size: 4,
@@ -25,7 +22,7 @@ function Field(props) {
       placements: [
         {
           coordinate: 1,
-          status: "Empty"
+          status: "Missed"
         },
         {
           coordinate: 2,
@@ -37,7 +34,7 @@ function Field(props) {
         },
         {
           coordinate: 4,
-          status: "Empty"
+          status: "Unwon"
         },
         {
           coordinate: 5,
@@ -45,7 +42,7 @@ function Field(props) {
         },
         {
           coordinate: 6,
-          status: "Prize"
+          status: "Won"
         },
         {
           coordinate: 7,
@@ -53,7 +50,7 @@ function Field(props) {
         },
         {
           coordinate: 8,
-          status: "Empty"
+          status: "Untouched"
         },
         {
           coordinate: 9,
@@ -65,7 +62,7 @@ function Field(props) {
         },
         {
           coordinate: 11,
-          status: "Empty"
+          status: "Won"
         },
         {
           coordinate: 12,
@@ -77,7 +74,7 @@ function Field(props) {
         },
         {
           coordinate: 14,
-          status: "Prize"
+          status: "Untouched"
         },
         {
           coordinate: 15,
@@ -106,11 +103,11 @@ function Field(props) {
     <div style={body_div}>
       <div style={field_div}>
         {fieldData.placements.map(cell => {
-          return <FieldCell fieldID={fieldID} coordinate={cell.coordinate} status={cell.status} key={cell.coordinate} />
+          return <MiniFieldCell fieldID={fieldID} coordinate={cell.coordinate} status={cell.status} key={cell.coordinate} />
         })}
       </div>
     </div>
   );
 }
 
-export default Field;
+export default MiniField;

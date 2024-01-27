@@ -10,6 +10,23 @@ const img_fallback = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYA
 
 function PrizeCell(props) {
 
+  /*
+  Запрос POST (c token-ом)
+  { fieldID, coordinate }
+  -> { prizeTitle, prizeImage }
+
+  Запрос POST (c token-ом)
+  { fieldID, coordinate } -> { message } - удаление приза
+
+  Запрос GET (c token-ом)
+  { fieldID, coordinate }
+  -> { prizeTitle, prizeDescription }
+
+  Запрос POST (c token-ом)
+  { fieldID, coordinate }
+  -> { prizeTitle, prizeDescription, prizeImage }
+  */
+
   const [isHover, setIsHover] = useState(false);
   const handleMouseEnter = () => {setIsHover(true);};
   const handleMouseLeave = () => {setIsHover(false);};

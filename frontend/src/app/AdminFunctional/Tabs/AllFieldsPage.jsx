@@ -30,6 +30,36 @@ const space_fill = {
 
 function AllFieldsPage() {
 
+  /*
+  Запрос GET (c token-ом)
+  -> (пример) {
+    fieldsNumber: 3,
+    fields: [
+      {
+        id: 1,
+        title: "BlaBlaBla",
+        "usersCount": 0,
+        "prizesWon": 0,
+        "prizesCount": 0
+      },
+      {
+        id: 34,
+        title: "GGBET",
+        "usersCount": 3,
+        "prizesWon": 10,
+        "prizesCount": 20
+      },
+      {
+        id: 35,
+        title: "SKLSJF",
+        "usersCount": 23,
+        "prizesWon": 99,
+        "prizesCount": 100
+      },
+    ]
+  }
+  */
+
   const fieldsNumber = 1;
 
   return (

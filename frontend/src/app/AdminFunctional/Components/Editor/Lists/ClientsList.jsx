@@ -12,6 +12,12 @@ const icon = {
 
 function ClientList(props) {
 
+  /*
+  Запрос POST (c token-ом)
+  { fieldId, userId, addCount }
+  -> { message }
+  */
+
   // const fieldID = props.fieldID;
 
   const [isModalOpen, setIsModalOpen] = useState(false);

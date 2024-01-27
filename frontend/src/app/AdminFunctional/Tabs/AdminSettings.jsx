@@ -1,8 +1,7 @@
 import React from "react";
 import { useState } from "react";
-import { Card, Avatar, Input, Space, Button } from "antd";
-import { UserOutlined, UploadOutlined } from "@ant-design/icons"
-import { useNavigate } from "react-router-dom";
+import { Card, Avatar, Input, Space, Button, Upload } from "antd";
+import { UserOutlined, UploadOutlined, SaveOutlined } from "@ant-design/icons"
 
 
 //Styles
@@ -32,18 +31,41 @@ const right_block = {
 
 function AdminSettings() {
 
-  const navigate = useNavigate();
+  /*
+  Запрос GET (с token-ом)
+  -> { name, avatar }
+  avatar - это ссылка на картинку
 
-  const [inputValue, setInputValue] = useState("Название");
+  Запрос POST (с token-ом)
+  ... загрузка картинки
+
+  Запрос POST (с token-ом)
+  { title }
+  -> (какое-нибудь сообщение)
+  */
+
+  const [title, setTitle] = useState("Название");
+  const [uploadDisabled, setUploadDisabled] = useState(true);
+
+  const saveTitle = () => {
+
+  }
 
   return (
     <div style={body_div}>
-      <Card title="Настройки" hoverable bodyStyle={card_content} style={card_style} extra={<a onClick={navigate(-1)} href="/#">на главную</a>}>
+      <Card title="Настройки" hoverable bodyStyle={card_content} style={card_style} extra={<a href="/">на главную</a>}>
         <Space size="middle">
-          <Avatar shape="square" size={128} icon={<UserOutlined />} />
+          <Avatar shape="square" size={150} icon={<UserOutlined />} />
           <div style={right_block}>
-            <Input placeholder="Название" variant="filled" value={inputValue} onChange={(event) => setInputValue(event.target.value)} />
-            <Button icon={<UploadOutlined />}>Установить аватар</Button>
+            <Space.Compact>
+              <Input placeholder="Название" value={title} onChange={(event) => setTitle(event.target.value)} />
+              <Button icon={<SaveOutlined />} onClick={saveTitle}></Button>
+            </Space.Compact>
+            
+            <Upload>
+              <Button icon={<UploadOutlined />}>Выбрать аватар</Button>
+            </Upload>
+            <Button disabled={uploadDisabled} type="primary" icon={<SaveOutlined />}>Загрузить</Button>
           </div>
         </Space>
       </Card>

@@ -14,6 +14,11 @@ const icon = {
 
 function AccountButton() {
 
+  /*
+  Запрос GET (c token-ом)
+  -> { title, avatar }
+  */
+
   const navigate = useNavigate();
 
   const [isHover, setIsHover] = useState(false);
@@ -30,7 +35,7 @@ function AccountButton() {
       key: '2',
       label: "Поддержка",
       icon: <MessageOutlined />,
-      disabled: true,
+      disabled: false,
     },
     {
       type: 'divider',
@@ -46,6 +51,8 @@ function AccountButton() {
   const onClick = ({ key }) => {
     if (key === '1') {
       navigate("/admin/settings");
+    } else if (key === '2') {
+      navigate("/admin/support");
     }
   };
 

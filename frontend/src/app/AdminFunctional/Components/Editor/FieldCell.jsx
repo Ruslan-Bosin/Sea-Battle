@@ -2,6 +2,7 @@ import React from "react";
 
 import EmptyCell from "./Cells/Editable/EmptyCell";
 import PrizeCell from "./Cells/Editable/PrizeCell";
+import ForbiddenCell from "./Cells/Editable/ForbiddenCell";
 
 import MissedCell from "./Cells/Uneditable/MissedCell";
 import UntouchedCell from "./Cells/Uneditable/UntouchedCell";
@@ -14,6 +15,7 @@ function FieldCell(props) {
 
   if (status === "Empty") { return <EmptyCell {...props} /> }
   else if (status === "Prize") { return <PrizeCell {...props} /> }
+  else if (status === "Forbidden") { return <ForbiddenCell {...props} /> }
 
   if (status === "Missed") { return <MissedCell {...props} /> }
   else if (status === "Untouched") { return <UntouchedCell {...props} /> }
