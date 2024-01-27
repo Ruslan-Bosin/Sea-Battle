@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { PlusOutlined, InboxOutlined, } from "@ant-design/icons";
 import { Modal, Input, Space, Upload, message, Tooltip } from "antd";
+import axios from "axios";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -24,6 +25,15 @@ function EmptyCell(props) {
     console.log(description);
     console.log(imageFile);
 
+    const formData = new FormData()
+    formData.append('avatar', imageFile);
+    formData.append('name', title);
+    formData.append('description', description);
+    axios.post('http://127.0.0.1:8000/api/upload_prize_avatar/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     setCreateModalOpen(false);
   };
 
