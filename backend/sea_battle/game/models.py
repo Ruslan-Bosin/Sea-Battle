@@ -44,6 +44,17 @@ def prize_avatar_upload_path(instance, filename):
 
 class Prize(models.Model):
     objects = game.managers.PrizesManager()
+    name = models.CharField(
+        verbose_name=_("название"),
+        help_text=_("название приза"),
+        max_length=24,
+        default=""
+    )
+    description = models.TextField(
+        verbose_name=_("описание"),
+        help_text=_("описание приза"),
+        default=""
+    )
 
     user = models.ForeignKey(
         verbose_name=_("обладатель"),
