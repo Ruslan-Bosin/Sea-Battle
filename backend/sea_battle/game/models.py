@@ -1,12 +1,28 @@
 from collections.abc import Iterable
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django_lifecycle import LifecycleModel, hook, AFTER_UPDATE
+
 
 
 import auth_users.models
 import game.managers
 import os
 
+
+def update_cells(cell, forbidden=True):
+    print("update_cells")
+    game = cell.game
+    game_size = cell.game.size
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            start_coord = cell.coord
+            if (i == 0 and j == 0) or (abs(i) == 1 and abs(j) == 1) or ((((start_coord + j - 1) // game_size) != ((start_coord - 1) // game_size))):
+                continue
+            forbidden_cell = Cell.objects.filter(game=game, coord=cell.coord + (game_size * i) + j).first()
+            if forbidden_cell is not None:
+                forbidden_cell.forbidden = forbidden
+                forbidden_cell.save()
 
 class Game(models.Model):
     name = models.CharField(
@@ -94,7 +110,10 @@ class Shots(models.Model):
         verbose_name_plural = _("выстрелы")
 
 
-class Cell(models.Model):
+class Cell(LifecycleModel):
+
+    _hook_called = False
+
     objects = game.managers.CellsManager()
     game = models.ForeignKey(
         verbose_name=_("игра"),
@@ -116,6 +135,11 @@ class Cell(models.Model):
         help_text=_("был ли совершен выстрел на поле"),
         default=False,
     )
+    forbidden = models.BooleanField(
+        verbose_name=_("заблокировано"),
+        help_text=_("можно ли размещать на этой клетке приз"),
+        default=False
+    )
     prize = models.ForeignKey(
         to=Prize,
         verbose_name=_("приз"),
@@ -125,6 +149,27 @@ class Cell(models.Model):
         on_delete=models.SET_NULL,
         related_name="cell",
     )
+
+    @hook(AFTER_UPDATE, when="prize", has_changed=True)
+    def update_prize_on_cell(self):
+        if not self._hook_called:
+            if self.prize is not None:
+                # print("prize changed on not none")
+                self.is_prize = True
+                print(self)
+                # self.save()
+                update_cells(self)
+            else:
+                self.is_prize = False
+                update_cells(self, forbidden=False)
+            self._hook_called = True
+            self.save()
+
+
+
+
+
+
 
     class Meta:
         verbose_name = _("клетка")
