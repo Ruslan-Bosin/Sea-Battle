@@ -28,6 +28,14 @@ import EditFieldPage from "./app/AdminFunctional/Tabs/EditFieldPage";
 import AdminSettings from "./app/AdminFunctional/Tabs/AdminSettings";
 import AdminSupport from "./app/AdminFunctional/Tabs/AdminSupport";
 
+// User Functional
+import UserMainPage from "./app/UserFunctional/UserMainPage";
+
+import AvailableFields from "./app/UserFunctional/Tabs/AvailableFields";
+import GamePage from "./app/UserFunctional/Tabs/GamePage";
+
+import UserSettings from "./app/UserFunctional/Tabs/UserSettings";
+import UserSupport from "./app/UserFunctional/Tabs/UserSupport"
 
 function App() {
   return (
@@ -45,6 +53,13 @@ function App() {
           <Route path="/admin/support" element={<AdminSupport />} />
         </Route>
 
+        <Route element={<UserMainPage />}>
+          <Route path="/user/availableFields" element={<AvailableFields />} />
+          <Route path="/user/game/:fieldID" element={<GamePage />} />
+
+          <Route path="/user/settings" element={<UserSettings />} />
+          <Route path="/user/support" element={<UserSupport />} />
+        </Route>
       </Route>
 
       <Route element={<UserAuth />}>

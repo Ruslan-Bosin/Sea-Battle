@@ -1,0 +1,4 @@
+- Unknown
+- Won (won by user)
+- Unwon (won by others)
+- Missed

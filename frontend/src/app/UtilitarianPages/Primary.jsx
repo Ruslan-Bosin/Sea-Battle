@@ -3,17 +3,17 @@ import { Navigate } from "react-router-dom";
 
 function Primary() {
 
-  const isAdmin = true;
+  const isAdmin = false;
 
   if (isAdmin) {
     return (
-      <Navigate to="/admin/allfields"/>
+      <Navigate to="/admin/allfields" />
+    );
+  } else {
+    return (
+      <Navigate to="/user/AvailableFields" />
     );
   }
-
-  return (
-    <Navigate to=""/>
-  );
 };
 
 export default Primary;

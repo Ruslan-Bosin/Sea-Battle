@@ -51,9 +51,9 @@ function AccountButton() {
 
   const onClick = ({ key }) => {
     if (key === '1') {
-      navigate("/admin/settings");
+      navigate("/user/settings");
     } else if (key === '2') {
-      navigate("/admin/support");
+      navigate("/user/support");
     }
   };
 
@@ -82,7 +82,7 @@ function AccountButton() {
       <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} >
         <Space>
           <Avatar icon={<UserOutlined />} style={icon} />
-          <Text>Название</Text>
+          <Text>Имя юзера</Text>
         </Space>
       </div>
     </Dropdown>

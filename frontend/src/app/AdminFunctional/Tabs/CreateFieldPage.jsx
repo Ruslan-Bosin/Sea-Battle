@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import Header from "../Components/Header/Header";
-import { Card, Typography, InputNumber, Button } from "antd";
+import { Card, Typography, InputNumber, Button, Input } from "antd";
 import { PlusOutlined } from "@ant-design/icons"
 import FieldSizePreview from "../Components/FieldsViewer/FieldSizePreview";
 const { Text } = Typography;
@@ -29,7 +29,7 @@ const create_field_block = {
 const card_body = {
   display: "flex",
   flexDirection: "column",
-  gap: "25px",
+  gap: "20px",
   padding: "0px 20px"
 }
 
@@ -54,6 +54,7 @@ function CreateFieldPage() {
   */
 
   const [fieldSize, setFieldSize] = useState(8);
+  const [fieldName, setFieldName] = useState("");
 
   return (
     <div style={body_div}>
@@ -67,6 +68,7 @@ function CreateFieldPage() {
             <Text>на</Text>
             <InputNumber value={fieldSize} style={input} size="small" disabled />
           </div>
+          <Input placeholder="Название поля" value={fieldName} onChange={(event) => setFieldName(event.target.value)} />
           <Button icon={<PlusOutlined />} size="large" type="primary" block>Создать</Button>
         </Card>
       </div>

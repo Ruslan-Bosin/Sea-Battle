@@ -28,8 +28,8 @@ function PrizeCell(props) {
   */
 
   const [isHover, setIsHover] = useState(false);
-  const handleMouseEnter = () => {setIsHover(true);};
-  const handleMouseLeave = () => {setIsHover(false);};
+  const handleMouseEnter = () => { setIsHover(true); };
+  const handleMouseLeave = () => { setIsHover(false); };
 
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState("")
@@ -65,11 +65,11 @@ function PrizeCell(props) {
   const popover_content = (
     <div>
       <Space direction="vertical">
-        <Image preview={true} src="" width="2  00px" height="200px" fallback={img_fallback}/>
-        <Space style={{width: "100%"}}>
+        <Image style={{ objectFit: "cover" }} preview={true} src="" width="2  00px" height="200px" fallback={img_fallback} />
+        <Space style={{ width: "100%" }}>
           <Button type="dashed" onClick={() => setModalOpen(true)}>Изменить</Button>
-          <Popconfirm title="Вы точно хотите удалить?" okText="Да" cancelText="Нет" onConfirm={() => {console.log('delete'); console.log(props.coordinate)}}>
-           <Button danger type="text">Удалить</Button>
+          <Popconfirm title="Вы точно хотите удалить?" okText="Да" cancelText="Нет" onConfirm={() => { console.log('delete'); console.log(props.coordinate) }}>
+            <Button danger type="text">Удалить</Button>
           </Popconfirm>
         </Space>
       </Space>
@@ -80,13 +80,13 @@ function PrizeCell(props) {
     <>
       <Popover content={popover_content} title="Название приза">
         <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-          <GiftTwoTone style={prize_icon}/>
+          <GiftTwoTone style={prize_icon} />
         </div>
       </Popover>
       <Modal zIndex={1031} open={modalOpen} title="Изменение приза" cancelText="Отмена" okText="Обновить" onCancel={() => setModalOpen(false)} onOk={onChangesSubmition}>
-        <Space size="small" direction="vertical" style={{width: "100%"}}>
-          <Input value={title} placeholder="Название приза" onChange={(event) => setTitle(event.target.value)}/>
-          <TextArea value={description} placeholder="Описание приза" autoSize={{minRows: 2, maxRows: 6,}} onChange={(event) => setDescription(event.target.value)}/>
+        <Space size="small" direction="vertical" style={{ width: "100%" }}>
+          <Input value={title} placeholder="Название приза" onChange={(event) => setTitle(event.target.value)} />
+          <TextArea value={description} placeholder="Описание приза" autoSize={{ minRows: 2, maxRows: 6, }} onChange={(event) => setDescription(event.target.value)} />
           <Dragger >
             <p className="ant-upload-drag-icon">
               <InboxOutlined />

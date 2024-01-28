@@ -1,15 +1,13 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
-class AuthRequired extends React.Component {
+function AuthRequired() {
 
-    authorized = true;
-    
-    render() {
-        return (
-            this.authorized ? <Outlet/> : <Navigate to="userauth"/>
-        );
-    };
+  const authorized = true;
+
+  return (
+    authorized ? <Outlet /> : <Navigate to="/userauth/login" />
+  );
 };
 
 export default AuthRequired;
