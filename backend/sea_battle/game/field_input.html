@@ -1,7 +1,0 @@
-<!-- field_input.html -->
-
-<form method="post" action="{% url 'field_view' %}">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Отправить</button>
-</form>
