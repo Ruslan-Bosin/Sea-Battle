@@ -81,7 +81,7 @@ function InfoViewer(props) {
   };
 
 
-  const collapse_items = useState([
+  const [collapse_items, setCollapseItems] = useState([
     {
       key: '1',
       label: 'Пользователи',
