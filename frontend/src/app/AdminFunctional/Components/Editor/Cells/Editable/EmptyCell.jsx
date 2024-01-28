@@ -29,11 +29,15 @@ function EmptyCell(props) {
     console.log(title);
     console.log(description);
     console.log(imageFile);
+    console.log(props.coordinate);
+    console.log(props.fieldID);
 
     const formData = new FormData()
     formData.append('avatar', imageFile);
     formData.append('name', title);
     formData.append('description', description);
+    formData.append('coordinate', props.coordinate);
+    formData.append('fieldID', props.fieldID);
     axios.post('http://127.0.0.1:8000/api/upload_prize_avatar/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -69,7 +73,7 @@ function EmptyCell(props) {
         <Space size="small" direction="vertical" style={{ width: "100%" }}>
           <Input value={title} placeholder="Название приза" onChange={(event) => setTitle(event.target.value)} />
           <TextArea value={description} placeholder="Описание приза" autoSize={{ minRows: 2, maxRows: 6, }} onChange={(event) => setDescription(event.target.value)} />
-          <Dragger accept=".png,.jpg" maxCount={1} customRequest={({ file }) => { setImageFile(file) }} listType="picture" beforeUpload={() => false}>
+          <Dragger accept=".png,.jpg" maxCount={1} customRequest={({ file }) => { setImageFile(file) }}   >
             <p className="ant-upload-drag-icon">
               <InboxOutlined />
             </p>

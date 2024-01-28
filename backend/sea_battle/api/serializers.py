@@ -71,7 +71,6 @@ class PlacementSerializer(serializers.Serializer):
             'size': game_instance.size,
         }
 
-
 class PrizesSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -113,21 +112,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'avatar']
 
 
-class PrizeSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    avatar = serializers.ImageField()
-    name = serializers.CharField(max_length=24)
-    description = serializers.CharField()
-
-    def create(self, validated_data):
-        return game.models.Prize.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        instance.title = validated_data.get('name', instance.title)
-        instance.description = validated_data.get('description', instance.description)
-        instance.avatar = validated_data.get('avatar', instance.avatar)
-        instance.save()
-        return instance
 
 class AdminGameSerializer(serializers.ModelSerializer):
     class Meta:

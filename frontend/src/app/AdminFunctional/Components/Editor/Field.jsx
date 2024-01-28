@@ -21,72 +21,7 @@ function Field(props) {
     {
       size: 4,
       editable: true,
-      placements: [
-        {
-          coordinate: 1,
-          status: "Empty"
-        },
-        {
-          coordinate: 2,
-          status: "Forbidden"
-        },
-        {
-          coordinate: 3,
-          status: "Empty"
-        },
-        {
-          coordinate: 4,
-          status: "Empty"
-        },
-        {
-          coordinate: 5,
-          status: "Forbidden"
-        },
-        {
-          coordinate: 6,
-          status: "Prize"
-        },
-        {
-          coordinate: 7,
-          status: "Forbidden"
-        },
-        {
-          coordinate: 8,
-          status: "Empty"
-        },
-        {
-          coordinate: 9,
-          status: "Prize"
-        },
-        {
-          coordinate: 10,
-          status: "Forbidden"
-        },
-        {
-          coordinate: 11,
-          status: "Empty"
-        },
-        {
-          coordinate: 12,
-          status: "Empty"
-        },
-        {
-          coordinate: 13,
-          status: "Empty"
-        },
-        {
-          coordinate: 14,
-          status: "Prize"
-        },
-        {
-          coordinate: 15,
-          status: "Prize"
-        },
-        {
-          coordinate: 16,
-          status: "Prize"
-        },
-      ]
+      placements: []
     }
   );
 

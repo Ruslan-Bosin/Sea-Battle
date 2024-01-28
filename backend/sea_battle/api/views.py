@@ -20,7 +20,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import UserSerializer, PrizeSerializer
+from .serializers import UserSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
@@ -392,20 +392,27 @@ class UploadAvatarView(APIView):
 
 
 
+
 class PrizeUploadView(APIView):
     permission_classes = [AllowAny]
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, *args, **kwargs):
-        print(1)
-        print(request.data)
-        serializer = PrizeSerializer(data=request.data)
+        title = request.data.get('name')
+        description = request.data.get('description')
+        image_file = request.data.get('avatar')
+        coordinate = int(request.data.get('coordinate'))
+        field_id = int(request.data.get('fieldID'))
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        prize = game.models.Prize.objects.create(name=title, description=description, avatar=image_file)
+
+        cell = get_object_or_404(game.models.Cell, game_id=field_id, coord=coordinate)
+        cell.prize = prize
+        cell.is_prize = True
+        cell.save()
+
+        return Response({'message': 'Prize created and associated with the cell'}, status=201)
+
 
 
 class GetUserFromPassToken(APIView):
