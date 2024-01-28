@@ -5,6 +5,11 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 import auth_users.models
 import game.models
 
+class StatistciSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = game.models.Cell
+        fields = ["wonCount", "prizesCount", "shootsNumber", "missedCount", "unwonCount"]
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -89,7 +94,7 @@ class UserForAdminSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'avatar']
     
     def to_representation(self, instance):
-        res = {"id": "id" + str(instance.id), "name": instance.username, "image_url": instance.avatar if instance.avatar else "", "shots_number": instance.shots_quantity}
+        res = {"id": instance.id, "name": instance.username, "image_url": instance.avatar if instance.avatar else "", "shots_number": instance.shots_quantity}
         return res
 
 class DeletePrizeSerializer(serializers.Serializer):
@@ -100,9 +105,9 @@ class DeletePrizeSerializer(serializers.Serializer):
 
 
 
-class GameSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    size = serializers.IntegerField()
+# class GameSerializer(serializers.Serializer):
+#     id = serializers.IntegerField()
+#     size = serializers.IntegerField()
 
 
 
@@ -129,15 +134,15 @@ class PrizeSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+class AdminGameSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ['id', 'name', 'size']
+    
 
-class GameSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    name = serializers.CharField(max_length=16)
-    size = serializers.IntegerField()
-    prizes_out = serializers.IntegerField()
-    prizes_max = serializers.IntegerField()
-    players = serializers.IntegerField()
-
+    def to_representation(self, instance):
+        print(instance.users.all())
+        resp = {'id': instance.id, 'size': instance.size, 'name': instance.name, "prizes_max": instance.cells.filter(is_prize=True).count(), 'prizes_out': instance.cells.filter(is_prize=True, used=True).count(), 'players': instance.users.all().count()}
+        return resp
 
 class UserGameSerializer(serializers.Serializer):
     id = serializers.IntegerField()

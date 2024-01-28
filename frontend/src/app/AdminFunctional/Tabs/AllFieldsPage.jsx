@@ -72,7 +72,10 @@ function AllFieldsPage() {
   useEffect(() => {
     fetch(created_by_admin_url, {headers})
       .then((response) => response.json())
-      .then((data) => setFieldsData(data))
+      .then((data) => {
+        console.log(data);
+        setFieldsData(data);
+      })
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
