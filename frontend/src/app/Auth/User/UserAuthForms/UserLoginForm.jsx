@@ -1,8 +1,9 @@
 import React from "react";
 import { useState } from "react";
-import { Input, Button, Space } from "antd";
+import { Input, Button, Space, message } from "antd";
 import { MailOutlined, LockOutlined, LoginOutlined } from "@ant-design/icons"
-// import { useNavigate } from "react-router-dom";
+import axios from "axios"
+import { useNavigate } from "react-router-dom";
 
 // Styles
 const body_div = {}
@@ -14,12 +15,31 @@ const space_divider = {
 
 function UserLoginForm() {
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const loginClicked = () => {
+  const loginClicked = async () => {
+      const request_data = {
+        email: email,
+        password: password
+      }
+      try {
+        const response = await axios.post('http://127.0.0.1:8000/api/token', request_data);
+        const { access, refresh } = response.data;
+        // Сохраняем токены в localStorage
+        localStorage.setItem('accessToken', access);
+        localStorage.setItem('refreshToken', refresh);
+  
+        message.success('Вы успешно авторизованы!');
+        navigate('/'); // Переход на главную страницу
+      } catch(error) {
+        console.error('Ошибка авторизации:', error);
+        message.error('Ошибка авторизации. Пожалуйста, проверьте введенные данные.');
+      }
+    }
+  
     /* 
     Запрос POST:
     { email, password }
@@ -28,7 +48,7 @@ function UserLoginForm() {
     или успешность входа
     */
     // navigate("/");
-  }
+
 
   return (
     <div style={body_div}>
