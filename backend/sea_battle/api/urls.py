@@ -9,6 +9,7 @@ urlpatterns = [
     path("make_shot", views.MakeShot.as_view()),
     path("add_shots", views.AddShots.as_view()),
     path("delete_prize", views.DeletePrize.as_view()),
+    path("add_user_to_game", views.AddUser.as_view()),
     path("send_email", views.SendEmailView.as_view()),
     path("get_cells_from_game", views.GetCellsFromGame.as_view()),
     path("get_prizes_from_game", views.GetPrizesFromGame.as_view()),

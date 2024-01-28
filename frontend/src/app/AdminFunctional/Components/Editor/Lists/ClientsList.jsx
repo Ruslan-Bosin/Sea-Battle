@@ -20,13 +20,31 @@ function ClientList(props) {
   */
 
   const fieldID = props.fieldID;
-
+  const add_shots_url = "http://127.0.0.1:8000/api/add_shots"
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentClientId, setCurrentClientId] = useState(-1);
   const [inputNumberValue, setInputNumberValue] = useState(1);
   const showModal = () => { setIsModalOpen(true); };
   const handleCancel = () => { setIsModalOpen(false); };
   const handleOk = () => {
+    const shots = inputNumberValue;
+    const userId = currentClientId
+    const request_data = {
+      quanity: shots,
+      user: userId,
+      game: fieldID
+    }
+    const access_token = (localStorage.getItem("accessToken") || "");
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + access_token,
+    }
+    axios.post(add_shots_url, request_data, {headers}).then(response => {
+      const data = response.data;
+      if (data.message != "Ok") {
+        console.log(data.message);
+      }
+    })
     console.log("ADD ");
     console.log(inputNumberValue);
     console.log("SHOOTS FOR USER WITH ID");
@@ -35,6 +53,7 @@ function ClientList(props) {
     setInputNumberValue(1);
     setCurrentClientId(-1);
   };
+
 
   const [clients_data, setClients_data] = useState([
     {
@@ -65,21 +84,24 @@ function ClientList(props) {
 
   const user_info_url = "http://127.0.0.1:8000/api/get_users_from_game";
   useEffect(() => {
-    const access_token = (localStorage.getItem("accessToken") || "");
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + access_token,
-    };
-    const params = {
-      'game': fieldID
+    if (isModalOpen === false) {
+      const access_token = (localStorage.getItem("accessToken") || "");
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + access_token,
+      };
+      const params = {
+        'game': fieldID
+      }
+      axios.get(user_info_url, {params, headers})
+      .then((response) => {
+        const data = response.data;
+        setClients_data(data);
+        console.log(data);
+      })
+      .catch((error) => console.error('Error fetching data:', error));
     }
-    axios.get(user_info_url, {params, headers})
-    .then((response) => {
-      const data = response.data;
-      setClients_data(data);
-      console.log(data);
-    })
-    .catch((error) => console.error('Error fetching data:', error));
+
     }, [])
   return (
     <div>

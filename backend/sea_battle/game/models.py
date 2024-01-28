@@ -24,7 +24,7 @@ def update_cells(cell, forbidden=True):
                 forbidden_cell.forbidden = forbidden
                 forbidden_cell.save()
 
-class Game(models.Model):
+class Game(LifecycleModel):
     editable = models.BooleanField(
         verbose_name=_("редактирование"),
         help_text=_("можно ли поле редактировать"),
@@ -48,8 +48,8 @@ class Game(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    def save(self, *args, **kwargs) -> None:
-        super().save(*args, **kwargs)
+    @hook('after_create')
+    def on_after_create(self):
         for i in range(1, self.size ** 2 + 1):
                 Cell.objects.create(game=self, coord=i)
 

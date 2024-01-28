@@ -57,7 +57,7 @@ class GetAllForInfoView(APIView):
         game_instance = game.models.Game.objects.filter(id=game_id).first()
         if game_instance is None:
             return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
-        prizes_queryset = game.models.Prize.objects.prefetch_related("cell").filter(cell__game=game_instance)
+        prizes_queryset = game.models.Prize.objects.prefetch_related("cell").filter(cell__game=game_instance).order_by(cell__used=True)
         users_queryset = game_instance.users.prefetch_related("shots").annotate(shots_quantity=Sum('shots__quanity', default=0))
         cells = game.models.Cell.objects.filter(game=game_instance)
         statistic_data = {
@@ -280,20 +280,44 @@ class MakeShot(APIView):
 
 
 class AddShots(APIView):
-    def get(self, request):
+    def post(self, request):
         ok_data = {"message": "Ok"}
-        user_id, game_id = request.GET.get("user"), request.GET.get("game")
-        quanity = int(request.GET.get("quanity"))
+        user_id, game_id = request.data.get("user"), request.data.get("game")
+        user_instance = auth_users.models.User.objects.filter(id=user_id).first()
+        game_instance = game.models.Game.objects.filter(id=game_id).first()
+        quanity = int(request.data.get("quanity"))
+        if user_instance is None or game_instance is None:
+            return Response({"message": "wrong game or user id"})
+        elif user_id not in [int(user.id) for user in game_instance.users.all()]:
+            return Response({"message": "wrong game or user id"})
         queryset = game.models.Shots.objects.get_shots_from_user_and_game(
             user_id, game_id
         )
         if len(queryset) == 0:
-            game.models.Shots.objects.create(user=user_id, game=game_id, quanity=0)
-        shot = queryset.first()
-        shot.quanity += quanity
-        shot.save()
+            game.models.Shots.objects.create(user=user_instance, game=game_instance, quanity=quanity)
+        else:
+            shot = queryset.first()
+            shot.quanity += quanity
+            shot.save()
         return Response(ok_data)
 
+
+class AddUser(APIView):
+
+    def post(self, request):
+        email = request.data.get("email")
+        game_id = request.data.get("game")
+        user_instance = auth_users.models.User.objects.filter(email=email).first()
+        game_instance = game.models.Game.objects.filter(id=game_id).first()
+        if game_instance is None:
+            return Response({"message": "game does not exists"})
+        if user_instance is None:
+            return Response({"message": "wrong email"})
+        if game_instance.users.all().filter(email=email).first() is not None:
+            return Response({"message": "this user is already added"})
+        game_instance.users.add(user_instance)
+        game_instance.save()
+        return Response({"message": "Ok"})
 
 class DeletePrize(APIView):
     def post(self, request, *args, **kwargs):

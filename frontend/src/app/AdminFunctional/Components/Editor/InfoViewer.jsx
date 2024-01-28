@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Alert, Card, Progress, Typography, Collapse, Button, Modal, Input } from "antd"
 import ClientList from "./Lists/ClientsList";
 import PrizesList from "./Lists/PrizesList";
+import axios from "axios"
 
 const { Text } = Typography;
 
@@ -66,13 +67,28 @@ function InfoViewer(props) {
 
   const editable = true;
   const fieldID = props.fieldID;
-
+  const add_user_url = "http://127.0.0.1:8000/api/add_user_to_game"
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const showModal = () => { setIsModalOpen(true); };
   const handleCancel = () => { setIsModalOpen(false); };
   const handleOk = () => {
-
+    const email = inputValue;
+    const response_data = {
+      email: email,
+      game: fieldID
+    }
+    const access_token = (localStorage.getItem("accessToken") || "");
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + access_token,
+    }
+    axios.post(add_user_url, response_data, {headers}).then(response => {
+      const data = response.data;
+      if (data.message != "Ok") {
+        console.log(data.message);
+      }
+    })
     console.log("Попробовать добавить пользователя и вывести message о результате");
     console.log(inputValue);
 
