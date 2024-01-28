@@ -16,7 +16,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             token['role'] = 'user'
         
         token['user_id'] = user.id
-        print(token['role'])
         return token
 
 
@@ -99,12 +98,6 @@ class DeletePrizeSerializer(serializers.Serializer):
 
 
 
-# class GameSerializer(serializers.Serializer):
-#     id = serializers.IntegerField()
-#     size = serializers.IntegerField()
-
-
-
 User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -119,7 +112,6 @@ class AdminGameSerializer(serializers.ModelSerializer):
     
 
     def to_representation(self, instance):
-        print(instance.users.all())
         resp = {'id': instance.id, 'size': instance.size, 'name': instance.name, "prizes_max": instance.cells.filter(is_prize=True).count(), 'prizes_out': instance.cells.filter(is_prize=True, used=True).count(), 'players': instance.users.all().count()}
         return resp
 
