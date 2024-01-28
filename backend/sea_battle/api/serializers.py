@@ -5,11 +5,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 import auth_users.models
 import game.models
 
-class StatistciSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = game.models.Cell
-        fields = ["wonCount", "prizesCount", "shootsNumber", "missedCount", "unwonCount"]
-
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):

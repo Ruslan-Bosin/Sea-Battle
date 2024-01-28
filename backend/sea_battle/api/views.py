@@ -1,5 +1,4 @@
 from django.http import JsonResponse
-from django.forms.models import model_to_dict
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.hashers import check_password, make_password
