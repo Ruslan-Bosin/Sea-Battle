@@ -9,9 +9,14 @@ const { Dragger } = Upload;
 
 function EmptyCell(props) {
 
+  /* Запрос POST (c token-ом)
+  { prizeTitle, prizeDescription, prizeImage }
+  -> { message }
+  */
+
   const [isHover, setIsHover] = useState(false);
-  const handleMouseEnter = () => {setIsHover(true);};
-  const handleMouseLeave = () => {setIsHover(false);};
+  const handleMouseEnter = () => { setIsHover(true); };
+  const handleMouseLeave = () => { setIsHover(false); };
 
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [title, setTitle] = useState("")
@@ -64,7 +69,7 @@ function EmptyCell(props) {
         <Space size="small" direction="vertical" style={{ width: "100%" }}>
           <Input value={title} placeholder="Название приза" onChange={(event) => setTitle(event.target.value)} />
           <TextArea value={description} placeholder="Описание приза" autoSize={{ minRows: 2, maxRows: 6, }} onChange={(event) => setDescription(event.target.value)} />
-          <Dragger accept=".png,.jpg" maxCount={1} customRequest={({ file }) => { setImageFile(file) }}>
+          <Dragger accept=".png,.jpg" maxCount={1} customRequest={({ file }) => { setImageFile(file) }} listType="picture" beforeUpload={() => false}>
             <p className="ant-upload-drag-icon">
               <InboxOutlined />
             </p>

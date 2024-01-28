@@ -9,6 +9,12 @@ const img_fallback = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYA
 
 function WonCell(props) {
 
+  /*
+  Запрос POST (c token-ом)
+  { fieldID, coordinate }
+  -> { prizeTitle, prizeImage, prizeWinnerName, prizeWinnerEmail }
+  */
+
   const [isHover, setIsHover] = useState(false);
   const handleMouseEnter = () => {setIsHover(true);};
   const handleMouseLeave = () => {setIsHover(false);};
