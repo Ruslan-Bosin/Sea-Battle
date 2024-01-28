@@ -30,7 +30,7 @@ from django.shortcuts import get_object_or_404
 import api.serializers
 import game.models
 import auth_users.models
-
+import api.validators
 
 class CheckToken(APIView):
     def get(self, request, *args, **kwargs):
@@ -47,6 +47,34 @@ class GetUserFromToken(APIView):
             instance=user
         )
         return Response(resp.data)
+
+
+
+class GetAllForInfoView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request):
+        game_id = request.GET.get("game")
+        game_instance = game.models.Game.objects.filter(id=game_id).first()
+        if game_instance is None:
+            return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
+        prizes_queryset = game.models.Prize.objects.prefetch_related("cell").filter(cell__game=game_instance)
+        users_queryset = game_instance.users.prefetch_related("shots").annotate(shots_quantity=Sum('shots__quanity', default=0))
+        cells = game.models.Cell.objects.filter(game=game_instance)
+        statistic_data = {
+            "shootsNumber": cells.filter(used=True).count(),
+            "missedCount": cells.filter(used=True, is_prize=False).count(),
+            "prizesCount": cells.filter(is_prize=True).count(),
+            "wonCount": cells.filter(is_prize=True, used=True).count(),
+            "unwonCount": cells.filter(is_prize=True, used=False).count()
+
+        }
+        prizes_serializer = api.serializers.PrizesSerializer(instance=prizes_queryset, many=True)
+        users_serializer = api.serializers.UserForAdminSerializer(
+            instance=users_queryset,
+            many=True
+        )
+        resp = {"editable": game_instance.editable, "statistics": statistic_data,"clientsNumber": len(users_queryset), "clients": users_serializer.data, "prizesNumber": len(prizes_queryset), "prizes": prizes_serializer.data}
+        return Response(resp, status=status.HTTP_200_OK)
 
 
 
@@ -110,22 +138,21 @@ class CustomObtainTokenPairView(TokenObtainPairView):
     serializer_class = api.serializers.CustomTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
-        email = request.data.get('email', None)
-        password = request.data.get('password', None)
 
-        if email is None or password is None:
-            return Response({'error': 'Both email and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
-
+        email = request.data.get("email")
+        password = request.data.get("password")
+        if api.validators.validate_email(email):
+            return Response({"message": "invalid email"})
+        if api.validators.validate_password(password):
+            return Response({"message": "invalid password"})
         user = authenticate(request, username=email, password=password)
-        print(user)
         if user is not None:
             response = super(CustomObtainTokenPairView, self).post(request, *args, **kwargs)
             refresh = RefreshToken.for_user(user)
             response.data['refresh'] = str(refresh)
-            # response.data['access'] = str(api.serializers.CustomTokenObtainPairSerializer.get_token(user))
             return response
         else:
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'message': 'Invalid credentials'})
 
 
 
@@ -140,12 +167,13 @@ class AdminCreatedGamesView(APIView):
             admin = user.admin
         except:
             return Response({"error": "Could not find admin with this id"})
-        created = admin.created_games.all().prefetch_related('cells').annotate(
-            prizes_out=Count('cells', filter=Q(cells__used=True, cells__is_prize=True)),
-            prizes_max=Count('cells', filter=Q(cells__is_prize=True)),
-            players=Count('users')
-        ).only('id', 'size', 'name')
-        resp = api.serializers.GameSerializer(
+        # created = admin.created_games.all().prefetch_related('cells', 'users').annotate(
+        #     prizes_out=Count('cells', filter=Q(cells__used=True, cells__is_prize=True)),
+        #     prizes_max=Count('cells', filter=Q(cells__is_prize=True)),
+        # )
+        created = admin.created_games.all().prefetch_related('cells', 'users')
+        print(created)
+        resp = api.serializers.AdminGameSerializer(
             instance=created,
             many=True
         )
