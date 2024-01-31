@@ -90,11 +90,6 @@ class UserForAdminSerializer(serializers.ModelSerializer):
         res = {"id": instance.id, "name": instance.username, "image_url": instance.avatar if instance.avatar else "", "shots_number": instance.shots_quantity}
         return res
 
-class DeletePrizeSerializer(serializers.Serializer):
-    row = serializers.IntegerField()
-    column = serializers.IntegerField()
-    game_id = serializers.IntegerField()
-
 
 
 

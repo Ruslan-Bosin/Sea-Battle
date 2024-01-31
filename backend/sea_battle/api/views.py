@@ -320,27 +320,31 @@ class AddUser(APIView):
         return Response({"message": "Ok"})
 
 class DeletePrize(APIView):
+    permission_classes = [AllowAny]
+    parser_classes = (MultiPartParser, FormParser)
     def post(self, request, *args, **kwargs):
-        serializer = api.serializers.DeletePrizeSerializer(data=request.data)
-        if serializer.is_valid():
-            # Получите данные из сериализатора
-            row = serializer.validated_data.get("row")
-            column = serializer.validated_data.get("column")
-            game_id = serializer.validated_data.get("game_id")
+        print(request.data)
+        coordinate = int(request.data.get('coordinate'))
+        field_id = int(request.data.get('fieldID'))
 
-            # Найдите объекты для удаления
-            objects_to_delete = game.models.Prize.objects.filter(
-                game=game_id, column=column, row=row
-            )
+        cell_to_update = game.models.Cell.objects.filter(
+            game_id=field_id, coord=coordinate,
+        ).first()
 
-            # Удалите найденные объекты
-            objects_to_delete.delete()
+        if cell_to_update:
+
+            cell_to_update.prize = None
+            cell_to_update.save(update_fields=['prize'])
 
             return Response(
-                {"message": "Objects deleted successfully"}, status=status.HTTP_200_OK
+                {"message": "Object deleted successfully"},
+                status=status.HTTP_200_OK
             )
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": "Object not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 
 
@@ -439,6 +443,9 @@ class PrizeUploadView(APIView):
 
 
 
+
+
+
 class GetUserFromPassToken(APIView):
 
     def post(self, request, *args, **kwargs):
@@ -462,3 +469,6 @@ class GetUserFromPassToken(APIView):
         user.save()
 
         return Response({"message": "done"})
+
+
+

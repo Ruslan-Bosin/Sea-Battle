@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { InboxOutlined, GiftTwoTone } from "@ant-design/icons";
 import { Modal, Input, Space, Upload, message, Popover, Image, Button, Popconfirm } from "antd";
+import axios from "axios";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -22,7 +23,7 @@ function PrizeCell(props) {
   { fieldID, coordinate }
   -> { prizeTitle, prizeDescription }
 
-  Запрос POST (c token-ом)
+  Запрос POST (c token-ом )
   { fieldID, coordinate }
   -> { prizeTitle, prizeDescription, prizeImage }
   */
@@ -40,6 +41,14 @@ function PrizeCell(props) {
 
     //...
 
+    setModalOpen(false);
+  };
+  const deletePrize = () => {
+    console.log(props.coordinate)
+    const formData = new FormData()
+    formData.append('coordinate', props.coordinate);
+    formData.append('fieldID', props.fieldID);
+    axios.post('http://127.0.0.1:8000/api/delete_prize  ', formData,)
     setModalOpen(false);
   };
 
@@ -68,7 +77,7 @@ function PrizeCell(props) {
         <Image preview={true} src="" width="2  00px" height="200px" fallback={img_fallback}/>
         <Space style={{width: "100%"}}>
           <Button type="dashed" onClick={() => setModalOpen(true)}>Изменить</Button>
-          <Popconfirm title="Вы точно хотите удалить?" okText="Да" cancelText="Нет" onConfirm={() => {console.log('delete'); console.log(props.coordinate)}}>
+          <Popconfirm title="Вы точно хотите удалить?" okText="Да" cancelText="Нет" onConfirm={deletePrize}>
            <Button danger type="text">Удалить</Button>
           </Popconfirm>
         </Space>
