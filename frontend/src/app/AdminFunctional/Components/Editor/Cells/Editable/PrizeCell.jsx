@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InboxOutlined, GiftTwoTone } from "@ant-design/icons";
 import { Modal, Input, Space, Upload, message, Popover, Image, Button, Popconfirm } from "antd";
 import axios from "axios";
@@ -29,27 +28,50 @@ function PrizeCell(props) {
   */
 
   const [isHover, setIsHover] = useState(false);
-  const handleMouseEnter = () => {setIsHover(true);};
-  const handleMouseLeave = () => {setIsHover(false);};
-
   const [modalOpen, setModalOpen] = useState(false);
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [prizeAvatarUrl, setPrizeAvatarUrl] = useState("");
+
+  const handleMouseEnter = () => { setIsHover(true); };
+  const handleMouseLeave = () => { setIsHover(false); };
 
   const onChangesSubmition = () => {
     message.info("...edit");
-
-    //...
-
+    // ... (your existing code)
     setModalOpen(false);
   };
+
+   useEffect(() => {
+    const access_token = localStorage.getItem("accessToken") || "";
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + access_token,
+    };
+
+
+    axios.get(`http://127.0.0.1:8000/api/get_prize_avatar/${props.fieldID}/${props.coordinate}/`, {headers})
+        .then(response => {
+            const prizeAvatarUrl = response.data.prize_avatar_url;
+            console.log(prizeAvatarUrl);
+            // Handle the prize avatar URL as needed
+        })
+        .catch(error => {
+            console.error(error);
+        });
+  }, []);
+
   const deletePrize = () => {
-    console.log(props.coordinate)
-    const formData = new FormData()
+    const formData = new FormData();
     formData.append('coordinate', props.coordinate);
     formData.append('fieldID', props.fieldID);
-    axios.post('http://127.0.0.1:8000/api/delete_prize  ', formData,)
-    setModalOpen(false);
+    axios.post('http://127.0.0.1:8000/api/delete_prize', formData)
+      .then(() => {
+        setModalOpen(false);
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 
   // Styles with state
@@ -74,7 +96,7 @@ function PrizeCell(props) {
   const popover_content = (
     <div>
       <Space direction="vertical">
-        <Image preview={true} src="" width="2  00px" height="200px" fallback={img_fallback}/>
+        <Image preview={true} src={"prizeAvatarUrl"} width="2  00px" height="200px" fallback={img_fallback}/>
         <Space style={{width: "100%"}}>
           <Button type="dashed" onClick={() => setModalOpen(true)}>Изменить</Button>
           <Popconfirm title="Вы точно хотите удалить?" okText="Да" cancelText="Нет" onConfirm={deletePrize}>

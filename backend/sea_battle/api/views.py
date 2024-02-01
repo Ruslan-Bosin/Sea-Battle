@@ -472,3 +472,17 @@ class GetUserFromPassToken(APIView):
 
 
 
+
+class GetPrizeAvatar(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, fieldID, coordinate, *args, **kwargs):
+        print(fieldID, coordinate)
+        cell = get_object_or_404(game.models.Cell, coord=coordinate, game_id=fieldID)
+
+        if cell.is_prize and cell.prize:
+            prize_avatar_url = cell.prize.avatar.url if cell.prize.avatar else None
+            print(prize_avatar_url)
+            return Response({'prize_avatar_url': prize_avatar_url})
+        else:
+            return Response({'prize_avatar_url': None})
