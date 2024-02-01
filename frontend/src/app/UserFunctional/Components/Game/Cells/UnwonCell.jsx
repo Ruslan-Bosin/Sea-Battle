@@ -9,17 +9,11 @@ const img_fallback = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYA
 
 function UnwonCell(props) {
 
-  /*
-  Запрос POST (c token-ом)
-  { fieldID, coordinate }
-  -> { prizeTitle, prizeImage }
-  */
-
   const [isHover, setIsHover] = useState(false);
   const handleMouseEnter = () => { setIsHover(true); };
   const handleMouseLeave = () => { setIsHover(false); };
 
-  // Strles with state
+  //Styles with state
   const body_div = {
     background: (isHover ? "#F5F5F5FF" : "#0505050F"),
     borderRadius: "10px",
@@ -28,21 +22,21 @@ function UnwonCell(props) {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    border: "thick double #4096ff",
-    boxShadow: (isHover ? "0 5px 15px rgba(64, 150, 255,0.5)" : "0 5px 15px rgba(0,0,0,0)"),
+    border: "thick double rgb(255, 77, 79)",
+    boxShadow: (isHover ? "0 5px 15px rgba(255, 77, 79, 0.5)" : "0 5px 15px rgba(0,0,0,0)"),
     transition: "all 0.2s ease-in-out"
   }
 
-  const prize_icon = {
+  const win_icon = {
     transform: (isHover ? "scale(2.5)" : "scale(2)"),
-    transition: "all 0.2s ease-in-out",
+    transition: "all 0.2s ease-in-out"
   }
 
   const popover_content = (
     <div>
       <Space direction="vertical">
         <Image style={{ objectFit: "cover" }} preview={true} src="" width="2  00px" height="200px" fallback={img_fallback} />
-        <Text type="secondary">Приз ещё никто не выиграл</Text>
+        <Text >Приз выиграл кто-то другой</Text>
       </Space>
     </div>
   );
@@ -50,10 +44,11 @@ function UnwonCell(props) {
   return (
     <Popover content={popover_content} title="Название приза">
       <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        <GiftTwoTone style={prize_icon} />
+        <GiftTwoTone twoToneColor="#ff4d4f" style={win_icon} />
       </div>
     </Popover>
   );
+
 }
 
 export default UnwonCell;

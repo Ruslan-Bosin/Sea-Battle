@@ -35,7 +35,7 @@ function AuthRequired() {
     console.log(authorized);
   }, []);
   return (
-      authorized ? <Outlet/> : <Navigate to="userauth/login"/>
+      authorized ? <Outlet/> : <Navigate to="/userauth/login"/>
   );
 };
 

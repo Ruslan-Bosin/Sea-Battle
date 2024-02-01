@@ -111,13 +111,13 @@ function PrizeCell(props) {
     <>
       <Popover content={popover_content} title="Название приза">
         <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-          <GiftTwoTone style={prize_icon}/>
+          <GiftTwoTone style={prize_icon} />
         </div>
       </Popover>
       <Modal zIndex={1031} open={modalOpen} title="Изменение приза" cancelText="Отмена" okText="Обновить" onCancel={() => setModalOpen(false)} onOk={onChangesSubmition}>
-        <Space size="small" direction="vertical" style={{width: "100%"}}>
-          <Input value={title} placeholder="Название приза" onChange={(event) => setTitle(event.target.value)}/>
-          <TextArea value={description} placeholder="Описание приза" autoSize={{minRows: 2, maxRows: 6,}} onChange={(event) => setDescription(event.target.value)}/>
+        <Space size="small" direction="vertical" style={{ width: "100%" }}>
+          <Input value={title} placeholder="Название приза" onChange={(event) => setTitle(event.target.value)} />
+          <TextArea value={description} placeholder="Описание приза" autoSize={{ minRows: 2, maxRows: 6, }} onChange={(event) => setDescription(event.target.value)} />
           <Dragger >
             <p className="ant-upload-drag-icon">
               <InboxOutlined />

@@ -1,9 +1,8 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import { Avatar, Typography, Space, Dropdown, message } from "antd"
+import { useState } from "react";
+import { Avatar, Typography, Space, Dropdown } from "antd"
 import { UserOutlined, IdcardOutlined, MessageOutlined, LogoutOutlined } from "@ant-design/icons"
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
 const { Text } = Typography;
 
 //Styles
@@ -23,23 +22,6 @@ function AccountButton() {
 
   const navigate = useNavigate();
 
-  const get_user_url = "http://127.0.0.1:8000/api/get_user";
-  const [username, setUsername] = useState("");
-  useEffect (() => {
-    const access_token = (localStorage.getItem("accessToken") || "");
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + access_token,
-    };
-    axios.get(get_user_url, {headers}).then(response => {
-      const response_data = response.data;
-      console.log(response);
-      console.log(response_data);
-      setUsername(response_data.username);
-    }).catch(error => {
-      console.log(error);
-    })
-  })
   const [isHover, setIsHover] = useState(false);
   const handleMouseEnter = () => { setIsHover(true); };
   const handleMouseLeave = () => { setIsHover(false); };
@@ -69,9 +51,9 @@ function AccountButton() {
 
   const onClick = ({ key }) => {
     if (key === '1') {
-      navigate("/admin/settings");
+      navigate("/user/settings");
     } else if (key === '2') {
-      navigate("/admin/support");
+      navigate("/user/support");
     }
   };
 
@@ -95,14 +77,13 @@ function AccountButton() {
   }
 
   // src={<img src={url} alt="avatar" />} for Avatar icon
-
   return (
     <Dropdown menu={{ items, onClick, }} trigger={['click']}>
       <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} >
         <Space>
-            <Avatar icon={<UserOutlined/>} style={icon}/>
-              {<Text>Hello, { username }</Text>}
-          </Space>
+          <Avatar icon={<UserOutlined />} style={icon} />
+          <Text>Имя юзера</Text>
+        </Space>
       </div>
     </Dropdown>
   );

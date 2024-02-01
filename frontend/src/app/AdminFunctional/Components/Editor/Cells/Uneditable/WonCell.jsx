@@ -16,11 +16,11 @@ function WonCell(props) {
   */
 
   const [isHover, setIsHover] = useState(false);
-  const handleMouseEnter = () => {setIsHover(true);};
-  const handleMouseLeave = () => {setIsHover(false);};
+  const handleMouseEnter = () => { setIsHover(true); };
+  const handleMouseLeave = () => { setIsHover(false); };
 
   //Styles with state
-  const body_div= {
+  const body_div = {
     background: (isHover ? "#F5F5F5FF" : "#0505050F"),
     borderRadius: "10px",
     padding: "5px",
@@ -41,7 +41,7 @@ function WonCell(props) {
   const popover_content = (
     <div>
       <Space direction="horizonatl">
-        <Image preview={true} src="" width="2  00px" height="200px" fallback={img_fallback}/>
+        <Image style={{ objectFit: "cover" }} preview={true} src="" width="2  00px" height="200px" fallback={img_fallback} />
         <Space direction="vertical">
           <Text>Приз выиграл: </Text>
           <Text code copyable>Никнеймпользователя</Text>
@@ -53,7 +53,7 @@ function WonCell(props) {
   return (
     <Popover content={popover_content} title="Название приза">
       <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        <GiftTwoTone twoToneColor="#ff4d4f" style={win_icon}/>
+        <GiftTwoTone twoToneColor="#ff4d4f" style={win_icon} />
       </div>
     </Popover>
   );
