@@ -103,7 +103,7 @@ class Prize(models.Model):
 
 class Shots(models.Model):
     objects = game.managers.ShotsManager()
-    quanity = models.IntegerField(
+    quantity = models.IntegerField(
         verbose_name=_("количество"),
         help_text=_("количество выстрелов"),
     )

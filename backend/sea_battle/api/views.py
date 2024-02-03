@@ -181,17 +181,15 @@ class AdminCreatedGamesView(APIView):
 
 
 class GetUserGames(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        user_id = request.GET.get("user_id")
+        user_id = request.user.id
         user = auth_users.models.User.objects.filter(pk=user_id).first()
         if user is None:
             return Response({"errror": "user does not exists"})
         select_related_fields = [field.name for field in user.games.all().first()._meta.get_fields() if field.is_relation and field.related_model]
-        print(select_related_fields)
-        user_games = user.games.prefetch_related('shots').annotate(shots_quantity=Sum('shots__quanity', default=0))
-
+        user_games = user.games.prefetch_related('shots').annotate(shots_quantity=Sum('shots__quantity', default=0))
         serializer_for_queryset = api.serializers.UserGameSerializer(
             instance=user_games,
             many=True
@@ -220,12 +218,21 @@ class GetCellsFromGame(APIView):
     permission_classes = [AllowAny]
     def get(self, request):
         game_id = request.GET.get('game')
+        user_id = request.user.id
         try:
             game_instance = game.models.Game.objects.get(id=game_id)
             cells_queryset = game.models.Cell.objects.filter(game=game_instance)
         except game.models.Game.DoesNotExist:
             return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
-        serializer = api.serializers.PlacementSerializer(cells_queryset, context={'editable': game_instance.editable, 'size': game_instance.size})
+        print(game_instance.created_by.user.id, user_id)
+        print(request)
+        context = {
+            'for_admin': (game_instance.created_by.user.id == user_id),
+            'size': game_instance.size,
+            'user_id': user_id,
+        }
+        # context = {'editable': game_instance.editable, 'size': game_instance.size}
+        serializer = api.serializers.PlacementSerializer(cells_queryset, context=context)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

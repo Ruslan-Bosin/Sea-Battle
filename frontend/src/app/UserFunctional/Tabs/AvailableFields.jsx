@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Header from "../Components/Header/Header";
 import NoFields from "../Components/FieldsViewer/NoFields";
 import FieldCard from "../Components/FieldsViewer/FieldCard";
@@ -29,8 +29,25 @@ const space_fill = {
 }
 
 function AvailableFields() {
+  const [fieldsData, setFieldsData] = useState([]);
+  const users_games_url = "http://127.0.0.1:8000/api/get_user_games";
+  const access_token = (localStorage.getItem("accessToken"));
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + access_token,
+  };
 
-  const fieldsNumber = 1;
+  useEffect(() => {
+    fetch(users_games_url, {headers})
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setFieldsData(data);
+      })
+      .catch((error) => console.error('Error fetching data:', error));
+  }, []);
+
+  const fieldsNumber = fieldsData.length;
 
   return (
     <div style={body_div}>
@@ -38,17 +55,13 @@ function AvailableFields() {
       {(fieldsNumber === 0) ? (<NoFields />) : (
         <div style={all_fields_block}>
 
-          <FieldCard />
-          <FieldCard />
-          <FieldCard />
-          <FieldCard />
-          <FieldCard />
-          <FieldCard />
-          <FieldCard />
-          <FieldCard />
-          <FieldCard />
-          <FieldCard />
-          <FieldCard />
+          {fieldsData.map((field) => (
+            <FieldCard
+              key={field.id} // Убедитесь, что каждая карточка имеет уникальный ключ// Замените на свои данные из API
+              FieldName={field.name}
+              Shots={field.shots_quantity} // Замените на свои данные из API
+            />
+          ))}
 
           <div style={space_fill}></div>
           <div style={space_fill}></div>

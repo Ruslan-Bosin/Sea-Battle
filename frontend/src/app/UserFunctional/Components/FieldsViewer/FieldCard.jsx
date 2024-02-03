@@ -39,14 +39,14 @@ const additional_info = {
 }
 
 
-function FieldCard() {
+function FieldCard({FieldName, Shots}) {
 
   return (
     <div style={body_div}>
       <Card hoverable bodyStyle={card_body_style}>
         <MiniField/>
-        <Title style={title} level={5} maxLength="2">Название поля</Title>
-        <Text type="secondary" style={text} >Количество выстрелов</Text>
+        <Title style={title} level={5} maxLength="2">{ FieldName }</Title>
+        <Text type="secondary" style={text} > Осталось шотов: { Shots } </Text>
         <div style={additional_info}>
           Осталось призов: 7 из 10<GiftOutlined />
         </div>

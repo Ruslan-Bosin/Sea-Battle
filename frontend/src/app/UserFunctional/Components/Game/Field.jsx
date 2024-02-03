@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useState } from "react";
 import FieldCell from "./FieldCell";
+import axios from "axios";
 
 // Styles
 const body_div = {
@@ -14,7 +15,6 @@ const body_div = {
 function Field(props) {
 
   const fieldID = props.fieldID;
-
   const [fieldData, setFieldData] = useState(
     {
       size: 4,
@@ -86,6 +86,27 @@ function Field(props) {
       ]
     }
   );
+
+  const game_info_url = "http://127.0.0.1:8000/api/get_cells_from_game";
+  useEffect(() => {
+    const access_token = (localStorage.getItem("accessToken") || "");
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + access_token,
+    };
+    const params = {
+      'game': fieldID
+    }
+    axios.get(game_info_url, {params, headers})
+    .then((response) => {
+      const data = response.data;
+      setFieldData(data);
+      console.log(data);
+
+      console.log(fieldData);
+    })
+    .catch((error) => console.error('Error fetching data:', error));
+    }, [])
 
   // Styles with state
   const field_div = {

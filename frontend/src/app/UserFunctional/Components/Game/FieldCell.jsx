@@ -9,7 +9,8 @@ function FieldCell(props) {
 
   const status = props.status;
 
-  if (status === "Unknown") { return <UnknownCell {...props} /> }
+
+  if (status === "Untouched") { return <UnknownCell {...props} /> }
   else if (status === "Unwon") { return <UnwonCell {...props} /> }
   else if (status === "Won") { return <WonCell {...props} /> }
   else if (status === "Missed") { return <MissedCell {...props} /> }
