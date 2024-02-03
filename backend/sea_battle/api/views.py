@@ -57,8 +57,8 @@ class GetAllForInfoView(APIView):
         game_instance = game.models.Game.objects.filter(id=game_id).first()
         if game_instance is None:
             return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
-        prizes_queryset = game.models.Prize.objects.prefetch_related("cell").filter(cell__game=game_instance).order_by(cell__used=True)
-        users_queryset = game_instance.users.prefetch_related("shots").annotate(shots_quantity=Sum('shots__quanity', default=0))
+        prizes_queryset = game.models.Prize.objects.prefetch_related("cell").filter(cell__game=game_instance).order_by('cell__used')
+        users_queryset = game_instance.users.prefetch_related("shots").annotate(shots_quantity=Sum('shots__quantity', default=0))
         cells = game.models.Cell.objects.filter(game=game_instance)
         statistic_data = {
             "shootsNumber": cells.filter(used=True).count(),
@@ -74,6 +74,7 @@ class GetAllForInfoView(APIView):
             many=True
         )
         resp = {"editable": game_instance.editable, "statistics": statistic_data,"clientsNumber": len(users_queryset), "clients": users_serializer.data, "prizesNumber": len(prizes_queryset), "prizes": prizes_serializer.data}
+        print(resp)
         return Response(resp, status=status.HTTP_200_OK)
 
 

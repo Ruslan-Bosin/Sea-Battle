@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { Alert, Card, Progress, Typography, Collapse, Button, Modal, Input } from "antd"
 import ClientList from "./Lists/ClientsList";
@@ -65,9 +65,21 @@ function InfoViewer(props) {
   -> { message } - добавление 
   */
 
+  
+
+  const [info, setInfo] = useState([]); // в info - данные в формате со строк 31 - 60
   const editable = true;
   const fieldID = props.fieldID;
-  const add_user_url = "http://127.0.0.1:8000/api/add_user_to_game"
+  const add_user_url = "http://127.0.0.1:8000/api/add_user_to_game";
+  const get_statistic = "http://127.0.0.1:8000/api/get_game_info_admin";
+  const params = {
+    game: fieldID
+  }
+  const access_token = (localStorage.getItem("accessToken") || "");
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + access_token,
+  }
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const showModal = () => { setIsModalOpen(true); };
@@ -77,11 +89,6 @@ function InfoViewer(props) {
     const response_data = {
       email: email,
       game: fieldID
-    }
-    const access_token = (localStorage.getItem("accessToken") || "");
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + access_token,
     }
     axios.post(add_user_url, response_data, {headers}).then(response => {
       const data = response.data;
@@ -95,6 +102,14 @@ function InfoViewer(props) {
     setIsModalOpen(false);
     setInputValue("");
   };
+
+  useEffect(() => {
+    axios.get(get_statistic, {headers, params}).then(response => {
+      const data = response.data;
+      setInfo(data);
+      console.log(data);
+    })
+  }, [])
 
 
   const [collapse_items, setCollapseItems] = useState([
