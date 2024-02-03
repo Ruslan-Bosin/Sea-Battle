@@ -82,27 +82,27 @@ function ClientList(props) {
     },
   ]);
 
-  const user_info_url = "http://127.0.0.1:8000/api/get_users_from_game";
-  useEffect(() => {
-    if (isModalOpen === false) {
-      const access_token = (localStorage.getItem("accessToken") || "");
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + access_token,
-      };
-      const params = {
-        'game': fieldID
-      }
-      axios.get(user_info_url, {params, headers})
-      .then((response) => {
-        const data = response.data;
-        setClients_data(data);
-        console.log(data);
-      })
-      .catch((error) => console.error('Error fetching data:', error));
-    }
+  // const user_info_url = "http://127.0.0.1:8000/api/get_users_from_game";
+  // useEffect(() => {
+  //   if (isModalOpen === false) {
+  //     const access_token = (localStorage.getItem("accessToken") || "");
+  //     const headers = {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': 'Bearer ' + access_token,
+  //     };
+  //     const params = {
+  //       'game': fieldID
+  //     }
+  //     axios.get(user_info_url, {params, headers})
+  //     .then((response) => {
+  //       const data = response.data;
+  //       setClients_data(data);
+  //       console.log(data);
+  //     })
+  //     .catch((error) => console.error('Error fetching data:', error));
+  //   }
 
-    }, [])
+  //   }, [])
   return (
     <div>
       <List itemLayout="horizontal" dataSource={clients_data} renderItem={(item, index) => (
