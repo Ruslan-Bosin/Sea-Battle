@@ -39,7 +39,7 @@ function ClientList(props) {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + access_token,
     }
-    axios.post(add_shots_url, request_data, {headers}).then(response => {
+    axios.post(add_shots_url, request_data, { headers }).then(response => {
       const data = response.data;
       if (data.message != "Ok") {
         console.log(data.message);
@@ -105,7 +105,7 @@ function ClientList(props) {
   //   }, [])
   return (
     <div>
-      <List itemLayout="horizontal" dataSource={clients_data} renderItem={(item, index) => (
+      <List itemLayout="horizontal" dataSource={props.data.clients} renderItem={(item, index) => (
         <List.Item actions={[<PlusSquareOutlined onClick={() => { setCurrentClientId(item.id); showModal(); }} />]}>
           <List.Item.Meta
             avatar={<Avatar icon={<UserOutlined />} style={icon} src={item.image_url} />}
