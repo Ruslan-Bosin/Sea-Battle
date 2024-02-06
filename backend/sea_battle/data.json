@@ -1,0 +1,1064 @@
+[
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2024-01-28T02:54:53.368Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "1",
+    "object_repr": "Game object (1)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2024-01-28T02:55:07.305Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "2",
+    "object_repr": "Game object (2)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2024-01-28T02:55:28.701Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "Prize object (1)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2024-01-28T02:55:35.860Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "52",
+    "object_repr": "Cell object (52)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"\\u041f\\u0440\\u0438\\u0437\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2024-01-28T02:55:40.438Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "31",
+    "object_repr": "Cell object (31)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"\\u041f\\u0440\\u0438\\u0437\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2024-01-28T02:55:47.040Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "16",
+    "object_repr": "Cell object (16)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"\\u041f\\u0440\\u0438\\u0437\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2024-01-28T02:55:51.989Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "51",
+    "object_repr": "Cell object (51)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"\\u041f\\u0440\\u0438\\u0437\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2024-01-28T02:56:38.379Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "4",
+    "object_repr": "test1@mail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Games\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2024-01-28T02:56:49.503Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "3",
+    "object_repr": "test@mail.com",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2024-01-28T16:56:03.448Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "2",
+    "object_repr": "Game object (2)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2024-01-28T16:56:03.458Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "1",
+    "object_repr": "Game object (1)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2024-01-28T16:56:15.212Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "3",
+    "object_repr": "Game object (3)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 13,
+  "fields": {
+    "action_time": "2024-01-28T16:56:31.933Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "4",
+    "object_repr": "Game object (4)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 14,
+  "fields": {
+    "action_time": "2024-02-03T22:15:31.301Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "4",
+    "object_repr": "test1@mail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Games\"]}}]"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "9rp15i2lphn89c4c6mjff8xer98gdg19",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hAYqh1cuvcMZOgMUjWQlHZlvLuSdKHb_977LxVoW3PYmixhZnVWVh1-t0jTQ0oHfKdyq3qqZV3mqLuid9r0tbI8L7v7d5Cp5V5bZwTZWBisMSgeHaUIBA7YO_Ajepes_0qQQJBwSEc0huOJkh8F1PsDujY3EQ:1rTvJ0:mFi9UTQz-TVw1UAFjjWsM2r269HssN68J0Z7SCTfWXg",
+    "expire_date": "2024-02-11T02:53:58.044Z"
+  }
+},
+{
+  "model": "game.game",
+  "pk": 3,
+  "fields": {
+    "editable": true,
+    "name": "Test",
+    "size": 5,
+    "created_by": 1
+  }
+},
+{
+  "model": "game.game",
+  "pk": 4,
+  "fields": {
+    "editable": true,
+    "name": "Test1",
+    "size": 6,
+    "created_by": 1
+  }
+},
+{
+  "model": "game.prize",
+  "pk": 1,
+  "fields": {
+    "name": "Prize",
+    "description": "prize",
+    "user": null,
+    "created_by": 1,
+    "avatar": ""
+  }
+},
+{
+  "model": "game.shots",
+  "pk": 2,
+  "fields": {
+    "quantity": 3,
+    "user": 3,
+    "game": 3
+  }
+},
+{
+  "model": "game.shots",
+  "pk": 3,
+  "fields": {
+    "quantity": 3,
+    "user": 4,
+    "game": 3
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 87,
+  "fields": {
+    "game": 3,
+    "coord": 1,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 88,
+  "fields": {
+    "game": 3,
+    "coord": 2,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 89,
+  "fields": {
+    "game": 3,
+    "coord": 3,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 90,
+  "fields": {
+    "game": 3,
+    "coord": 4,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 91,
+  "fields": {
+    "game": 3,
+    "coord": 5,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 92,
+  "fields": {
+    "game": 3,
+    "coord": 6,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 93,
+  "fields": {
+    "game": 3,
+    "coord": 7,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 94,
+  "fields": {
+    "game": 3,
+    "coord": 8,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 95,
+  "fields": {
+    "game": 3,
+    "coord": 9,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 96,
+  "fields": {
+    "game": 3,
+    "coord": 10,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 97,
+  "fields": {
+    "game": 3,
+    "coord": 11,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 98,
+  "fields": {
+    "game": 3,
+    "coord": 12,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 99,
+  "fields": {
+    "game": 3,
+    "coord": 13,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 100,
+  "fields": {
+    "game": 3,
+    "coord": 14,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 101,
+  "fields": {
+    "game": 3,
+    "coord": 15,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 102,
+  "fields": {
+    "game": 3,
+    "coord": 16,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 103,
+  "fields": {
+    "game": 3,
+    "coord": 17,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 104,
+  "fields": {
+    "game": 3,
+    "coord": 18,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 105,
+  "fields": {
+    "game": 3,
+    "coord": 19,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 106,
+  "fields": {
+    "game": 3,
+    "coord": 20,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 107,
+  "fields": {
+    "game": 3,
+    "coord": 21,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 108,
+  "fields": {
+    "game": 3,
+    "coord": 22,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 109,
+  "fields": {
+    "game": 3,
+    "coord": 23,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 110,
+  "fields": {
+    "game": 3,
+    "coord": 24,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 111,
+  "fields": {
+    "game": 3,
+    "coord": 25,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 112,
+  "fields": {
+    "game": 4,
+    "coord": 1,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 113,
+  "fields": {
+    "game": 4,
+    "coord": 2,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 114,
+  "fields": {
+    "game": 4,
+    "coord": 3,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 115,
+  "fields": {
+    "game": 4,
+    "coord": 4,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 116,
+  "fields": {
+    "game": 4,
+    "coord": 5,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 117,
+  "fields": {
+    "game": 4,
+    "coord": 6,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 118,
+  "fields": {
+    "game": 4,
+    "coord": 7,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 119,
+  "fields": {
+    "game": 4,
+    "coord": 8,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 120,
+  "fields": {
+    "game": 4,
+    "coord": 9,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 121,
+  "fields": {
+    "game": 4,
+    "coord": 10,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 122,
+  "fields": {
+    "game": 4,
+    "coord": 11,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 123,
+  "fields": {
+    "game": 4,
+    "coord": 12,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 124,
+  "fields": {
+    "game": 4,
+    "coord": 13,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 125,
+  "fields": {
+    "game": 4,
+    "coord": 14,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 126,
+  "fields": {
+    "game": 4,
+    "coord": 15,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 127,
+  "fields": {
+    "game": 4,
+    "coord": 16,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 128,
+  "fields": {
+    "game": 4,
+    "coord": 17,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 129,
+  "fields": {
+    "game": 4,
+    "coord": 18,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 130,
+  "fields": {
+    "game": 4,
+    "coord": 19,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 131,
+  "fields": {
+    "game": 4,
+    "coord": 20,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 132,
+  "fields": {
+    "game": 4,
+    "coord": 21,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 133,
+  "fields": {
+    "game": 4,
+    "coord": 22,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 134,
+  "fields": {
+    "game": 4,
+    "coord": 23,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 135,
+  "fields": {
+    "game": 4,
+    "coord": 24,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 136,
+  "fields": {
+    "game": 4,
+    "coord": 25,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 137,
+  "fields": {
+    "game": 4,
+    "coord": 26,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 138,
+  "fields": {
+    "game": 4,
+    "coord": 27,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 139,
+  "fields": {
+    "game": 4,
+    "coord": 28,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 140,
+  "fields": {
+    "game": 4,
+    "coord": 29,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 141,
+  "fields": {
+    "game": 4,
+    "coord": 30,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 142,
+  "fields": {
+    "game": 4,
+    "coord": 31,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 143,
+  "fields": {
+    "game": 4,
+    "coord": 32,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 144,
+  "fields": {
+    "game": 4,
+    "coord": 33,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 145,
+  "fields": {
+    "game": 4,
+    "coord": 34,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 146,
+  "fields": {
+    "game": 4,
+    "coord": 35,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "game.cell",
+  "pk": 147,
+  "fields": {
+    "game": 4,
+    "coord": 36,
+    "is_prize": false,
+    "used": false,
+    "forbidden": false,
+    "prize": null
+  }
+},
+{
+  "model": "auth_users.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$192Yr7YVTXfsg2A1oX0OtL$+Ei7Uiu+DgRCj3qiPzJJDQn+FrdzW5sfwDx5L51XCKI=",
+    "last_login": "2024-01-28T02:53:57.983Z",
+    "is_superuser": true,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2024-01-28T02:53:45.713Z",
+    "username": "glebs",
+    "email": "glev.shooter06@gmail.com",
+    "avatar": "",
+    "groups": [],
+    "user_permissions": [],
+    "games": []
+  }
+},
+{
+  "model": "auth_users.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$MbwyPa03W8K6M3J4vdIz5k$OiBwXgrpZaTsv4iJ9xv9/iED/pYgcB/pyIVGMKstn4w=",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-01-28T02:54:23.886Z",
+    "username": "admin",
+    "email": "admin@mail.com",
+    "avatar": "",
+    "groups": [],
+    "user_permissions": [],
+    "games": []
+  }
+},
+{
+  "model": "auth_users.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$AdNEFH6GEBisi7czLrThrl$QqJXI0XaY2JAcxmk87qJVfEqLR81gyPt67bUPzRq9Mc=",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-01-28T02:56:16Z",
+    "username": "test",
+    "email": "test@mail.com",
+    "avatar": "",
+    "groups": [],
+    "user_permissions": [],
+    "games": [
+      3
+    ]
+  }
+},
+{
+  "model": "auth_users.user",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$q3CBuOWP4WXxWZ6uIAyPtG$GAD7Jno9wavCjFA3rtkdxkbmWgsdOqaijWcXu/Ax6jg=",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-01-28T02:56:25Z",
+    "username": "test1",
+    "email": "test1@mail.com",
+    "avatar": "",
+    "groups": [],
+    "user_permissions": [],
+    "games": [
+      3
+    ]
+  }
+},
+{
+  "model": "auth_users.admins",
+  "pk": 1,
+  "fields": {
+    "user": 2
+  }
+}
+]
