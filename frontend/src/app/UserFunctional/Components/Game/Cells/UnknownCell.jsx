@@ -27,6 +27,7 @@ function UnknownCell(props) {
 
   const get_shots_url = "http://127.0.0.1:8000/api/get_shots/";
   const updateQuantityUrl = "http://127.0.0.1:8000/api/update_quantity/";
+  const get_prize_url = "http://127.0.0.1:8000/api/get_prize/";
 
   const access_token = localStorage.getItem("accessToken") || "";
     const headers = {
@@ -116,9 +117,11 @@ function UnknownCell(props) {
         }
       )
       .then(response => {
-      let won = true;
+      const { prize_name, prize_title, error } = response.data;
+      console.log(prize_name);
+      console.log(prize_title);
 
-      if (won) {
+      if (prize_name && prize_title) {
         modal.success({
           centered: true,
           title: 'Победа!',
@@ -127,9 +130,9 @@ function UnknownCell(props) {
           closable: true,
           destroyOnClose: true,
           content: <div style={{ display: "flex", flexDirection: "column" }}>
-            <Text>Вы выиграли: <Text strong>Название приза</Text></Text>
+            <Text>Вы выиграли: <Text strong>{prize_name}</Text></Text>
             <Image style={{ objectFit: "cover", aspectRatio: "3 / 2" }} preview={true} src="https://kinonews.ru/insimgs/2022/shotimg/shotimg110875_24.jpg" width="100%" fallback={img_fallback} />
-            <Paragraph ellipsis={{ rows: 2, expandable: true, symbol: 'покказать всё' }} type="secondary"><Text type="default">Описание: </Text>Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только успешно пережил без заметных изменений пять веков, но и перешагнул в электронный дизайн. Его популяризации в новое время послужили публикация листов Letraset с образцами Lorem Ipsum в 60-х годах и, в более недавнее время, программы электронной вёрстки типа Aldus PageMaker, в шаблонах которых используется Lorem Ipsum.</Paragraph>
+            <Paragraph ellipsis={{ rows: 2, expandable: true, symbol: 'покказать всё' }} type="secondary"><Text type="default">Описание: </Text>{prize_title}</Paragraph>
           </div>,
         });
       } else {

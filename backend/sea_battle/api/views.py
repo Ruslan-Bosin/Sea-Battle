@@ -205,12 +205,8 @@ class UpdateCellAfterShoot(APIView):
     def post(self, request):
         user, game_id = request.user, request.data.get("game_id")
         coord = request.data.get("coord")
-        print(user, game_id, coord)
-        print(user, game_id, coord)
-        print(user, game_id, coord)
 
         cell = game.models.Cell.objects.get(game__id=game_id, coord=coord)
-        print(cell)
         cell.used = True
         if cell.is_prize:
             prize = cell.prize
@@ -224,9 +220,8 @@ class UpdateCellAfterShoot(APIView):
             shot = game.models.Shots.objects.get(user=user, game__id=game_id)
             shot.quantity -= 1
             shot.save()
-
-
-
+            if cell.is_prize and cell.prize:
+                return Response({'prize_name': cell.prize.name, 'prize_title': cell.prize.description})
             return Response({'message': 'Quantity and cell updated successfully'}, status=status.HTTP_200_OK)
         except game.models.Shots.DoesNotExist:
             return Response({'error': 'Shot not found or you do not have permission to update quantity'},
@@ -537,3 +532,26 @@ class GetPrizeAvatar(APIView):
             return Response({'prize_avatar_url': prize_avatar_url})
         else:
             return Response({'prize_avatar_url': None})
+
+
+
+class GetPrize(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        coord = request.GET.get("coord")
+        game_id = request.GET.get("game_id")
+        print(coord, game_id)
+        cell = get_object_or_404(game.models.Cell, coord=coord, game_id=game_id)
+
+        try:
+            if cell.is_prize and cell.prize:
+                prize_avatar_url = cell.prize.avatar.url if cell.prize.avatar else None
+                return Response({'prize_avatar_url': prize_avatar_url, 'prize_name': str(cell.prize.name), 'prize_title': str(cell.prize.description)})
+            else:
+                return Response({'prize_avatar_url': None, 'prize_name': str(cell.prize.name), 'prize_title': str(cell.prize.description)})
+        except:
+            return Response(
+                {"message": "Object not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
