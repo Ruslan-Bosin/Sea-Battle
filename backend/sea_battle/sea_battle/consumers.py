@@ -37,20 +37,16 @@ class CellConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard("group", self.channel_name)
 
     async def receive(self, text_data):
-        print("receive")
-        # print(self.scope.get("user").id)
         print("NEW PRINT: ", text_data)
         message = json.loads(text_data)
-        cell_id = message["cellId"]
-        if message["type"] == "update_cell":
-            await self.update_cell_in_database(cell_id)
-        elif message["type"] == "get_prize":
-            await get_prize(cell_id, self.scope.get("user").id)
+        # cell_id = message["cellId"]
+        # if message["type"] == "update_cell":
+        #     await self.update_cell_in_database(cell_id)
+        #     await self.send_group_message()
 
-        # Обновляем данные клетки в базе данных
+        # elif message["type"] == "get_prize":
+        #     await get_prize(cell_id, self.scope.get("user").id)
 
-        # Отправляем обновленные данные всей группе
-        await self.send_group_message()
 
     async def update_cell_in_database(self, cell_id):
         await update_cell_in_database(cell_id)

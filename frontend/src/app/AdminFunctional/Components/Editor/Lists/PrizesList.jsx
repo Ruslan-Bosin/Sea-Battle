@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { List, Avatar } from "antd"
 import { CheckOutlined } from "@ant-design/icons"
 import axios from "axios"
@@ -6,35 +6,7 @@ import axios from "axios"
 function PrizesList(props) {
 
   const fieldID = props.fieldID;
-  console.log(fieldID);
-
-  const [prizes_data, setPrizes_data] = useState([
-    {
-      id: "id",
-      title: 'Название приза',
-      image_url: "",
-      won: true
-    },
-    {
-      id: "id",
-      title: 'Название приза',
-      image_url: "",
-      won: false
-    },
-    {
-      id: "id",
-      title: 'Название приза',
-      image_url: "",
-      won: true
-    },
-    {
-      id: "id",
-      title: 'Название приза',
-      image_url: "",
-      won: true
-    },
-  ]);
-
+  /*
   const game_info_url = "http://127.0.0.1:8000/api/get_prizes_from_game";
   useEffect(() => {
     const access_token = (localStorage.getItem("accessToken") || "");
@@ -53,9 +25,10 @@ function PrizesList(props) {
     })
     .catch((error) => console.error('Error fetching data:', error));
     }, [])
+  */
 
   return (
-    <List itemLayout="horizontal" dataSource={prizes_data} renderItem={(item, index) => (
+    <List itemLayout="horizontal" dataSource={props.data.prizes} renderItem={(item, index) => (
       <List.Item actions={[item.won ? <CheckOutlined /> : <></>]}>
         <List.Item.Meta
           avatar={<Avatar shape="square" src={item.image_url} />}

@@ -18,7 +18,7 @@ from sea_battle.consumers import CellConsumer
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sea_battle.settings")
 
 websocket_urlpatterns = [
-    path("ws/cell_update", CellConsumer.as_asgi()),
+    path("ws/cell_update/<int:FieldID>", CellConsumer.as_asgi()),
 ]
 
 

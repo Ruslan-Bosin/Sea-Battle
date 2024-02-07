@@ -39,7 +39,7 @@ function ClientList(props) {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + access_token,
     }
-    axios.post(add_shots_url, request_data, {headers}).then(response => {
+    axios.post(add_shots_url, request_data, { headers }).then(response => {
       const data = response.data;
       if (data.message != "Ok") {
         console.log(data.message);
@@ -82,30 +82,30 @@ function ClientList(props) {
     },
   ]);
 
-  const user_info_url = "http://127.0.0.1:8000/api/get_users_from_game";
-  useEffect(() => {
-    if (isModalOpen === false) {
-      const access_token = (localStorage.getItem("accessToken") || "");
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + access_token,
-      };
-      const params = {
-        'game': fieldID
-      }
-      axios.get(user_info_url, {params, headers})
-      .then((response) => {
-        const data = response.data;
-        setClients_data(data);
-        console.log(data);
-      })
-      .catch((error) => console.error('Error fetching data:', error));
-    }
+  // const user_info_url = "http://127.0.0.1:8000/api/get_users_from_game";
+  // useEffect(() => {
+  //   if (isModalOpen === false) {
+  //     const access_token = (localStorage.getItem("accessToken") || "");
+  //     const headers = {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': 'Bearer ' + access_token,
+  //     };
+  //     const params = {
+  //       'game': fieldID
+  //     }
+  //     axios.get(user_info_url, {params, headers})
+  //     .then((response) => {
+  //       const data = response.data;
+  //       setClients_data(data);
+  //       console.log(data);
+  //     })
+  //     .catch((error) => console.error('Error fetching data:', error));
+  //   }
 
-    }, [])
+  //   }, [])
   return (
     <div>
-      <List itemLayout="horizontal" dataSource={clients_data} renderItem={(item, index) => (
+      <List itemLayout="horizontal" dataSource={props.data.clients} renderItem={(item, index) => (
         <List.Item actions={[<PlusSquareOutlined onClick={() => { setCurrentClientId(item.id); showModal(); }} />]}>
           <List.Item.Meta
             avatar={<Avatar icon={<UserOutlined />} style={icon} src={item.image_url} />}
