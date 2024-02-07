@@ -5,14 +5,49 @@ from django.contrib.auth.views import (
     PasswordChangeDoneView,
     PasswordResetCompleteView,
 )
+from django.http import Http404
 from django.http import HttpResponse
+from django.views import View
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 
 import auth_users.forms
+import auth_users.models
+import game.models
 
+
+
+class GetImageByUser(View):
+    def get(self, request, user_id):
+        user = auth_users.models.User.objects.filter(id=user_id).first()
+        print(user)
+        print(user.avatar)
+        if user is None:
+            raise Http404("User does not exist")
+        if user.avatar:
+            print(user.avatar.path)    
+            # Открываем изображение и читаем его содержимое
+            with open(user.avatar.path, 'rb') as image_file:
+                image_data = image_file.read()
+
+            # Отправляем содержимое изображения в HTTP-ответе
+            return HttpResponse(image_data, content_type='image/jpeg')  # Измените content_type по необходимости
+        return HttpResponse("no image")
+
+
+class GetImageByPrize(View):
+    def get(self, request, prize_id):
+        prize = game.models.Prize.objects.filter(id=prize_id).first()
+        if prize is None:
+            raise Http404("Prize does not exists")
+        
+        with open(prize.avatar.path, 'rb') as image_file:
+            image_data = image_file.read()
+
+        # Отправляем содержимое изображения в HTTP-ответе
+        return HttpResponse(image_data, content_type='image/jpeg')  # Измените content_type по необходимости
 
 
 class CheckTokenView(TemplateView):

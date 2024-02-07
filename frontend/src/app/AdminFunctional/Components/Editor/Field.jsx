@@ -16,6 +16,7 @@ function Field(props) {
   /* Запрос через сокет (c token-ом)
   { fieldID }
   -> json как в fieldData и message */
+  const [updateTrigger, setUpdateTrigger] = useState(0);
   const fieldID = props.fieldID;
   const [fieldData, setFieldData] = useState(
     {
@@ -26,6 +27,19 @@ function Field(props) {
   );
 
   const game_info_url = "http://127.0.0.1:8000/api/get_cells_from_game";
+
+  useEffect(() => {
+    const socket = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + fieldID);
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === "update_field") {
+        console.log('Message from server:', data);
+        setUpdateTrigger(prevTrigger => prevTrigger + 1); 
+      }
+      // Обработайте сообщение от сервера по вашему усмотрению
+    };
+  }, [])
+
   useEffect(() => {
     const access_token = (localStorage.getItem("accessToken") || "");
     const headers = {
@@ -43,7 +57,7 @@ function Field(props) {
       console.log(fieldData);
     })
     .catch((error) => console.error('Error fetching data:', error));
-    }, [])
+    }, [updateTrigger])
 
   // Styles with state
   const field_div = {

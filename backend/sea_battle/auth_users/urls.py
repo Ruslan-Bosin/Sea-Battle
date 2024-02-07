@@ -7,6 +7,7 @@ import auth_users.views as auth_views
 app_name = "authorisation"
 
 urlpatterns = [
+    django.urls.path("user_image/<int:user_id>", auth_views.GetImageByUser.as_view(), name="image"),
     django.urls.path("check_token/", auth_views.CheckTokenView.as_view()),
     django.urls.path(
         "login/",

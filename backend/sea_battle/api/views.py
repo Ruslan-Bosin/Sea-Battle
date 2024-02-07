@@ -173,7 +173,6 @@ class AdminCreatedGamesView(APIView):
         #     prizes_max=Count('cells', filter=Q(cells__is_prize=True)),
         # )
         created = admin.created_games.all().prefetch_related('cells', 'users')
-        print(created)
         resp = api.serializers.AdminGameSerializer(
             instance=created,
             many=True
@@ -190,7 +189,7 @@ class GetUserGames(APIView):
         if user is None:
             return Response({"errror": "user does not exists"})
         select_related_fields = [field.name for field in user.games.all().first()._meta.get_fields() if field.is_relation and field.related_model]
-        user_games = user.games.prefetch_related('shots').annotate(shots_quantity=Sum('shots__quantity', default=0))
+        user_games = user.games.prefetch_related('shots', 'cells').filter(shots__user=user).annotate(shots_quantity=Sum('shots__quantity', default=0))
         serializer_for_queryset = api.serializers.UserGameSerializer(
             instance=user_games,
             many=True
@@ -318,9 +317,9 @@ class MakeShot(APIView):
         if len(queryset) == 0:
             return Response(data)
         shot = queryset.first()
-        if shot.quanity == 0:
+        if shot.quantity == 0:
             return Response(data)
-        shot.quanity -= 1
+        shot.quantity -= 1
         shot.save()
         return Response(ok_data)
 
@@ -340,10 +339,10 @@ class AddShots(APIView):
             user_id, game_id
         )
         if len(queryset) == 0:
-            game.models.Shots.objects.create(user=user_instance, game=game_instance, quanity=quanity)
+            game.models.Shots.objects.create(user=user_instance, game=game_instance, quantity=quanity)
         else:
             shot = queryset.first()
-            shot.quanity += quanity
+            shot.quantity += quanity
             shot.save()
         return Response(ok_data)
 

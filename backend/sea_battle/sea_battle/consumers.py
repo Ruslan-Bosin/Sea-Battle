@@ -37,8 +37,10 @@ class CellConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard("group", self.channel_name)
 
     async def receive(self, text_data):
-        print("NEW PRINT: ", text_data)
         message = json.loads(text_data)
+        print(message)
+        await self.send_group_message()
+
         # cell_id = message["cellId"]
         # if message["type"] == "update_cell":
         #     await self.update_cell_in_database(cell_id)
@@ -50,6 +52,15 @@ class CellConsumer(AsyncWebsocketConsumer):
 
     async def update_cell_in_database(self, cell_id):
         await update_cell_in_database(cell_id)
+
+    # async def update_clients(self, event=None):
+    #     await self.channel_layer.group_send(
+    #         "group",
+    #         {
+    #             "type": "update_clients",
+    #         },
+    #     )
+
 
     async def send_group_message(self):
         # Отправляем сообщение об обновлении всей группе

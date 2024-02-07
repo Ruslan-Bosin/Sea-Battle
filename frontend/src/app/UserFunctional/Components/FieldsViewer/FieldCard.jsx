@@ -39,7 +39,7 @@ const additional_info = {
 }
 
 
-function FieldCard({FieldName, Shots}) {
+function FieldCard({FieldName, Shots, PrizesMax, PrizesOut}) {
 
   return (
     <div style={body_div}>
@@ -48,7 +48,7 @@ function FieldCard({FieldName, Shots}) {
         <Title style={title} level={5} maxLength="2">{ FieldName }</Title>
         <Text type="secondary" style={text} > Осталось шотов: { Shots } </Text>
         <div style={additional_info}>
-          Осталось призов: 7 из 10<GiftOutlined />
+          Осталось призов: { PrizesMax - PrizesOut } из { PrizesMax }<GiftOutlined />
         </div>
       </Card>
     </div>

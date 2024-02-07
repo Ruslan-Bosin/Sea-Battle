@@ -60,6 +60,8 @@ function AvailableFields() {
               key={field.id} // Убедитесь, что каждая карточка имеет уникальный ключ// Замените на свои данные из API
               FieldName={field.name}
               Shots={field.shots_quantity} // Замените на свои данные из API
+              PrizesMax={field.prizes_max}
+              PrizesOut={field.prizes_out}
             />
           ))}
 
