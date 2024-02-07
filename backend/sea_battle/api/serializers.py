@@ -1,9 +1,12 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.urls import reverse_lazy
+
 
 import auth_users.models
 import game.models
+import sea_battle.utils as utils
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -115,27 +118,33 @@ class PrizesSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'avatar']
 
     def to_representation(self, instance):
-        res = {"id": instance.id, "title": instance.name, "image_url": instance.avatar if instance.avatar else "", "won": instance.cell.first().used}
+        res = {"id": instance.id, "title": instance.name, "image_url": utils.get_absolute_url(reverse_lazy('game:image', kwargs={'prize_id': instance.id})) if instance.avatar else "", "won": instance.cell.first().used}
         return res
     
 
 class UserForAdminSerializer(serializers.ModelSerializer):
     class Meta:
-        model = game.models.Prize
+        model = auth_users.models.User
         fields = ['id', 'username', 'avatar']
     
     def to_representation(self, instance):
-        res = {"id": instance.id, "name": instance.username, "image_url": instance.avatar if instance.avatar else "", "shots_number": instance.shots_quantity}
+        res = {"id": instance.id, "name": instance.username, "image_url": utils.get_absolute_url(reverse_lazy('authorisation:image', kwargs={'user_id': instance.id})) if instance.avatar else "", "shots_number": instance.shots_quantity}
         return res
 
 
 
 
 User = get_user_model()
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'avatar']
+class UserSerializer(serializers.Serializer):
+    # class Meta:
+    #     model = User
+    #     fields = ['id', 'username', 'email', 'avatar']
+    
+    def to_representation(self, instance):
+        print('instance', instance)
+        print('avatar', instance.avatar)
+        resp = {'id': instance.id, 'username': instance.username, 'email': instance.email, 'avatar': reverse_lazy('authorisation:image', kwargs={'user_id': instance.id}) if instance.avatar else ''}
+        return resp
 
 
 
@@ -149,7 +158,9 @@ class AdminGameSerializer(serializers.ModelSerializer):
         return resp
 
 class UserGameSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    size = serializers.IntegerField()
-    name = serializers.StringRelatedField()
-    shots_quantity = serializers.IntegerField()
+    class Meta:
+        fields = ['id', 'name', 'size', 'shots_quantity']
+
+    def to_representation(self, instance):
+        resp = {'id': instance.id, 'size': instance.size, 'name': instance.name, "prizes_max": instance.cells.filter(is_prize=True).count(), 'prizes_out': instance.cells.filter(is_prize=True, used=True).count(), 'shots_quantity': instance.shots_quantity}
+        return resp

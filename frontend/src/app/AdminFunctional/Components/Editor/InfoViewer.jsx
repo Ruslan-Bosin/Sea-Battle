@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
-import { Alert, Card, Progress, Typography, Collapse, Button, Modal, Input } from "antd"
+import { Alert, Card, Progress, Typography, Collapse, Button, Modal, Input, message } from "antd"
 import ClientList from "./Lists/ClientsList";
 import PrizesList from "./Lists/PrizesList";
 import axios from "axios"
@@ -65,8 +65,9 @@ function InfoViewer(props) {
   -> { message } - добавление 
   */
 
-
+  const socketRef = useRef(null);
   const [info, setInfo] = useState([]); // в info - данные в формате со строк 31 - 60
+  const [updateTrigger, setUpdateTrigger] = useState(0);
   const editable = true;
   const fieldID = props.fieldID;
   const add_user_url = "http://127.0.0.1:8000/api/add_user_to_game";
@@ -91,8 +92,16 @@ function InfoViewer(props) {
     }
     axios.post(add_user_url, response_data, { headers }).then(response => {
       const data = response.data;
-      if (data.message != "Ok") {
-        console.log(data.message);
+      if (data.message !== "Ok") {
+        message.error("Неправильные данные пользователя");
+      } else {
+        const socket_message = {
+          message: "update_info",
+        }
+        if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+          socketRef.current.send(JSON.stringify(socket_message));
+          console.log("Message to server");
+        }
       }
     })
     console.log("Попробовать добавить пользователя и вывести message о результате");
@@ -100,6 +109,8 @@ function InfoViewer(props) {
 
     setIsModalOpen(false);
     setInputValue("");
+
+
   };
 
   const [data, setData] = useState({
@@ -130,6 +141,18 @@ function InfoViewer(props) {
       }
     ]
   });
+
+  useEffect(() => {
+    // const socket = new WebSocket('ws://127.0.0.1:8000/ws/cell_update' + fieldID);
+    socketRef.current = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + fieldID);
+    socketRef.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log('Message from server:', data);
+      setUpdateTrigger(prevTrigger => prevTrigger + 1);
+      // Обработайте сообщение от сервера по вашему усмотрению
+    };
+  }, [])
+
   useEffect(() => {
     axios.get(get_statistic, { headers, params }).then(response => {
       const data = response.data;
@@ -137,7 +160,7 @@ function InfoViewer(props) {
       console.log(data);
       setData(data);
     })
-  }, [])
+  }, [updateTrigger])
 
 
   const collapse_items = [

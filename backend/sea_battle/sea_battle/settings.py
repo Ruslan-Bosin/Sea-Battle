@@ -31,6 +31,8 @@ SECRET_KEY = os.getenv("SECRET_KEY", "not_so_secret")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = utils.conventer(os.getenv("DEBUG", "False"))
 
+MAIN_URL = os.getenv("MAIN_URL", "http://127.0.0.1:8000")
+
 ADMIN_CODE = os.getenv("ADMIN_CODE", "admin")
 
 PASSWORD_RESET_TIME = os.getenv("PASSWORD_RESET_TIME", 5)
