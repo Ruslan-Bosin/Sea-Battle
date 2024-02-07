@@ -198,21 +198,64 @@ class GetUserGames(APIView):
         return Response(serializer_for_queryset.data)
 
 
+class UpdateCellAfterShoot(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user, game_id = request.user, request.data.get("game_id")
+        coord = request.data.get("coord")
+        print(user, game_id, coord)
+        print(user, game_id, coord)
+        print(user, game_id, coord)
+
+        cell = game.models.Cell.objects.get(game__id=game_id, coord=coord)
+        print(cell)
+        cell.used = True
+        if cell.is_prize:
+            prize = cell.prize
+            if prize.user is None:
+                prize.user = user
+                prize.save()
+        cell.save()
+
+
+        try:
+            shot = game.models.Shots.objects.get(user=user, game__id=game_id)
+            shot.quantity -= 1
+            shot.save()
+
+
+
+            return Response({'message': 'Quantity and cell updated successfully'}, status=status.HTTP_200_OK)
+        except game.models.Shots.DoesNotExist:
+            return Response({'error': 'Shot not found or you do not have permission to update quantity'},
+                            status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f'An error occurred: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class GetShots(APIView):
     def get(self, request):
-        # Извлекаем набор всех записей из таблицы Capital
-        # queryset = Capital.objects.all()
-        user_id, game_id = request.GET.get("user"), request.GET.get("game")
-        queryset = game.models.Shots.objects.get_shots_from_user_and_game(
-            user_id, game_id
-        )
-        # Создаём сериалайзер для извлечённого наборa записей
-        serializer_for_queryset = api.serializers.ShotsSerializer(
-            instance=queryset,  # Передаём набор записей
-            many=True,  # На вход подается именно набор, а не одна запись
-        )
-        return Response(serializer_for_queryset.data)
+        user_id, game_id = request.user.id, request.GET.get("game_id")
 
+        queryset = game.models.Shots.objects.get_shots_from_user_and_game(user_id, game_id)
+
+        # Calculate the total quantity of shots
+        total_shots = sum([shot.quantity for shot in queryset])
+
+        # Serialize the queryset
+        serializer_for_queryset = api.serializers.ShotsSerializer(
+            instance=queryset,
+            many=True,
+        )
+
+        # Add the total quantity to the response data
+        response_data = {
+            'shots': serializer_for_queryset.data,
+            'total_shots': total_shots,
+        }
+
+        return Response(response_data)
 
 class GetCellsFromGame(APIView):
     permission_classes = [AllowAny]
