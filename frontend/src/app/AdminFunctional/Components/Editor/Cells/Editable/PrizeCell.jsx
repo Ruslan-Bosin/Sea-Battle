@@ -31,10 +31,14 @@ function PrizeCell(props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [prizeAvatarUrl, setPrizeAvatarUrl] = useState("");
+  const [data, setData] = useState({
+    prize_name: "Название не загрузилось",
+    prize_avatar_url: ""
+  });
 
   const handleMouseEnter = () => { setIsHover(true); };
   const handleMouseLeave = () => { setIsHover(false); };
+  const cell_prize_info = "http://127.0.0.1:8000/api/get_prize";
 
   const onChangesSubmition = () => {
     message.info("...edit");
@@ -42,24 +46,22 @@ function PrizeCell(props) {
     setModalOpen(false);
   };
 
-   useEffect(() => {
-    const access_token = localStorage.getItem("accessToken") || "";
+  useEffect(() => {
+    const access_token = (localStorage.getItem("accessToken") || "");
     const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + access_token,
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + access_token,
     };
-
-
-    axios.get(`http://127.0.0.1:8000/api/get_prize_avatar/${props.fieldID}/${props.coordinate}/`, {headers})
-        .then(response => {
-            const prizeAvatarUrl = response.data.prize_avatar_url;
-            console.log(prizeAvatarUrl);
-            // Handle the prize avatar URL as needed
-        })
-        .catch(error => {
-            console.error(error);
-        });
-  }, []);
+    const params = {
+      'game_id': props.fieldID,
+      'coord': props.coordinate
+    }
+    axios.get(cell_prize_info, {params, headers})
+    .then((response) => {
+      setData(response.data);
+    })
+    .catch((error) => console.error('Error fetching data:', error));
+  }, [])
 
   const deletePrize = () => {
     const formData = new FormData();
@@ -96,7 +98,8 @@ function PrizeCell(props) {
   const popover_content = (
     <div>
       <Space direction="vertical">
-        <Image preview={true} src={"prizeAvatarUrl"} width="2  00px" height="200px" fallback={img_fallback}/>
+        <Image preview={true} src={data.prize_avatar_url} width="2  00px" height="200px" fallback={img_fallback}/>
+        {"http://127.0.0.1:8000" + data.prize_avatar_url}
         <Space style={{width: "100%"}}>
           <Button type="dashed" onClick={() => setModalOpen(true)}>Изменить</Button>
           <Popconfirm title="Вы точно хотите удалить?" okText="Да" cancelText="Нет" onConfirm={deletePrize}>

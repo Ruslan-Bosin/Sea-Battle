@@ -28,6 +28,5 @@ urlpatterns = [
     path("token_check", views.CheckToken.as_view()),
     path("get_user", views.GetUserFromToken.as_view()),
     path("update_quantity/", views.UpdateCellAfterShoot.as_view()),
-    path('get_prize_avatar/<int:fieldID>/<int:coordinate>/', views.GetPrizeAvatar.as_view(), name='get_prize_avatar'),
     path("get_prize/", views.GetPrize.as_view()),
 ]

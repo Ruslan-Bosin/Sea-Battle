@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.urls import reverse_lazy
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.hashers import check_password, make_password
@@ -31,6 +32,7 @@ import api.serializers
 import game.models
 import auth_users.models
 import api.validators
+import sea_battle.utils as utils
 
 class CheckToken(APIView):
     def get(self, request, *args, **kwargs):
@@ -204,6 +206,12 @@ class UpdateCellAfterShoot(APIView):
     def post(self, request):
         user, game_id = request.user, request.data.get("game_id")
         coord = request.data.get("coord")
+        this_game = game.models.Game.objects.get(id=game_id)
+
+        if this_game.editable:
+            this_game.editable = False
+            this_game.save()
+
 
         cell = game.models.Cell.objects.get(game__id=game_id, coord=coord)
         cell.used = True
@@ -544,11 +552,13 @@ class GetPrize(APIView):
         cell = get_object_or_404(game.models.Cell, coord=coord, game_id=game_id)
 
         try:
-            if cell.is_prize and cell.prize:
-                prize_avatar_url = cell.prize.avatar.url if cell.prize.avatar else None
+            if cell.is_prize:
+                prize_avatar_url = utils.get_absolute_url(reverse_lazy('game:image', kwargs={'prize_id': cell.prize.id})) if cell.prize.avatar else ""
+                if cell.prize.user:
+                    return Response({'prize_avatar_url': prize_avatar_url, 'prize_name': str(cell.prize.name), 'prize_title': str(cell.prize.description), 'prize_userName_got': str(cell.prize.user.username)})
                 return Response({'prize_avatar_url': prize_avatar_url, 'prize_name': str(cell.prize.name), 'prize_title': str(cell.prize.description)})
             else:
-                return Response({'prize_avatar_url': None, 'prize_name': str(cell.prize.name), 'prize_title': str(cell.prize.description)})
+                return Response({'prize_avatar_url': "", 'prize_name': "", 'prize_title': ""})
         except:
             return Response(
                 {"message": "Object not found"},

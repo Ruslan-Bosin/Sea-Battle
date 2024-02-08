@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useState } from "react";
 import { GiftTwoTone } from "@ant-design/icons";
 import { Space, Popover, Image, Typography } from "antd";
+import axios from "axios";
 
 const { Text } = Typography;
 
@@ -16,8 +17,31 @@ function WonCell(props) {
   */
 
   const [isHover, setIsHover] = useState(false);
+  const [data, setData] = useState({
+    prize_name: "Название не загрузилось",
+    prize_avatar_url: "",
+    prize_userName_got: ""
+   });
   const handleMouseEnter = () => { setIsHover(true); };
   const handleMouseLeave = () => { setIsHover(false); };
+
+  const cell_prize_info = "http://127.0.0.1:8000/api/get_prize";
+  useEffect(() => {
+    const access_token = (localStorage.getItem("accessToken") || "");
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + access_token,
+    };
+    const params = {
+      'game_id': props.fieldID,
+      'coord': props.coordinate
+    }
+    axios.get(cell_prize_info, {params, headers})
+    .then((response) => {
+      setData(response.data);
+    })
+    .catch((error) => console.error('Error fetching data:', error));
+  }, [])
 
   //Styles with state
   const body_div = {
@@ -41,17 +65,17 @@ function WonCell(props) {
   const popover_content = (
     <div>
       <Space direction="horizonatl">
-        <Image style={{ objectFit: "cover" }} preview={true} src="" width="2  00px" height="200px" fallback={img_fallback} />
+        <Image style={{ objectFit: "cover" }} preview={true} src={data.prize_avatar_url} width="2  00px" height="200px" fallback={img_fallback} />
         <Space direction="vertical">
           <Text>Приз выиграл: </Text>
-          <Text code copyable>Никнеймпользователя</Text>
+          <Text code copyable>{data.prize_userName_got}</Text>
         </Space>
       </Space>
     </div>
   );
 
   return (
-    <Popover content={popover_content} title="Название приза">
+    <Popover content={popover_content} title={data.prize_name}>
       <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         <GiftTwoTone twoToneColor="#ff4d4f" style={win_icon} />
       </div>
