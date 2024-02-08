@@ -1,8 +1,9 @@
 import React from "react";
 import { useState } from "react";
-import { Input, Button, Space, Tooltip } from "antd";
+import { Input, Button, Space, Tooltip, message } from "antd";
 import { UserOutlined, LockOutlined, LoginOutlined, InfoCircleOutlined, MailOutlined, CodeOutlined } from "@ant-design/icons"
 import { useNavigate } from "react-router-dom";
+import axios from 'axios'
 
 // Styles
 const body_div = {}
@@ -22,14 +23,23 @@ function UserRegisterForm() {
   const [code, setCode] = useState("");
   const [codeDisabled, setCodeDisabled] = useState(true);
   const [password, setPassword] = useState("");
+  const email_token_url = 'http://127.0.0.1:8000/api/send_email_token'
+  const register_url = 'http://127.0.0.1:8000/api/register';
+
 
   const checkEmailClicked = () => {
-    /*
-    Запрос POST:
-    { email }
-    -> { message }
-    в message указаь ошибку или успешнсть
-    */
+    const request = {
+      email: email
+    }
+    axios.post(email_token_url, request ).then(response => {
+      const data = response.data;
+      if (data.message !== "Ok") {
+        message.error(data.message)
+      } else {
+        message.success("Письмо с кодом подтверждения отправлено на вашу почту");
+        setCodeDisabled(false);
+      }
+    })
   };
 
   const registerClicked = () => {
@@ -39,6 +49,25 @@ function UserRegisterForm() {
     -> { message, token(s) }
     в message подробно указаь ошибку или успешнсть (если пароль слабый тоже тут писать)
     */
+   const request = {
+    email: email,
+    username: name,
+    email_token: code,
+    password: password
+   }
+   axios.post(register_url, request).then(response => {
+      message.success("Пользователь успешно создан");
+      const { access, refresh } = response.data;
+      console.log(response.data);
+      console.log(access, refresh);
+      localStorage.setItem("accessToken", access);
+      localStorage.setItem("refreshToken", refresh);
+      console.log("accessToken:", localStorage.getItem("accessToken"));
+      console.log("refreshToken:", localStorage.getItem("refreshToken"));
+      navigate('/');
+   }).catch(error => {
+    message.error(error.response.data.message);
+   })
   };
 
   const password_tooltip = (

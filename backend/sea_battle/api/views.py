@@ -96,18 +96,37 @@ class WorkCheck(APIView):
 
 
 class CreateUserView(TokenObtainPairView):
+    permission_classes = [AllowAny]
+    serializer_class = api.serializers.CustomTokenObtainPairSerializer
     def post(self, request, *args, **kwargs):
         username = request.data.get('username')
         email = request.data.get('email')
         password = request.data.get('password')
+        email_token = request.data.get('email_token')
         admin_code = request.data.get('admin_code')
 
         if username is None or email is None or password is None:
-            return Response({'error': 'This url have 3 required params: username, email, password'})
+            return Response({'message': 'This url have 3 required params: username, email, password'}, status=status.HTTP_400_BAD_REQUEST)
 
         if len(auth_users.models.User.objects.filter(email=email)) != 0:
-            return Response({'error': 'user with this email is already exists'})
+            return Response({'message': 'Пользователь с такой почтой уже существует'}, status=status.HTTP_400_BAD_REQUEST)
         
+        if api.validators.email_validator(email):
+            return Response({'message': 'Введите существующую почту'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        password_validate, password_status = api.validators.validate_password(password)
+
+        if password_validate:
+            return Response({'message': password_status}, status=status.HTTP_400_BAD_REQUEST)
+
+        token = auth_users.models.CheckEmailToken.objects.filter(email=email).first()
+        print(token.token, email_token)
+        print(str(token.token) == email_token)
+        if token is None or token.expired():
+            return Response({'message': 'Срок действия токена истек'}, status=status.HTTP_400_BAD_REQUEST)
+        if str(token.token) != email_token:
+            return Response({'message': 'Неправильный токен'}, status=status.HTTP_400_BAD_REQUEST)
+
         password = make_password(password)
         
 
@@ -116,22 +135,17 @@ class CreateUserView(TokenObtainPairView):
             admin = auth_users.models.Admins.objects.create(user=user)
             admin.save()
             user.save()
-            refresh = RefreshToken.for_user(user)
-            access_token = api.serializers.CustomTokenObtainPairSerializer.get_token(user)
-            response_data = {
-                'access_token': str(access_token),
-                'refresh_token': str(refresh),
-            }
         else:
             user = auth_users.models.User.objects.create(username=username, email=email, password=password)
             user.save()
-            refresh = RefreshToken.for_user(user)
-            access_token = api.serializers.CustomTokenObtainPairSerializer.get_token(user)
-            response_data = {
-                'access_token': str(access_token),
-                'refresh_token': str(refresh),
-            }
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        response = super(CreateUserView, self).post(request, *args, **kwargs)
+        refresh = RefreshToken.for_user(user)
+        response.data['refresh'] = str(refresh)
+        # return Response({"message": "Ok"}, status=status.HTTP_201_CREATED)
+        return Response(response.data, status=status.HTTP_201_CREATED)
+        
+
+
 
 
 class CustomObtainTokenPairView(TokenObtainPairView):
@@ -144,8 +158,6 @@ class CustomObtainTokenPairView(TokenObtainPairView):
         password = request.data.get("password")
         if api.validators.validate_email(email):
             return Response({"message": "invalid email"})
-        if api.validators.validate_password(password):
-            return Response({"message": "invalid password"})
         user = authenticate(request, username=email, password=password)
         if user is not None:
             response = super(CustomObtainTokenPairView, self).post(request, *args, **kwargs)
@@ -154,6 +166,30 @@ class CustomObtainTokenPairView(TokenObtainPairView):
             return response
         else:
             return Response({'message': 'Invalid credentials'})
+
+
+class SendEmailToken(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        if api.validators.validate_email(email):
+            return Response({"message": "Укажите существующий адресс электронной почты"})
+        
+        token = auth_users.models.CheckEmailToken.objects.filter(email=email).first()
+
+        if token is None or token.expired():
+            new_token = auth_users.models.CheckEmailToken.objects.create(email=email)
+            # TODO: раскоментить на проде
+            # send_mail(
+            #     'Подтверждение почты',
+            #     f'Ваш код подтверждения: {new_token.token}',
+            #     settings.EMAIL_HOST_USER,
+            #     [email],
+            #     fail_silently=False,
+            # )
+            print(new_token.token)
+            return Response({"message": "Ok"})
+        return Response({"message": "На эту почту уже отправлено подтверждение"})
 
 
 
@@ -188,7 +224,6 @@ class GetUserGames(APIView):
         user = auth_users.models.User.objects.filter(pk=user_id).first()
         if user is None:
             return Response({"errror": "user does not exists"})
-        select_related_fields = [field.name for field in user.games.all().first()._meta.get_fields() if field.is_relation and field.related_model]
         user_games = user.games.prefetch_related('shots', 'cells').filter(shots__user=user).annotate(shots_quantity=Sum('shots__quantity', default=0))
         serializer_for_queryset = api.serializers.UserGameSerializer(
             instance=user_games,

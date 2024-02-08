@@ -12,3 +12,7 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(auth_users.models.Admins)
 class AdminsAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(auth_users.models.CheckEmailToken)
+class CheckEmailTokenAdmin(admin.ModelAdmin):
+    pass

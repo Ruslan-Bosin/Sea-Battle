@@ -31,13 +31,13 @@ const space_fill = {
 function AvailableFields() {
   const [fieldsData, setFieldsData] = useState([]);
   const users_games_url = "http://127.0.0.1:8000/api/get_user_games";
-  const access_token = (localStorage.getItem("accessToken"));
+  const access_token = (localStorage.getItem("accessToken") || "nothing");
   const headers = {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ' + access_token,
   };
-
   useEffect(() => {
+    console.log(headers);
     fetch(users_games_url, {headers})
       .then((response) => response.json())
       .then((data) => {
