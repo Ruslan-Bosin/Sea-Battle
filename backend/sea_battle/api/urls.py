@@ -29,4 +29,5 @@ urlpatterns = [
     path("get_user", views.GetUserFromToken.as_view()),
     path("update_quantity/", views.UpdateCellAfterShoot.as_view()),
     path("get_prize/", views.GetPrize.as_view()),
+    path("send_email_token", views.SendEmailToken.as_view())
 ]

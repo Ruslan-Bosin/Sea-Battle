@@ -26,11 +26,13 @@ function AccountButton() {
   const get_user_url = "http://127.0.0.1:8000/api/get_user";
   const [username, setUsername] = useState("");
   useEffect (() => {
-    const access_token = (localStorage.getItem("accessToken") || "");
+    const access_token = (localStorage.getItem("accessToken") || "nothing");
+    console.log(access_token);
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + access_token,
     };
+    console.log(headers);
     axios.get(get_user_url, {headers}).then(response => {
       const response_data = response.data;
       console.log(response);
@@ -39,7 +41,7 @@ function AccountButton() {
     }).catch(error => {
       console.log(error);
     })
-  })
+  }, [])
   const [isHover, setIsHover] = useState(false);
   const handleMouseEnter = () => { setIsHover(true); };
   const handleMouseLeave = () => { setIsHover(false); };
@@ -101,7 +103,7 @@ function AccountButton() {
       <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} >
         <Space>
             <Avatar icon={<UserOutlined/>} style={icon}/>
-              {<Text>Hello, { username }</Text>}
+              {<Text>{ username }</Text>}
           </Space>
       </div>
     </Dropdown>
