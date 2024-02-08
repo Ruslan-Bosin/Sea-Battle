@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { Card, Input, Button, Space, message } from "antd";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const { TextArea } = Input;
 
 
@@ -28,10 +29,25 @@ function UserSupport() {
 
   const [emai, setEmail] = useState("");
   const [messageContent, setMessageContent] = useState("");
+  const support_url = "http://127.0.0.1:8000/api/support-request/"
+
+
 
   const form_submit = () => {
-    message.success("Ваше сообщение было отправлено");
-    navigate("/");
+    const access_token = (localStorage.getItem("accessToken") || "");
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + access_token,
+    };
+
+    axios.post(support_url, { description: messageContent, mail: emai}, {headers})
+      .then(response => {
+        message.success("Ваше сообщение было отправлено");
+        navigate("/");
+      })
+      .catch(error => {
+        console.error('Ошибка:', error);
+      });
   };
 
   return (

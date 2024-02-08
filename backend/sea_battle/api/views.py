@@ -1,3 +1,4 @@
+import requests
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -599,3 +600,94 @@ class GetPrize(APIView):
                 {"message": "Object not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
+
+
+class SupportRequest(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+
+        url = "https://discord.com/api/webhooks/1205224642566950923/nuCofYE5XzEzeREpNzxslsi4LeEgSlQVyxc1DMEo5CaqAKP9rua20ST82A5CLq8Bk4BE"
+        data = {
+            "username": "Support",
+            "content": "Question",
+            "embeds": [{
+                "title": request.data.get('mail'),
+                "description": request.data.get('description')
+            }]
+        }
+
+        requests.post(url, json=data)
+        return Response({"message": "done"})
+
+
+class GetUserInfoViewer(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        game_id = request.GET.get("game_id")
+        user_instance = auth_users.models.User.objects.filter(id=user.id).first()
+        game_instance = game.models.Game.objects.filter(id=game_id).first()
+        if not (user_instance and game_instance):
+            return Response({"message": "Invalid game or user ID."})
+
+        if user_instance not in game_instance.users.all():
+            return Response({"message": "User is not associated with this game."})
+
+        shoots_info = {}
+        shoots = game.models.Shots.objects.filter(user=user, game=game_instance).first()
+        if shoots:
+            shoots_info = {
+                "quantity": shoots.quantity,
+            }
+
+        field_info = {
+            "name": game_instance.name,
+            "creator": game_instance.created_by.user.username if game_instance.created_by else None,
+        }
+
+        game_cells = game.models.Cell.objects.filter(game=game_instance)
+
+        game_prizes_info = []
+        for cell in game_cells:
+            prize = cell.prize
+            if prize:
+                prize_data = {
+                    "name": prize.name,
+                    "avatar": prize.avatar.url if prize.avatar else None,
+                }
+                game_prizes_info.append(prize_data)
+
+        game_user_prizes_info = []
+        for cell in game_cells:
+            prize = cell.prize
+            if prize:
+                if prize.user:
+                    if prize.user.id == user.id:
+                        prize_data = {
+                            "name": prize.name,
+                            "avatar": prize.avatar.url if prize.avatar else None,
+                        }
+                        game_user_prizes_info.append(prize_data)
+
+        game_user_prizes_used = []
+        for cell in game_cells:
+            prize = cell.prize
+            if prize:
+                if prize.user:
+                    prize_data = {
+                        "name": prize.name,
+                        "avatar": prize.avatar.url if prize.avatar else None,
+                    }
+                    game_user_prizes_used.append(prize_data)
+        print(game_prizes_info)
+        print(game_user_prizes_info)
+
+        return Response({
+            "field_info": field_info,
+            "shoots_info": shoots_info,
+            "prizes_info": game_prizes_info,
+            "game_user_prizes_info": game_user_prizes_info,
+            "game_user_prizes_used": game_user_prizes_used,
+        })
