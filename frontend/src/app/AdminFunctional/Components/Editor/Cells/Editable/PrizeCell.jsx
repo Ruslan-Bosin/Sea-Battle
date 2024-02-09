@@ -32,6 +32,7 @@ function PrizeCell(props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [imageFile, setImageFile] = useState("");
   const [data, setData] = useState({
     prize_name: "Название не загрузилось",
     prize_avatar_url: ""
@@ -48,7 +49,11 @@ function PrizeCell(props) {
   const params = {
     'game_id': props.fieldID,
     'coord': props.coordinate
-  }
+  };
+  const socket_message = {
+      message: "update_field",
+  };
+  const [updateTrigger, setUpdateTrigger] = useState(0);
 
   useEffect(() => {
     socketRef.current = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + props.fieldID);
@@ -57,19 +62,26 @@ function PrizeCell(props) {
       setData(response.data);
     })
     .catch((error) => console.error('Error fetching data:', error));
-  }, [])
+  }, [updateTrigger])
 
   const deletePrize = () => {
     const formData = new FormData();
     formData.append('coordinate', props.coordinate);
     formData.append('fieldID', props.fieldID);
-    const socket_message = {
-      message: "update_field",
-    }
-    axios.post('http://127.0.0.1:8000/api/delete_prize', formData)
-    axios.post('http://127.0.0.1:8000/api/delete_prize', formData, {headers})
+    axios.post('http://127.0.0.1:8000/api/delete_prize', formData, {headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': 'Bearer ' + access_token,
+      }})
       .then(() => {
         setModalOpen(false);
+        if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+          socketRef.current.send(JSON.stringify(socket_message));
+          console.log("Message to server");
+        } else {
+            socketRef.current.onopen = function(event) {
+            socketRef.current.send(JSON.stringify(socket_message));
+          }
+        }
       })
       .catch(error => {
         console.error(error);
@@ -90,14 +102,7 @@ function PrizeCell(props) {
       }})
       .then(() => {
         setModalOpen(false);
-        if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-          socketRef.current.send(JSON.stringify(socket_message));
-          console.log("Message to server");
-        } else {
-            socketRef.current.onopen = function(event) {
-            socketRef.current.send(JSON.stringify(socket_message));
-          }
-        }
+        setUpdateTrigger(prevTrigger => prevTrigger + 1);
       })
       .catch(error => {
         console.error(error);
