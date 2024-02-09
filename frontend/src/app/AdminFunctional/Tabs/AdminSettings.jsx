@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useState } from "react";
 import { Card, Avatar, Input, Space, Button, Upload } from "antd";
 import { UserOutlined, UploadOutlined, SaveOutlined } from "@ant-design/icons"
+import axios from "axios";
 
 
 //Styles
@@ -44,28 +45,73 @@ function AdminSettings() {
   -> (какое-нибудь сообщение)
   */
 
-  const [title, setTitle] = useState("Название");
+  const [imageFile, setImageFile] = useState("");
+  const [newImageFile, setNewImageFile] = useState("");
+  const [username, setUsername] = useState("Не загрузилось имя");
   const [uploadDisabled, setUploadDisabled] = useState(true);
+  const get_user_url = "http://127.0.0.1:8000/api/get_user";
+  const update_name_url = "http://127.0.0.1:8000/api/update_username/";
+  const update_avatar_url = "http://127.0.0.1:8000/api/update_avatar/";
+
+  const access_token = (localStorage.getItem("accessToken") || "");
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + access_token,
+  };
+
+  useEffect(() => {
+    axios.get(get_user_url, { headers }).then(response => {
+
+      setUsername(response.data.username);
+      setImageFile(response.data.avatar);
+    })
+  }, [])
+
 
   const saveTitle = () => {
+    axios.post(update_name_url, { new_username: username }, {headers})
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        console.error(error);
+      });
 
+  }
+  const saveImage = () => {
+    const formData = new FormData();
+    setImageFile(newImageFile)
+    formData.append('avatar', newImageFile);
+
+    axios.post(update_avatar_url, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': 'Bearer ' + access_token
+      }
+    })
+      .then(response => {
+        console.log(response);
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error(error);
+      });
   }
 
   return (
     <div style={body_div}>
       <Card title="Настройки" hoverable bodyStyle={card_content} style={card_style} extra={<a href="/">на главную</a>}>
         <Space size="middle">
-          <Avatar shape="square" size={150} icon={<UserOutlined />} />
+          <Avatar shape="square" size={150} src={"http://127.0.0.1:8000" + imageFile} icon={<UserOutlined />} />
           <div style={right_block}>
             <Space.Compact>
-              <Input placeholder="Название" value={title} onChange={(event) => setTitle(event.target.value)} />
+              <Input placeholder="Имя" value={username} onChange={(event) => setUsername(event.target.value)} />
               <Button icon={<SaveOutlined />} onClick={saveTitle}></Button>
             </Space.Compact>
-            
-            <Upload>
-              <Button icon={<UploadOutlined />}>Выбрать аватар</Button>
+            <Upload accept=".png,.jpg" maxCount={1} customRequest={({ file }) => { setNewImageFile(file); setUploadDisabled(false) }} >
+              <Button icon={<UploadOutlined />} >Выбрать аватар</Button>
             </Upload>
-            <Button disabled={uploadDisabled} type="primary" icon={<SaveOutlined />}>Загрузить</Button>
+            <Button disabled={uploadDisabled} type="primary" onClick={saveImage} icon={<SaveOutlined />}>Загрузить</Button>
           </div>
         </Space>
       </Card>
