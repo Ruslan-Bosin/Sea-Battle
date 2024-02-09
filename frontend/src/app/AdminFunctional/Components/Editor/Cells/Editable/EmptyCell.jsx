@@ -21,7 +21,7 @@ function EmptyCell(props) {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [imageFile, setImageFile] = useState();
+  const [imageFile, setImageFile] = useState("");
 
   const access_token = (localStorage.getItem("accessToken") || "");
   const headers = {

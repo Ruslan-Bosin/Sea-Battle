@@ -31,6 +31,7 @@ function PrizeCell(props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+   const [imageFile, setImageFile] = useState("");
   const [data, setData] = useState({
     prize_name: "Название не загрузилось",
     prize_avatar_url: ""
@@ -39,23 +40,17 @@ function PrizeCell(props) {
   const handleMouseEnter = () => { setIsHover(true); };
   const handleMouseLeave = () => { setIsHover(false); };
   const cell_prize_info = "http://127.0.0.1:8000/api/get_prize";
-
-  const onChangesSubmition = () => {
-    message.info("...edit");
-    // ... (your existing code)
-    setModalOpen(false);
+  const access_token = (localStorage.getItem("accessToken") || "");
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + access_token,
   };
+  const params = {
+    'game_id': props.fieldID,
+    'coord': props.coordinate
+  }
 
   useEffect(() => {
-    const access_token = (localStorage.getItem("accessToken") || "");
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + access_token,
-    };
-    const params = {
-      'game_id': props.fieldID,
-      'coord': props.coordinate
-    }
     axios.get(cell_prize_info, {params, headers})
     .then((response) => {
       setData(response.data);
@@ -67,7 +62,27 @@ function PrizeCell(props) {
     const formData = new FormData();
     formData.append('coordinate', props.coordinate);
     formData.append('fieldID', props.fieldID);
-    axios.post('http://127.0.0.1:8000/api/delete_prize', formData)
+    axios.post('http://127.0.0.1:8000/api/delete_prize', formData, {headers})
+      .then(() => {
+        setModalOpen(false);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+  const onChangesSubmition = () => {
+    const formData = new FormData();
+    formData.append('coordinate', props.coordinate);
+    formData.append('fieldID', props.fieldID);
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('imageFile', imageFile);
+
+    axios.post('http://127.0.0.1:8000/api/change_prize', formData, {headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': 'Bearer ' + access_token,
+      }})
       .then(() => {
         setModalOpen(false);
       })
@@ -111,7 +126,7 @@ function PrizeCell(props) {
 
   return (
     <>
-      <Popover content={popover_content} title="Название приза">
+      <Popover content={popover_content} title={data.prize_name}>
         <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
           <GiftTwoTone style={prize_icon} />
         </div>
@@ -120,7 +135,7 @@ function PrizeCell(props) {
         <Space size="small" direction="vertical" style={{ width: "100%" }}>
           <Input value={title} placeholder="Название приза" onChange={(event) => setTitle(event.target.value)} />
           <TextArea value={description} placeholder="Описание приза" autoSize={{ minRows: 2, maxRows: 6, }} onChange={(event) => setDescription(event.target.value)} />
-          <Dragger >
+          <Dragger accept=".png,.jpg" maxCount={1} customRequest={({ file }) => { setImageFile(file) }}>
             <p className="ant-upload-drag-icon">
               <InboxOutlined />
             </p>

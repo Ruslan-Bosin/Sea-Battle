@@ -198,11 +198,11 @@ function InfoViewer(props) {
         <Alert style={alert} message="Редактируйте!" description="Вы можете редактировать это поле. Пока не было произведено абсолютно никаких выстрелов." type="success" showIcon /> :
         <Alert style={alert} message="Игра идёт..." description="Пользователи уже производили выстрелы по полю. Поле больше нельзя редактировать" type="warning" showIcon />}
       <Card title="Статистика" style={alert}>
-        <Progress style={progress} strokeColor="#ffc53d" percent={(data.statistics.missedCount * 100) / (data.statistics.allCells)} status="active" />
+        <Progress style={progress} strokeColor="#ffc53d" percent={Math.floor((data.statistics.missedCount * 100) / (data.statistics.allCells))} status="active" />
         <Text type="secondary" style={progress_title}>Промахов: {data.statistics.missedCount}</Text>
-        <Progress style={progress} strokeColor="#ff4d4f" percent={(0) ? (data.statistics.prizesCount === 0): ((data.statistics.wonCount * 100) / (data.statistics.prizesCount))} status="active" />
+        <Progress style={progress} strokeColor="#ff4d4f" percent={(0) ? (data.statistics.prizesCount === 0): Math.floor(((data.statistics.wonCount * 100) / (data.statistics.prizesCount)))} status="active" />
         <Text type="secondary" style={progress_title}>Выиграно: {data.statistics.wonCount}</Text>
-        <Progress style={progress} percent={(0) ? (data.statistics.prizesCount === 0): ((data.statistics.unwonCount * 100) / (data.statistics.prizesCount))} status="active" />
+        <Progress style={progress} percent={(0) ? (data.statistics.prizesCount === 0): Math.floor(((data.statistics.unwonCount * 100) / (data.statistics.prizesCount)))} status="active" />
         <Text type="secondary" style={progress_title}>Осталось: {data.statistics.unwonCount}</Text>
       </Card>
       <Collapse style={alert} accordion items={collapse_items} />

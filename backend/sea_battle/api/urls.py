@@ -34,5 +34,6 @@ urlpatterns = [
     path("get_admin_viewer/", views.GetAdminInfoViewer.as_view()),
     path("update_username/", views.UpdateUsername.as_view()),
     path("update_avatar/", views.UpdateUserAvatar.as_view()),
+    path("change_prize", views.ChangePrize.as_view()),
 
 ]

@@ -408,7 +408,7 @@ class AddUser(APIView):
         return Response({"message": "Ok"})
 
 class DeletePrize(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser, FormParser)
     def post(self, request, *args, **kwargs):
         print(request.data)
@@ -726,4 +726,22 @@ class UpdateUsername(APIView):
         user = request.user
         user.username = new_username
         user.save()
+        return Response({'message': 'error'}, status=201)
+
+class ChangePrize(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, *args, **kwargs):
+        coordinate = int(request.data.get('coordinate'))
+        field_id = int(request.data.get('fieldID'))
+        title = request.data.get('title')
+        description = request.data.get('description')
+        image_file = request.data.get('imageFile')
+        prize = game.models.Prize.objects.create(name=title, description=description, avatar=image_file)
+        cell = get_object_or_404(game.models.Cell, game_id=field_id, coord=coordinate)
+        cell.prize = prize
+        cell.is_prize = True
+        cell.save()
+
         return Response({'message': 'error'}, status=201)
