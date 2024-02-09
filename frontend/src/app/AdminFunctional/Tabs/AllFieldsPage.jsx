@@ -91,10 +91,7 @@ function AllFieldsPage() {
           {fieldsData.map((field) => (
             <FieldCard
               key={field.id} // Убедитесь, что каждая карточка имеет уникальный ключ
-              FieldName={field.name} // Замените на свои данные из API
-              Players={field.players} // Замените на свои данные из API
-              GiftOut={field.prizes_out} // Замените на свои данные из API
-              GiftMax={field.prizes_max} // Замените на свои данные из API
+              FieldId={field.id}
             />
           ))}
 

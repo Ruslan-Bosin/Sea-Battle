@@ -598,9 +598,13 @@ class GetUserInfoViewer(APIView):
 
         shoots_info = {}
         shoots = game.models.Shots.objects.filter(user=user, game=game_instance).first()
-        if shoots:
+        if shoots is not None:
             shoots_info = {
                 "quantity": shoots.quantity,
+            }
+        else:
+            shoots_info = {
+                "quantity": 0
             }
 
         field_info = {
@@ -608,49 +612,21 @@ class GetUserInfoViewer(APIView):
             "creator": game_instance.created_by.user.username if game_instance.created_by else None,
         }
 
-        game_cells = game.models.Cell.objects.filter(game=game_instance)
+        prizes_queryset = game.models.Prize.objects.prefetch_related("cell").filter(cell__game=game_instance)
+        unwon_prizes = prizes_queryset.filter(cell__used=False)
+        prizes_won_queryset = prizes_queryset.filter(user=user)
 
-        game_prizes_info = []
-        for cell in game_cells:
-            prize = cell.prize
-            if prize:
-                prize_data = {
-                    "name": prize.name,
-                    "avatar": prize.avatar.url if prize.avatar else None,
-                }
-                game_prizes_info.append(prize_data)
+        prizes = api.serializers.PrizesSerializer(prizes_queryset, many=True, context={"infoviewer": True, "user_id": request.user.id}).data
+        won_prizes = api.serializers.PrizesSerializer(prizes_won_queryset, many=True, context={"infoviewer": True, "won_list": True}).data
 
-        game_user_prizes_info = []
-        for cell in game_cells:
-            prize = cell.prize
-            if prize:
-                if prize.user:
-                    if prize.user.id == user.id:
-                        prize_data = {
-                            "name": prize.name,
-                            "avatar": prize.avatar.url if prize.avatar else None,
-                        }
-                        game_user_prizes_info.append(prize_data)
 
-        game_user_prizes_used = []
-        for cell in game_cells:
-            prize = cell.prize
-            if prize:
-                if prize.user:
-                    prize_data = {
-                        "name": prize.name,
-                        "avatar": prize.avatar.url if prize.avatar else None,
-                    }
-                    game_user_prizes_used.append(prize_data)
-        print(game_prizes_info)
-        print(game_user_prizes_info)
 
         return Response({
             "field_info": field_info,
             "shoots_info": shoots_info,
-            "prizes_info": game_prizes_info,
-            "game_user_prizes_info": game_user_prizes_info,
-            "game_user_prizes_used": game_user_prizes_used,
+            "unwon": unwon_prizes.count(),
+            "user_won": won_prizes,
+            "all_prizes": prizes
         })
 
 

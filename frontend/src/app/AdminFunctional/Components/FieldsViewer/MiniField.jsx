@@ -1,6 +1,7 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MiniFieldCell from "./MiniFieldCell";
+import axios from "axios"
 
 // Styles
 const body_div = {
@@ -12,81 +13,13 @@ const body_div = {
 }
 
 function MiniField(props) {
-
-  const fieldID = props.fieldID;
-
-  const [fieldData, setFieldData] = useState(
+  // const fieldID = props.
+  const fieldData = 
     {
-      size: 4,
-      editable: true,
-      placements: [
-        {
-          coordinate: 1,
-          status: "Missed"
-        },
-        {
-          coordinate: 2,
-          status: "Forbidden"
-        },
-        {
-          coordinate: 3,
-          status: "Empty"
-        },
-        {
-          coordinate: 4,
-          status: "Unwon"
-        },
-        {
-          coordinate: 5,
-          status: "Forbidden"
-        },
-        {
-          coordinate: 6,
-          status: "Won"
-        },
-        {
-          coordinate: 7,
-          status: "Forbidden"
-        },
-        {
-          coordinate: 8,
-          status: "Untouched"
-        },
-        {
-          coordinate: 9,
-          status: "Prize"
-        },
-        {
-          coordinate: 10,
-          status: "Forbidden"
-        },
-        {
-          coordinate: 11,
-          status: "Won"
-        },
-        {
-          coordinate: 12,
-          status: "Empty"
-        },
-        {
-          coordinate: 13,
-          status: "Empty"
-        },
-        {
-          coordinate: 14,
-          status: "Untouched"
-        },
-        {
-          coordinate: 15,
-          status: "Prize"
-        },
-        {
-          coordinate: 16,
-          status: "Prize"
-        },
-      ]
-    }
-  );
+      size: props.size,
+      editable: props.editable,
+      placements: props.placements
+    };
 
   // Styles with state
   const field_div = {
@@ -103,7 +36,7 @@ function MiniField(props) {
     <div style={body_div}>
       <div style={field_div}>
         {fieldData.placements.map(cell => {
-          return <MiniFieldCell fieldID={fieldID} coordinate={cell.coordinate} status={cell.status} key={cell.coordinate} />
+          return <MiniFieldCell coordinate={cell.coordinate} status={cell.status} key={cell.coordinate} />
         })}
       </div>
     </div>
