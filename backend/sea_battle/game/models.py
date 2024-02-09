@@ -10,19 +10,19 @@ import game.managers
 import os
 
 
-def update_cells(cell, forbidden=True):
-    print("update_cells")
-    game = cell.game
-    game_size = cell.game.size
-    for i in range(-1, 2):
-        for j in range(-1, 2):
-            start_coord = cell.coord
-            if (i == 0 and j == 0) or (abs(i) == 1 and abs(j) == 1) or ((((start_coord + j - 1) // game_size) != ((start_coord - 1) // game_size))):
-                continue
-            forbidden_cell = Cell.objects.filter(game=game, coord=cell.coord + (game_size * i) + j).first()
-            if forbidden_cell is not None:
-                forbidden_cell.forbidden = forbidden
-                forbidden_cell.save()
+# def update_cells(cell, forbidden=True):
+#     print("update_cells")
+#     game = cell.game
+#     game_size = cell.game.size
+#     for i in range(-1, 2):
+#         for j in range(-1, 2):
+#             start_coord = cell.coord
+#             if (i == 0 and j == 0) or (abs(i) == 1 and abs(j) == 1) or ((((start_coord + j - 1) // game_size) != ((start_coord - 1) // game_size))):
+#                 continue
+#             forbidden_cell = Cell.objects.filter(game=game, coord=cell.coord + (game_size * i) + j).first()
+#             if forbidden_cell is not None:
+#                 forbidden_cell.forbidden = forbidden
+#                 forbidden_cell.save()
 
 class Game(LifecycleModel):
     editable = models.BooleanField(
@@ -174,10 +174,10 @@ class Cell(LifecycleModel):
                 self.is_prize = True
                 print(self)
                 # self.save()
-                update_cells(self)
+                # update_cells(self)
             else:
                 self.is_prize = False
-                update_cells(self, forbidden=False)
+                # update_cells(self, forbidden=False)
             self._hook_called = True
             self.save()
 
