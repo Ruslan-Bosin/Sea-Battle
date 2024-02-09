@@ -72,6 +72,7 @@ function InfoViewer(props) {
   const fieldID = props.fieldID;
   const add_user_url = "http://127.0.0.1:8000/api/add_user_to_game";
   const get_statistic = "http://127.0.0.1:8000/api/get_game_info_admin";
+  const get_user_url = "http://127.0.0.1:8000/api/get_user";
   const params = {
     game: fieldID
   }
@@ -96,12 +97,24 @@ function InfoViewer(props) {
         message.error("Неправильные данные пользователя");
       } else {
         const socket_message = {
-          message: "update_info",
+          message: "added_user",
         }
         if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
           socketRef.current.send(JSON.stringify(socket_message));
           console.log("Message to server");
         }
+        axios.get(get_user_url, { headers }).then(response => {
+          const data = response.data;
+          const user_id = data.id;
+          const socket = new WebSocket('ws://127.0.0.1:8000/ws/user/new_game/' + user_id);
+          socket.onopen = function (event) {
+            const message_to_user_socket = {
+              message: "new_game"
+            }
+            socket.send(JSON.stringify(message_to_user_socket));
+            console.log("SEND TO USER NEW GAME");
+          }
+        })
       }
     })
     console.log("Попробовать добавить пользователя и вывести message о результате");
@@ -148,7 +161,9 @@ function InfoViewer(props) {
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log('Message from server:', data);
-      setUpdateTrigger(prevTrigger => prevTrigger + 1);
+      if (data.message === "update_info" || data.message === "added_user") {
+        setUpdateTrigger(prevTrigger => prevTrigger + 1);
+      }
       // Обработайте сообщение от сервера по вашему усмотрению
     };
   }, [])
@@ -178,7 +193,7 @@ function InfoViewer(props) {
 
   return (
     <div style={body_div}>
-      {editable ?
+      {data.editable ?
         <Alert style={alert} message="Редактируйте!" description="Вы можете редактировать это поле. Пока не было произведено абсолютно никаких выстрелов." type="success" showIcon /> :
         <Alert style={alert} message="Игра идёт..." description="Пользователи уже производили выстрелы по полю. Поле больше нельзя редактировать" type="warning" showIcon />}
       <Card title="Статистика" style={alert}>

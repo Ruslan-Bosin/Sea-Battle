@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, Q, Sum, Prefetch
 from rest_framework import status
 from django.utils import timezone
 from django.core.mail import send_mail
@@ -224,7 +224,7 @@ class GetUserGames(APIView):
         user = auth_users.models.User.objects.filter(pk=user_id).first()
         if user is None:
             return Response({"errror": "user does not exists"})
-        user_games = user.games.prefetch_related('shots', 'cells').filter(shots__user=user).annotate(shots_quantity=Sum('shots__quantity', default=0))
+        user_games = user.games.prefetch_related(Prefetch('shots', queryset=game.models.Shots.objects.filter(user=user)), 'cells').annotate(shots_quantity=Sum('shots__quantity', default=0))
         serializer_for_queryset = api.serializers.UserGameSerializer(
             instance=user_games,
             many=True
@@ -239,6 +239,13 @@ class UpdateCellAfterShoot(APIView):
     def post(self, request):
         user, game_id = request.user, request.data.get("game_id")
         coord = request.data.get("coord")
+
+        this_game = game.models.Game.objects.get(id=game_id)
+
+        if this_game.editable:
+            this_game.editable = False
+            this_game.save()
+
 
         cell = game.models.Cell.objects.get(game__id=game_id, coord=coord)
         cell.used = True

@@ -156,7 +156,7 @@ class Cell(LifecycleModel):
         help_text=_("можно ли размещать на этой клетке приз"),
         default=False
     )
-    prize = models.ForeignKey(
+    prize = models.OneToOneField(
         to=Prize,
         verbose_name=_("приз"),
         help_text=_("приз, который находится в клетке"),

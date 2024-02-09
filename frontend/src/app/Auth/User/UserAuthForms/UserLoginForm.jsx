@@ -28,10 +28,10 @@ function UserLoginForm() {
       try {
         const response = await axios.post('http://127.0.0.1:8000/api/token', request_data);
         const { access, refresh } = response.data;
+        console.log(response.data);
         // Сохраняем токены в localStorage
         localStorage.setItem('accessToken', access);
         localStorage.setItem('refreshToken', refresh);
-  
         message.success('Вы успешно авторизованы!');
         navigate('/'); // Переход на главную страницу
       } catch(error) {

@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { AimOutlined, } from "@ant-design/icons";
 import { Tooltip, Modal, Typography, Progress, Image, message } from "antd";
 import axios from "axios";
@@ -17,8 +17,9 @@ const timer_modal = {
 }
 
 function UnknownCell(props) {
-
+  const socketRef = useRef(null);
   const [modal, contextHolder] = Modal.useModal();
+  const [userid, setUserid] = useState('');
 
   const [isHover, setIsHover] = useState(false);
 
@@ -28,6 +29,7 @@ function UnknownCell(props) {
   const get_shots_url = "http://127.0.0.1:8000/api/get_shots/";
   const updateQuantityUrl = "http://127.0.0.1:8000/api/update_quantity/";
   const get_prize_url = "http://127.0.0.1:8000/api/get_prize/";
+  const get_user_url = "http://127.0.0.1:8000/api/get_user"
 
   const access_token = localStorage.getItem("accessToken") || "";
     const headers = {
@@ -53,6 +55,17 @@ function UnknownCell(props) {
   }
 
 
+  const ModalClosed = () => {
+    console.log("modal_closed");
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      const message = {
+        message: "modal_closed",
+        user_id: userid
+      }
+      socketRef.current.send(JSON.stringify(message));
+    }
+  }
+
   const shootClicked = () => {
     console.log(props.fieldID)
     console.log(props.coordinate)
@@ -64,6 +77,7 @@ function UnknownCell(props) {
     })
     .then(response => {
       if (response.data.total_shots === 0) {
+        console.log(response.data);
         message.error("У вас закончились выстрелы...");
       return;
     }
@@ -118,8 +132,23 @@ function UnknownCell(props) {
       )
       .then(response => {
       const { prize_name, prize_title, error } = response.data;
-      console.log(prize_name);
-      console.log(prize_title);
+      axios.get(get_user_url, {headers}).then(response => {
+        const user_id = response.data.id;
+        setUserid(user_id);
+        console.log(prize_name)
+        console.log(prize_title);
+        socketRef.current = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + props.fieldID);
+        socketRef.current.onopen = function (event) {
+          console.log("Connection opened");
+          const socket_message = {
+            message: "update_info",
+            user_id: user_id
+          };
+          // console.log(socket.readyState);
+          console.log("Message to server");
+          socketRef.current.send(JSON.stringify(socket_message));
+        };
+      })
 
       if (prize_name && prize_title) {
         modal.success({
@@ -129,6 +158,7 @@ function UnknownCell(props) {
           closeIcon: true,
           closable: true,
           destroyOnClose: true,
+          afterClose: ModalClosed,
           content: <div style={{ display: "flex", flexDirection: "column" }}>
             <Text>Вы выиграли: <Text strong>{prize_name}</Text></Text>
             <Image style={{ objectFit: "cover", aspectRatio: "3 / 2" }} preview={true} src="https://kinonews.ru/insimgs/2022/shotimg/shotimg110875_24.jpg" width="100%" fallback={img_fallback} />
@@ -143,6 +173,7 @@ function UnknownCell(props) {
           closeIcon: true,
           closable: true,
           destroyOnClose: true,
+          afterClose: ModalClosed,
           content: <div style={{ display: "flex", flexDirection: "column" }}>
             <Text>В этот раз вам не повезло 😔...<br />Попробуйте ещё раз!</Text>
           </div>,

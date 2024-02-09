@@ -13,8 +13,9 @@ const body_div = {
 }
 
 function Field(props) {
-
+  const get_user_url = "http://127.0.0.1:8000/api/get_user"
   const fieldID = props.fieldID;
+  const [updateTrigger, setUpdateTrigger] = useState(0);
   const [fieldData, setFieldData] = useState(
     {
       size: 4,
@@ -86,7 +87,29 @@ function Field(props) {
       ]
     }
   );
-
+  
+  useEffect(() => {
+    const socket = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + fieldID);
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log(data);
+      const sender_id = data.sender_id;
+      const access_token = (localStorage.getItem("accessToken") || "");
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + access_token,
+      };
+      axios.get(get_user_url, {headers}).then(response => {
+        const response_data = response.data;
+        if ((response_data.id !== sender_id) || (response_data.id === sender_id && data.message === "modal_closed")) {
+          setUpdateTrigger(prevTrigger => prevTrigger + 1);
+          console.log('This is sender');
+        }
+      })
+      console.log('Message from server:', data);
+      // Обработайте сообщение от сервера по вашему усмотрению
+    };
+  }, [])
   const game_info_url = "http://127.0.0.1:8000/api/get_cells_from_game";
   useEffect(() => {
     const access_token = (localStorage.getItem("accessToken") || "");
@@ -106,7 +129,7 @@ function Field(props) {
       console.log(fieldData);
     })
     .catch((error) => console.error('Error fetching data:', error));
-    }, [])
+    }, [updateTrigger])
 
   // Styles with state
   const field_div = {

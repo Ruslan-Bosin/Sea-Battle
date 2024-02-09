@@ -32,8 +32,7 @@ function Field(props) {
     const socket = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + fieldID);
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === "update_field") {
-        console.log('Message from server:', data);
+      if (data.message === "update_info") {
         setUpdateTrigger(prevTrigger => prevTrigger + 1); 
       }
       // Обработайте сообщение от сервера по вашему усмотрению

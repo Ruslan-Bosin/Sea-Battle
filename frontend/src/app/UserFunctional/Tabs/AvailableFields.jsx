@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import Header from "../Components/Header/Header";
 import NoFields from "../Components/FieldsViewer/NoFields";
 import FieldCard from "../Components/FieldsViewer/FieldCard";
+import axios from "axios"
 
 //Styles
 const body_div = {
@@ -30,6 +31,9 @@ const space_fill = {
 
 function AvailableFields() {
   const [fieldsData, setFieldsData] = useState([]);
+  const [updateTrigger, setUpdateTrigger] = useState(0);
+
+  const get_user_url = "http://127.0.0.1:8000/api/get_user";
   const users_games_url = "http://127.0.0.1:8000/api/get_user_games";
   const access_token = (localStorage.getItem("accessToken") || "nothing");
   const headers = {
@@ -45,7 +49,22 @@ function AvailableFields() {
         setFieldsData(data);
       })
       .catch((error) => console.error('Error fetching data:', error));
-  }, []);
+  }, [updateTrigger]);
+
+    useEffect(() => {
+      axios.get(get_user_url, { headers }).then(response => {
+        const data = response.data;
+        const user_id = data.id;
+        const socket = new WebSocket('ws://127.0.0.1:8000/ws/user/new_game/' + user_id);
+      
+        socket.onmessage = (event) => {
+          console.log("MESSAGE FROM SERVER")
+          console.log(event.data)
+          setUpdateTrigger(prevTrigger => prevTrigger + 1);
+        };
+      })
+
+  }, [])
 
   const fieldsNumber = fieldsData.length;
 

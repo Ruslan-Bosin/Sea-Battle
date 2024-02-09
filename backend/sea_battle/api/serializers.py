@@ -118,7 +118,7 @@ class PrizesSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'avatar']
 
     def to_representation(self, instance):
-        res = {"id": instance.id, "title": instance.name, "image_url": utils.get_absolute_url(reverse_lazy('game:image', kwargs={'prize_id': instance.id})) if instance.avatar else "", "won": instance.cell.first().used}
+        res = {"id": instance.id, "title": instance.name, "image_url": utils.get_absolute_url(reverse_lazy('game:image', kwargs={'prize_id': instance.id})) if instance.avatar else "", "won": instance.cell.used}
         return res
     
 
