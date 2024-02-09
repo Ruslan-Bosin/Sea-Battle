@@ -100,31 +100,8 @@ class NewGameConsumer(AsyncWebsocketConsumer):
         print("receive")
         data = json.loads(text_data)
         data_to_send = {"message": data["message"]}
-        # if data.get("message") == "update_info" or data.get("message") == "modal_closed":
-        #     data_to_send = {"sender_id": data["user_id"], "message": data["message"]}
-        # else:
-        #     data_to_send = {"message": data["message"]}
         await self.send_group_message(data_to_send)
 
-        # cell_id = message["cellId"]
-        # if message["type"] == "update_cell":
-        #     await self.update_cell_in_database(cell_id)
-        #     await self.send_group_message()
-
-        # elif message["type"] == "get_prize":
-        #     await get_prize(cell_id, self.scope.get("user").id)
-
-
-    async def update_cell_in_database(self, cell_id):
-        await update_cell_in_database(cell_id)
-
-    # async def update_clients(self, event=None):
-    #     await self.channel_layer.group_send(
-    #         "group",
-    #         {
-    #             "type": "update_clients",
-    #         },
-    #     )
 
 
     async def send_group_message(self, data_to_send):

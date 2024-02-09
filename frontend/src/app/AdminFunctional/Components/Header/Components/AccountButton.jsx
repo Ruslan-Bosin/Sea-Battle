@@ -24,7 +24,9 @@ function AccountButton() {
   const navigate = useNavigate();
 
   const get_user_url = "http://127.0.0.1:8000/api/get_user";
+  // const server_
   const [username, setUsername] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   useEffect (() => {
     const access_token = (localStorage.getItem("accessToken") || "nothing");
     console.log(access_token);
@@ -38,6 +40,8 @@ function AccountButton() {
       console.log(response);
       console.log(response_data);
       setUsername(response_data.username);
+      setImageUrl(response.data.avatar);
+      console.log(imageUrl);
     }).catch(error => {
       console.log(error);
     })
@@ -98,11 +102,13 @@ function AccountButton() {
 
   // src={<img src={url} alt="avatar" />} for Avatar icon
 
+
+
   return (
     <Dropdown menu={{ items, onClick, }} trigger={['click']}>
       <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} >
         <Space>
-            <Avatar icon={<UserOutlined/>} style={icon}/>
+            {(imageUrl === "") ? (<Avatar icon={<UserOutlined/>} style={icon}/>): (<Avatar src={<img src={imageUrl} alt="avatar" />} style={icon}/>)}
               {<Text>{ username }</Text>}
           </Space>
       </div>
