@@ -59,7 +59,7 @@ function UnwonCell(props) {
   const popover_content = (
     <div>
       <Space direction="vertical">
-        <Image style={{ objectFit: "cover" }} preview={true} src="" width="2  00px" height="200px" fallback={img_fallback} />
+        <Image style={{ objectFit: "cover" }} preview={true} src={data.prize_avatar_url} width="2  00px" height="200px" fallback={img_fallback} />
         <Text >Приз выиграл кто-то другой</Text>
       </Space>
     </div>

@@ -1,9 +1,10 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useState } from "react";
 import { UnorderedListOutlined, ShoppingOutlined } from "@ant-design/icons";
-import { Segmented, Card, Progress, Typography } from "antd";
+import {Segmented, Card, Progress, Typography, Modal} from "antd";
 import AllPrizesList from "./Lists/AllPrizesList"
 import MyPrizesList from "./Lists/MyPrizesList";
+import axios from "axios";
 
 
 const { Text } = Typography;
@@ -36,8 +37,34 @@ const shoots_count = {
 }
 
 function InfoViewer(props) {
+  const [modal, contextHolder] = Modal.useModal();
 
-  // const fieldID = props.fieldID;
+  const [isHover, setIsHover] = useState(false);
+
+  const [data, setData] = useState({
+    field_info: [],
+    shoots_info: [],
+    prizes_info: [],
+    game_user_prizes_info: [],
+    game_user_prizes_used: []
+  });
+
+  const get_shots_url = "http://127.0.0.1:8000/api/get_user_viewer/";
+  useEffect(() => {
+    const access_token = (localStorage.getItem("accessToken") || "");
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + access_token,
+    };
+    const params = {
+      'game_id': props.fieldID,
+    }
+    axios.get(get_shots_url, {params, headers})
+    .then((response) => {
+      setData(response.data);
+    })
+    .catch((error) => console.error('Error fetching data:', error));
+  }, [])
 
   const [tab, setTab] = useState("all");
 
@@ -48,25 +75,25 @@ function InfoViewer(props) {
 
         <div style={two_sides}>
           <Text>Название: </Text>
-          <Text strong>Название поля</Text>
+          <Text strong>{data.field_info.name}</Text>
         </div>
 
         <div style={two_sides}>
           <Text type="secondary">Принадлежит: </Text>
-          <Text type="secondary" strong>Название</Text>
+          <Text type="secondary" strong>{data.field_info.creator}</Text>
         </div>
 
         <div style={shoots_count}>
-          <Text>Выстрелов: <Text keyboard>21</Text></Text>
+          <Text>Выстрелов: <Text keyboard>{data.shoots_info.quantity}</Text></Text>
         </div>
 
       </Card>
 
       <Card title="Статистика" style={alert}>
-        <Progress style={progress} strokeColor="#52c41a" percent={10} status="active" />
-        <Text type="secondary" style={progress_title}>Вы выиграли: 3</Text>
-        <Progress style={progress} percent={80} status="active" />
-        <Text type="secondary" style={progress_title}>Целых: 7</Text>
+        <Progress style={progress} strokeColor="#52c41a" percent={Math.floor(data.game_user_prizes_info.length / data.prizes_info.length * 100)} status="active" />
+        <Text type="secondary" style={progress_title}>Вы выиграли: {data.game_user_prizes_info.length}</Text>
+        <Progress style={progress} percent={Math.floor((1 - data.game_user_prizes_used.length / data.prizes_info.length) * 100)} status="active" />
+        <Text type="secondary" style={progress_title}>Целых: {data.prizes_info.length - data.game_user_prizes_used.length}</Text>
       </Card>
 
       <Card title="Призы" style={alert}>

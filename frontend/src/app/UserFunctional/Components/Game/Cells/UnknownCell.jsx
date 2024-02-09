@@ -32,10 +32,10 @@ function UnknownCell(props) {
   const get_user_url = "http://127.0.0.1:8000/api/get_user"
 
   const access_token = localStorage.getItem("accessToken") || "";
-    const headers = {
+  const headers = {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ' + access_token,
-    };
+  };
 
 
   // Styles with state

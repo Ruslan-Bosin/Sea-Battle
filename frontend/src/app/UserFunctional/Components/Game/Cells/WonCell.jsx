@@ -59,7 +59,7 @@ function WonCell(props) {
   const popover_content = (
     <div>
       <Space direction="vertical">
-        <Image style={{ objectFit: "cover" }} preview={true} src="" width="200px" height="200px" fallback={img_fallback} />
+        <Image style={{ objectFit: "cover" }} preview={true} src={data.prize_avatar_url} width="200px" height="200px" fallback={img_fallback} />
         <Text>Вы выиграли этот приз</Text>
 
       </Space>
