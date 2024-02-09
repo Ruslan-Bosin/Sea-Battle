@@ -131,7 +131,7 @@ function UnknownCell(props) {
         }
       )
       .then(response => {
-      const { prize_name, prize_title, error } = response.data;
+      const { prize_name, prize_title, prize_avatar_url, error } = response.data;
       axios.get(get_user_url, {headers}).then(response => {
         const user_id = response.data.id;
         setUserid(user_id);
@@ -161,7 +161,7 @@ function UnknownCell(props) {
           afterClose: ModalClosed,
           content: <div style={{ display: "flex", flexDirection: "column" }}>
             <Text>Вы выиграли: <Text strong>{prize_name}</Text></Text>
-            <Image style={{ objectFit: "cover", aspectRatio: "3 / 2" }} preview={true} src="https://kinonews.ru/insimgs/2022/shotimg/shotimg110875_24.jpg" width="100%" fallback={img_fallback} />
+            <Image style={{ objectFit: "cover", aspectRatio: "3 / 2" }} preview={true} src={prize_avatar_url} width="100%" fallback={img_fallback} />
             <Paragraph ellipsis={{ rows: 2, expandable: true, symbol: 'покказать всё' }} type="secondary"><Text type="default">Описание: </Text>{prize_title}</Paragraph>
           </div>,
         });

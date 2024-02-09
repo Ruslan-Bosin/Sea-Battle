@@ -99,7 +99,6 @@ function PrizeCell(props) {
     <div>
       <Space direction="vertical">
         <Image preview={true} src={data.prize_avatar_url} width="2  00px" height="200px" fallback={img_fallback}/>
-        {"http://127.0.0.1:8000" + data.prize_avatar_url}
         <Space style={{width: "100%"}}>
           <Button type="dashed" onClick={() => setModalOpen(true)}>Изменить</Button>
           <Popconfirm title="Вы точно хотите удалить?" okText="Да" cancelText="Нет" onConfirm={deletePrize}>

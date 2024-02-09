@@ -20,7 +20,6 @@ urlpatterns = [
     path('register', views.CreateUserView.as_view()),
     path("work_check", views.WorkCheck.as_view()),
     path('reset-password/request/', views.PasswordResetRequestView.as_view(), name='password_reset_request'),
-    path('upload_avatar/', views.UploadAvatarView.as_view(), name='upload_avatar'),
     path('upload_prize_avatar/', views.PrizeUploadView.as_view(), name='upload_prize_avatar'),
     path("get_admin_created_games", views.AdminCreatedGamesView.as_view()),
     path("get_user_games", views.GetUserGames.as_view()),
@@ -32,5 +31,8 @@ urlpatterns = [
     path("send_email_token", views.SendEmailToken.as_view()),
     path("support-request/", views.SupportRequest.as_view()),
     path("get_user_viewer/", views.GetUserInfoViewer.as_view()),
+    path("get_admin_viewer/", views.GetAdminInfoViewer.as_view()),
+    path("update_username/", views.UpdateUsername.as_view()),
+    path("update_avatar/", views.UpdateUserAvatar.as_view()),
 
 ]

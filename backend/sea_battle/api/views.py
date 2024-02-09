@@ -248,14 +248,6 @@ class UpdateCellAfterShoot(APIView):
             this_game.editable = False
             this_game.save()
 
-
-        this_game = game.models.Game.objects.get(id=game_id)
-
-        if this_game.editable:
-            this_game.editable = False
-            this_game.save()
-
-
         cell = game.models.Cell.objects.get(game__id=game_id, coord=coord)
         cell.used = True
         if cell.is_prize:
@@ -271,7 +263,9 @@ class UpdateCellAfterShoot(APIView):
             shot.quantity -= 1
             shot.save()
             if cell.is_prize and cell.prize:
-                return Response({'prize_name': cell.prize.name, 'prize_title': cell.prize.description})
+                prize_avatar_url = utils.get_absolute_url(
+                    reverse_lazy('game:image', kwargs={'prize_id': cell.prize.id})) if cell.prize.avatar else ""
+                return Response({'prize_name': cell.prize.name, 'prize_title': cell.prize.description, "prize_avatar_url": prize_avatar_url}  )
             return Response({'message': 'Quantity and cell updated successfully'}, status=status.HTTP_200_OK)
         except game.models.Shots.DoesNotExist:
             return Response({'error': 'Shot not found or you do not have permission to update quantity'},
@@ -313,8 +307,6 @@ class GetCellsFromGame(APIView):
             cells_queryset = game.models.Cell.objects.filter(game=game_instance)
         except game.models.Game.DoesNotExist:
             return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
-        print(game_instance.created_by.user.id, user_id)
-        print(request)
         context = {
             'for_admin': (game_instance.created_by.user.id == user_id),
             'size': game_instance.size,
@@ -481,44 +473,8 @@ class PasswordResetRequestView(APIView):
         return Response({'message': 'Password reset link sent successfully.'})
 
 
-
-class UploadAvatarView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def upload_avatar(self, instance, image_data):
-        if not image_data:
-            return Response({'error': 'No image data provided'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Пример изменения размера изображения до 300x300
-        img = Image.open(BytesIO(image_data.read()))
-        img = img.resize((300, 300), Image.ANTIALIAS)
-
-        # Сохранение изображения
-        image_name = f'{instance.id}_avatar.jpg'
-        instance.avatar.save(image_name, ContentFile(img.tobytes()))
-
-        return Response({'message': 'Avatar uploaded successfully'}, status=status.HTTP_200_OK)
-
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        image_data = request.data.get('avatar')
-        self.upload_avatar(user, image_data)
-
-        # Обновление JWT-токена после загрузки аватара
-        refresh = RefreshToken.for_user(user)
-        access_token = UserSerializer.get_token(user)
-        response_data = {
-            'access_token': str(access_token),
-            'refresh_token': str(refresh),
-        }
-
-        return Response(response_data, status=status.HTTP_200_OK)
-
-
-
-
 class PrizeUploadView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, *args, **kwargs):
@@ -698,3 +654,78 @@ class GetUserInfoViewer(APIView):
             "game_user_prizes_info": game_user_prizes_info,
             "game_user_prizes_used": game_user_prizes_used,
         })
+
+
+class GetAdminInfoViewer(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        game_id = request.GET.get("game_id")
+        user_instance = auth_users.models.User.objects.filter(id=user.id).first()
+        game_instance = game.models.Game.objects.filter(id=game_id).first()
+        if not (user_instance and game_instance):
+            return Response({"message": "Invalid game or user ID."})
+
+        if user_instance not in game_instance.users.all():
+            return Response({"message": "User is not associated with this game."})
+        game_cells = game.models.Cell.objects.filter(game=game_instance)
+
+        game_prizes_info = []
+        for cell in game_cells:
+            prize = cell.prize
+            if prize:
+                prize_data = {
+                    "name": prize.name,
+                    "avatar": prize.avatar.url if prize.avatar else None,
+                }
+                game_prizes_info.append(prize_data)
+
+        game_user_prizes_used = []
+        for cell in game_cells:
+            prize = cell.prize
+            if prize:
+                if prize.user:
+                    prize_data = {
+                        "name": prize.name,
+                        "avatar": prize.avatar.url if prize.avatar else None,
+                    }
+                    game_user_prizes_used.append(prize_data)
+
+        cells_used = 0
+        for cell in game_cells:
+            used = cell.used
+            if used:
+                cells_used += 1
+
+        return Response({
+            "cells": len(game_cells),
+            "cells_used": cells_used,
+            "prizes_info": game_prizes_info,
+            "game_user_prizes_used": game_user_prizes_used,
+        })
+
+
+class UpdateUserAvatar(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, *args, **kwargs):
+        image_file = request.data.get('avatar')
+        user = request.user
+
+        user.avatar = image_file
+        user.save()
+
+        return Response({'message': 'error'}, status=201)
+
+
+class UpdateUsername(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        new_username = request.data.get('new_username')
+        user = request.user
+        user.username = new_username
+        user.save()
+        return Response({'message': 'error'}, status=201)

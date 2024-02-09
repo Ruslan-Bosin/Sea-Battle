@@ -23,6 +23,12 @@ function EmptyCell(props) {
   const [description, setDescription] = useState("")
   const [imageFile, setImageFile] = useState();
 
+  const access_token = (localStorage.getItem("accessToken") || "");
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + access_token,
+  };
+
   const createNewPrizeSumbit = () => {
     message.info("...create");
 
@@ -40,7 +46,8 @@ function EmptyCell(props) {
     formData.append('fieldID', props.fieldID);
     axios.post('http://127.0.0.1:8000/api/upload_prize_avatar/', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
+        'Authorization': 'Bearer ' + access_token,
       }
     })
     setCreateModalOpen(false);

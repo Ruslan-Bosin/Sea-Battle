@@ -69,9 +69,9 @@ function AccountButton() {
 
   const onClick = ({ key }) => {
     if (key === '1') {
-      navigate("/admin/settings");
+      navigate("/user/settings");
     } else if (key === '2') {
-      navigate("/admin/support");
+      navigate("/user/support");
     }
   };
 
