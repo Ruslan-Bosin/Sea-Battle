@@ -76,7 +76,8 @@ function AvailableFields() {
 
           {fieldsData.map((field) => (
             <FieldCard
-              key={field.id} // Убедитесь, что каждая карточка имеет уникальный ключ// Замените на свои данные из API
+              key={field.id}
+              Key={field.id} // Убедитесь, что каждая карточка имеет уникальный ключ// Замените на свои данные из API
               FieldName={field.name}
               Shots={field.shots_quantity} // Замените на свои данные из API
               PrizesMax={field.prizes_max}

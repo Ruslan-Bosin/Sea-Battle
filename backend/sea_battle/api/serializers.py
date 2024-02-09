@@ -51,14 +51,14 @@ class CellSerializer(serializers.ModelSerializer):
             elif not instance.is_prize:
                 res["status"] = "Empty"
         else:
-            print(12312313123)
+            # print(12312313123)
             if instance.is_prize and instance.used:
                 res["status"] = "Won"
             elif instance.is_prize and not instance.used:
                 res["status"] = "Unwon"
-            elif instance.used:
+            elif instance.used and not instance.is_prize:
                 res["status"] = "Missed"
-            elif not instance.used:
+            else:
                 res["status"] = "Untouched"
         return res
 
@@ -99,7 +99,7 @@ class PlacementSerializer(serializers.Serializer):
         size = context.get('size', 0)
         user_id = context.get('user_id', 0)
         if for_admin:
-            print(1111111111111111111)
+            # print(1111111111111111111)
             return {
                 'placements': [CellSerializer(cell).data for cell in queryset],
                 'editable': game_instance.editable,
@@ -128,7 +128,10 @@ class UserForAdminSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'avatar']
     
     def to_representation(self, instance):
-        res = {"id": instance.id, "name": instance.username, "image_url": utils.get_absolute_url(reverse_lazy('authorisation:image', kwargs={'user_id': instance.id})) if instance.avatar else "", "shots_number": instance.shots_quantity}
+        print("UserForAdminSerializer")
+        print(instance.__dict__)
+        shots = instance.shots.first()
+        res = {"id": instance.id, "name": instance.username, "image_url": utils.get_absolute_url(reverse_lazy('authorisation:image', kwargs={'user_id': instance.id})) if instance.avatar else "", "shots_number": shots.quantity if shots is not None else 0}
         return res
 
 
@@ -143,7 +146,7 @@ class UserSerializer(serializers.Serializer):
     def to_representation(self, instance):
         print('instance', instance)
         print('avatar', instance.avatar)
-        resp = {'id': instance.id, 'username': instance.username, 'email': instance.email, 'avatar': reverse_lazy('authorisation:image', kwargs={'user_id': instance.id}) if instance.avatar else ''}
+        resp = {'id': instance.id, 'username': instance.username, 'email': instance.email, 'avatar': utils.get_absolute_url(reverse_lazy('authorisation:image', kwargs={'user_id': instance.id})) if instance.avatar else ''}
         return resp
 
 

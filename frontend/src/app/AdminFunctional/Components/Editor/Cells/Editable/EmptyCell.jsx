@@ -49,6 +49,17 @@ function EmptyCell(props) {
         'Content-Type': 'multipart/form-data',
         'Authorization': 'Bearer ' + access_token,
       }
+    }).then(response => {
+      const socket = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + props.fieldID);
+      const socket_message = {
+        "message": "update_field"
+      }
+      socket.onopen = function (event) {
+        socket.send(JSON.stringify(socket_message));
+        console.log("message to server")
+      }
+    }).catch(error => {
+      console.log(error);
     })
     setCreateModalOpen(false);
   };

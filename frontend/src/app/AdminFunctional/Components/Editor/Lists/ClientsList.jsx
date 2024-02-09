@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { List, Avatar, Modal, InputNumber } from "antd"
 import { PlusSquareOutlined, UserOutlined } from "@ant-design/icons"
 import axios from "axios"
@@ -18,7 +18,7 @@ function ClientList(props) {
   { fieldId, userId, addCount }
   -> { message }
   */
-
+  const socketRef = useRef(null);
   const fieldID = props.fieldID;
   const add_shots_url = "http://127.0.0.1:8000/api/add_shots"
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,17 +43,25 @@ function ClientList(props) {
       const data = response.data;
       if (data.message != "Ok") {
         console.log(data.message);
+      } else {
+        const socket_message = {
+          message: "added_user",
+        }
+        if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+          socketRef.current.send(JSON.stringify(socket_message));
+          console.log("Message to server");
+        }
       }
     })
-    console.log("ADD ");
-    console.log(inputNumberValue);
-    console.log("SHOOTS FOR USER WITH ID");
-    console.log(currentClientId);
     setIsModalOpen(false);
     setInputNumberValue(1);
     setCurrentClientId(-1);
   };
 
+
+  useEffect(() => {
+    socketRef.current = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + fieldID);
+  }, [])
 
   const [clients_data, setClients_data] = useState([
     {

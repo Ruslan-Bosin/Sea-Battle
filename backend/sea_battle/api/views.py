@@ -54,22 +54,21 @@ class GetUserFromToken(APIView):
 
 
 class GetAllForInfoView(APIView):
-    permission_classes = [AllowAny]
     def get(self, request):
         game_id = request.GET.get("game")
         game_instance = game.models.Game.objects.filter(id=game_id).first()
         if game_instance is None:
             return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
         prizes_queryset = game.models.Prize.objects.prefetch_related("cell").filter(cell__game=game_instance).order_by('cell__used')
-        users_queryset = game_instance.users.prefetch_related("shots").annotate(shots_quantity=Sum('shots__quantity', default=0))
+        users_queryset = game_instance.users.prefetch_related(Prefetch('shots', queryset=game.models.Shots.objects.filter(game=game_instance)))
         cells = game.models.Cell.objects.filter(game=game_instance)
         statistic_data = {
             "shootsNumber": cells.filter(used=True).count(),
             "missedCount": cells.filter(used=True, is_prize=False).count(),
             "prizesCount": cells.filter(is_prize=True).count(),
             "wonCount": cells.filter(is_prize=True, used=True).count(),
-            "unwonCount": cells.filter(is_prize=True, used=False).count()
-
+            "unwonCount": cells.filter(is_prize=True, used=False).count(),
+            "allCells": cells.count(),
         }
         prizes_serializer = api.serializers.PrizesSerializer(instance=prizes_queryset, many=True)
         users_serializer = api.serializers.UserForAdminSerializer(
@@ -390,6 +389,7 @@ class AddShots(APIView):
         return Response(ok_data)
 
 
+
 class AddUser(APIView):
 
     def post(self, request):
@@ -492,8 +492,6 @@ class PrizeUploadView(APIView):
         cell.save()
 
         return Response({'message': 'Prize created and associated with the cell'}, status=201)
-
-
 
 
 
