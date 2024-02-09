@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import { useState } from "react";
 import { UnorderedListOutlined, ShoppingOutlined } from "@ant-design/icons";
 import {Segmented, Card, Progress, Typography, Modal} from "antd";
@@ -38,18 +38,34 @@ const shoots_count = {
 
 function InfoViewer(props) {
   const [modal, contextHolder] = Modal.useModal();
+  const fieldID = props.fieldID;
+  const [updateTrigger, setUpdateTrigger] = useState(0);
+  const socketRef = useRef(null);
+
 
   const [isHover, setIsHover] = useState(false);
 
   const [data, setData] = useState({
     field_info: [],
     shoots_info: [],
-    prizes_info: [],
-    game_user_prizes_info: [],
-    game_user_prizes_used: []
+    user_won: [],
+    all_prizes: []
   });
 
   const get_shots_url = "http://127.0.0.1:8000/api/get_user_viewer/";
+
+  useEffect(() => {
+    socketRef.current = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + fieldID);
+    socketRef.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log('Message from server:', data);
+      if (data.message === "update_info" || data.message === "added_user" || data.message === "update_field") {
+        setUpdateTrigger(prevTrigger => prevTrigger + 1);
+      }
+      // Обработайте сообщение от сервера по вашему усмотрению
+    };
+  }, [])
+
   useEffect(() => {
     const access_token = (localStorage.getItem("accessToken") || "");
     const headers = {
@@ -62,9 +78,11 @@ function InfoViewer(props) {
     axios.get(get_shots_url, {params, headers})
     .then((response) => {
       setData(response.data);
+      // console.log(data);
+      console.log(response.data);
     })
     .catch((error) => console.error('Error fetching data:', error));
-  }, [])
+  }, [updateTrigger])
 
   const [tab, setTab] = useState("all");
 
@@ -90,15 +108,15 @@ function InfoViewer(props) {
       </Card>
 
       <Card title="Статистика" style={alert}>
-        <Progress style={progress} strokeColor="#52c41a" percent={Math.floor(data.game_user_prizes_info.length / data.prizes_info.length * 100)} status="active" />
-        <Text type="secondary" style={progress_title}>Вы выиграли: {data.game_user_prizes_info.length}</Text>
-        <Progress style={progress} percent={Math.floor((1 - data.game_user_prizes_used.length / data.prizes_info.length) * 100)} status="active" />
-        <Text type="secondary" style={progress_title}>Целых: {data.prizes_info.length - data.game_user_prizes_used.length}</Text>
+        <Progress style={progress} strokeColor="#52c41a" percent={Math.floor(data.user_won.length / data.all_prizes.length * 100)} status="active" />
+        <Text type="secondary" style={progress_title}>Вы выиграли: {data.user_won.length}</Text>
+        <Progress style={progress} percent={Math.floor(((data.unwon) / data.all_prizes.length) * 100)} status="active" />
+        <Text type="secondary" style={progress_title}>Целых: {data.unwon}</Text>
       </Card>
 
       <Card title="Призы" style={alert}>
         <Segmented onChange={(value) => setTab(value)} block options={[{ label: 'Все', value: 'all', icon: <UnorderedListOutlined /> }, { label: 'Мои', value: 'mine', icon: <ShoppingOutlined /> },]} />
-        {(tab === "all") ? <AllPrizesList /> : <MyPrizesList />}
+        {(tab === "all") ? <AllPrizesList all_prizes={data.all_prizes} /> : <MyPrizesList prizes={data.user_won} />}
 
       </Card>
 

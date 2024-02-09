@@ -11,45 +11,47 @@ function AllPrizesList(props) {
 
   const [modal, contextHolder] = Modal.useModal();
 
-  const prizes_data = [
-    {
-      id: "id",
-      title: 'Название приза',
-      image_url: "",
-      won: true
-    },
-    {
-      id: "id",
-      title: 'Название приза',
-      image_url: "",
-      won: false
-    },
-    {
-      id: "id",
-      title: 'Название приза',
-      image_url: "",
-      won: true
-    },
-    {
-      id: "id",
-      title: 'Название приза',
-      image_url: "",
-      won: true
-    },
-  ];
+  // const prizes_data = [
+  //   {
+  //     id: "id",
+  //     title: 'Название приза',
+  //     image_url: "",
+  //     won: true
+  //   },
+  //   {
+  //     id: "id",
+  //     title: 'Название приза',
+  //     image_url: "",
+  //     won: false
+  //   },
+  //   {
+  //     id: "id",
+  //     title: 'Название приза',
+  //     image_url: "",
+  //     won: true
+  //   },
+  //   {
+  //     id: "id",
+  //     title: 'Название приза',
+  //     image_url: "",
+  //     won: true
+  //   },
+  // ];
 
-  const viewPrizeClicked = () => {
+  const prizes_data = props.all_prizes;
+
+  const viewPrizeClicked = (item) => {
     modal.success({
       centered: true,
-      title: 'Название приза',
+      title: item.title,
       width: "50%",
       closeIcon: true,
       icon: null,
       closable: false,
       destroyOnClose: true,
       content: <div style={{ display: "flex", flexDirection: "column" }}>
-        <Image style={{ objectFit: "cover", aspectRatio: "3 / 2" }} preview={true} src="https://kinonews.ru/insimgs/2022/shotimg/shotimg110875_24.jpg" width="100%" fallback={img_fallback} />
-        <Paragraph ellipsis={{ rows: 2, expandable: true, symbol: 'покказать всё' }} type="secondary"><Text type="default">Описание: </Text>Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только успешно пережил без заметных изменений пять веков, но и перешагнул в электронный дизайн. Его популяризации в новое время послужили публикация листов Letraset с образцами Lorem Ipsum в 60-х годах и, в более недавнее время, программы электронной вёрстки типа Aldus PageMaker, в шаблонах которых используется Lorem Ipsum.</Paragraph>
+        <Image style={{ objectFit: "cover", aspectRatio: "3 / 2" }} preview={true} src={item.image_url} width="100%" fallback={img_fallback} />
+        <Paragraph ellipsis={{ rows: 2, expandable: true, symbol: 'покказать всё' }} type="secondary"><Text type="default">Описание: </Text>{item.description}</Paragraph>
       </div>,
     });
   }
@@ -57,10 +59,18 @@ function AllPrizesList(props) {
   return (
     <>
       <List style={{ marginTop: "20px" }} itemLayout="horizontal" dataSource={prizes_data} renderItem={(item, index) => (
-        <List.Item actions={[item.won ? <CheckOutlined /> : <></>]}>
+        <List.Item actions={[
+          item.won ? (
+            item.won_by_user ? (
+              <CheckOutlined style={{ color: "#00ff00" }} />
+            ) : (
+              <CheckOutlined/>
+            )
+          ) : <></>,
+        ]}>
           <List.Item.Meta
             avatar={<Avatar shape="square" src={item.image_url} />}
-            title={<div style={{ cursor: "pointer" }} onClick={viewPrizeClicked}>{item.title}</div>}
+            title={<div style={{ cursor: "pointer" }} onClick={() => viewPrizeClicked(item)}>{item.title}</div>}
           />
         </List.Item>
       )} />

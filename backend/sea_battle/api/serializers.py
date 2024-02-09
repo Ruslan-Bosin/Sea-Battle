@@ -98,17 +98,27 @@ class PlacementSerializer(serializers.Serializer):
         for_admin = context.get('for_admin', False)
         size = context.get('size', 0)
         user_id = context.get('user_id', 0)
+        shots = game.models.Shots.objects.filter(user_id=user_id, game=game_instance).first()
         if for_admin:
             # print(1111111111111111111)
             return {
                 'placements': [CellSerializer(cell).data for cell in queryset],
                 'editable': game_instance.editable,
                 'size': game_instance.size,
+                'FieldName': game_instance.name,
+                'Players': game_instance.users.count(),
+                'GiftOut': queryset.filter(used=True, is_prize=True).count(),
+                'GiftMax': queryset.filter(is_prize=True).count()
             }
         return {
             'placements': [UserCellSerializer(cell, context={'user_id': user_id}).data for cell in queryset],
             'editable': game_instance.editable,
-            'size': size,
+            'size': game_instance.size,
+            'FieldName': game_instance.name,
+            'Players': game_instance.users.count(),
+            'GiftOut': queryset.filter(used=True, is_prize=True).count(),
+            'GiftMax': queryset.filter(is_prize=True).count(),
+            'Shots': shots.quantity if shots is not None else 0
         }
 
 class PrizesSerializer(serializers.ModelSerializer):
@@ -118,9 +128,21 @@ class PrizesSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'avatar']
 
     def to_representation(self, instance):
-        res = {"id": instance.id, "title": instance.name, "image_url": utils.get_absolute_url(reverse_lazy('game:image', kwargs={'prize_id': instance.id})) if instance.avatar else "", "won": instance.cell.used}
+        inforviewer = self.context.get("infoviewer", None)
+        print("inforviewer", inforviewer)
+        user_id = self.context.get("user_id", None)
+        won_list = self.context.get("won_list", None)
+        res = {"id": instance.id, "title": instance.name, "image_url": utils.get_absolute_url(reverse_lazy('game:image', kwargs={'prize_id': instance.id})) if instance.avatar else ""}
+        if inforviewer:
+            res["description"] = instance.description
+        if won_list is None:
+            res["won"] = instance.cell.used
+        if won_list is None and inforviewer:
+            res["won_by_user"] = instance.user_id == user_id
         return res
-    
+
+
+
 
 class UserForAdminSerializer(serializers.ModelSerializer):
     class Meta:

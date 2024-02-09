@@ -50,6 +50,10 @@ function ClientList(props) {
         if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
           socketRef.current.send(JSON.stringify(socket_message));
           console.log("Message to server");
+        } else {
+            socketRef.current.onopen = function(event) {
+            socketRef.current.send(JSON.stringify(socket_message));
+          }
         }
       }
     })

@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Typography } from "antd";
 import { GiftOutlined } from "@ant-design/icons"
 import MiniField from "./MiniField";
+import axios from "axios"
+
 const { Title, Text } = Typography;
 
 //Styles
@@ -39,16 +41,60 @@ const additional_info = {
 }
 
 
-function FieldCard({Key, FieldName, Shots, PrizesMax, PrizesOut}) {
+function FieldCard(props) {
+  const fieldId = props.fieldId;
+  const [updateTrigger, setUpdateTrigger] = useState(0);
+  const game_info_url = "http://127.0.0.1:8000/api/get_cells_from_game";
+  const [fieldData, setFieldData] = useState({
+    size: 4,
+    editable: true,
+    FieldName: "test",
+    Players: 0,
+    GiftOut: 0,
+    GiftMax: 0,
+    placements: []
+  })
+
+  useEffect(() => {
+    const socket = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + fieldId);
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.message === "update_info" || data.message === "update_field") {
+        setUpdateTrigger(prevTrigger => prevTrigger + 1); 
+      }
+      // Обработайте сообщение от сервера по вашему усмотрению
+    };
+  }, [])
+
+
+  useEffect(() => {
+    const access_token = (localStorage.getItem("accessToken") || "");
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + access_token,
+    };
+    const params = {
+      'game': fieldId
+    }
+    axios.get(game_info_url, {params, headers})
+    .then((response) => {
+      const data = response.data;
+      setFieldData(data);
+      console.log(data);
+    })
+    .catch((error) => console.error('Error fetching data:', error));
+    }, [updateTrigger])
+
+
 
   return (
     <div style={body_div}>
       <Card hoverable bodyStyle={card_body_style}>
-        <MiniField FieldId={Key} />
-        <Title style={title} level={5} maxLength="2">{ FieldName }</Title>
-        <Text type="secondary" style={text} > Осталось шотов: { Shots } </Text>
+        <MiniField data={fieldData.placements} size={fieldData.size} editable={fieldData.editable} fieldID={fieldId} />
+        <Title style={title} level={5} maxLength="2">{ fieldData.FieldName }</Title>
+        <Text type="secondary" style={text} > Осталось шотов: { fieldData.Shots } </Text>
         <div style={additional_info}>
-          Осталось призов: { PrizesMax - PrizesOut } из { PrizesMax }<GiftOutlined />
+          Осталось призов: { fieldData.GiftMax - fieldData.GiftOut } из { fieldData.GiftMax }<GiftOutlined />
         </div>
       </Card>
     </div>
