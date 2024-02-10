@@ -13,8 +13,8 @@ __pycache__/
 *.pyc
 __pycache__
 db.sqlite3
-sea_battle/media/prize_avatars
-sea_battle/media/user_avatars
+sea_battle/media/prize_avatars/*
+sea_battle/media/user_avatars/*
 
 # Distribution / packaging
 .Python
