@@ -78,7 +78,7 @@ function App() {
       <Route path="/adminauth/forgotpassword" element={<AdminForgotPassword />} />
 
       <Route path="/*" element={<NotFound />} />
-      <Rout path="/unauthorised" element={<Unauthorised />} />
+      <Route path="/forbidden" element={<Forbidden />} />
 
     </Routes>
   );
