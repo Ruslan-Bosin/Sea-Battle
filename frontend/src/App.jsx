@@ -17,6 +17,7 @@ import AdminForgotPassword from "./app/Auth/Admin/AdminForgotPassword"
 // Utilitarian
 import Primary from './app/UtilitarianPages/Primary';
 import NotFound from './app/UtilitarianPages/NotFound';
+import Unauthorised from "./app/UtilitarianPages/Unauthorised";
 
 // Admin Functional
 import AdminMainPage from "./app/AdminFunctional/AdminMainPage";
@@ -77,6 +78,7 @@ function App() {
       <Route path="/adminauth/forgotpassword" element={<AdminForgotPassword />} />
 
       <Route path="/*" element={<NotFound />} />
+      <Rout path="/unauthorised" element={<Unauthorised />} />
 
     </Routes>
   );
