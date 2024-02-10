@@ -1,7 +1,7 @@
-import React, {useEffect, useRef} from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
-import { UnorderedListOutlined, ShoppingOutlined } from "@ant-design/icons";
-import {Segmented, Card, Progress, Typography, Modal} from "antd";
+import { UnorderedListOutlined, ShoppingOutlined, BookOutlined } from "@ant-design/icons";
+import { Segmented, Card, Progress, Typography, Modal, Button } from "antd";
 import AllPrizesList from "./Lists/AllPrizesList"
 import MyPrizesList from "./Lists/MyPrizesList";
 import axios from "axios";
@@ -57,7 +57,7 @@ function InfoViewer(props) {
   useEffect(() => {
     socketRef.current = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + fieldID);
     socketRef.current.onmessage = (event) => {
-        const data_from_socket = JSON.parse(event.data);
+      const data_from_socket = JSON.parse(event.data);
       if (data_from_socket.message === "update_info" || data_from_socket.message === "added_user" || data_from_socket.message === "update_field") {
         setUpdateTrigger(prevTrigger => prevTrigger + 1);
       }
@@ -74,20 +74,31 @@ function InfoViewer(props) {
     const params = {
       'game_id': props.fieldID,
     }
-    axios.get(get_shots_url, {params, headers})
-    .then((response) => {
-      setData(response.data);
+    axios.get(get_shots_url, { params, headers })
+      .then((response) => {
+        setData(response.data);
 
-    })
-    .catch((error) => console.error('Error fetching data:', error));
+      })
+      .catch((error) => console.error('Error fetching data:', error));
   }, [updateTrigger])
 
   const [tab, setTab] = useState("all");
 
+  const showGuide = () => {
+    modal.info({
+      title: 'Инструкция',
+      content: <div>
+        <Text>
+          Эта игра строится по принципу морского боя, за совершённые покупки на ваш аккаунт начисляются «выстрелы». На виртуальном поле находятся клетки: пустые и содержащие призы. Ваша задача выбрать клетку в которой находится приз, призы не могут стоять в соседних клетках. Дважды «стрелять» одну и ту же клетку запрещено. На поле находитесь не вы одни, поэтому поторопитесь, призы ограничены.
+        </Text>
+      </div>
+    });
+  }
+
   return (
     <div style={body_div}>
 
-      <Card title="Поле" style={alert}>
+      <Card title="Поле" style={alert} extra={<Button onClick={showGuide}><BookOutlined /></Button>}>
 
         <div style={two_sides}>
           <Text>Название: </Text>
@@ -117,6 +128,7 @@ function InfoViewer(props) {
         {(tab === "all") ? <AllPrizesList all_prizes={data.all_prizes} /> : <MyPrizesList prizes={data.user_won} />}
 
       </Card>
+      {contextHolder}
 
     </div>
   );
