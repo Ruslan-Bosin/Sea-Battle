@@ -22,6 +22,7 @@ function Header(props) {
       <LogoSpace />
       <HeaderTab tabIndex={1} selected={props.selectedTab === 1} title="Все Поля" />
       {props.showGameTab ? <HeaderTab tabIndex={2} selected={props.selectedTab === 2} title="Игра" /> : <></>}
+      <HeaderTab tabIndex={3} selected={props.selectedTab === 3} title="Призы" />
       <AccountButton />
     </div>
   );
