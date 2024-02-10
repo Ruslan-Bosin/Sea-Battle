@@ -74,8 +74,8 @@ function AccountButton() {
       navigate("/user/support");
     } else if (key == '3') {
       localStorage.removeItem("accessToken");
-      localStorage.removeItem("accessToken");
-      // localStorage.removeItem("role")
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("role")
       navigate("/userauth/login");
     }
   };
