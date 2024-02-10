@@ -159,7 +159,7 @@ class CustomObtainTokenPairView(TokenObtainPairView):
         email = request.data.get("email")
         password = request.data.get("password")
         if api.validators.validate_email(email):
-            return Response({"message": "invalid email"})
+            return Response({"message": "invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         user = authenticate(request, username=email, password=password)
         if user is not None:
             response = super(CustomObtainTokenPairView, self).post(request, *args, **kwargs)
@@ -167,7 +167,7 @@ class CustomObtainTokenPairView(TokenObtainPairView):
             response.data['refresh'] = str(refresh)
             return response
         else:
-            return Response({'message': 'Invalid credentials'})
+            return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SendEmailToken(APIView):
@@ -182,13 +182,13 @@ class SendEmailToken(APIView):
         if token is None or token.expired():
             new_token = auth_users.models.CheckEmailToken.objects.create(email=email)
             # TODO: раскоментить на проде
-            # send_mail(
-            #     'Подтверждение почты',
-            #     f'Ваш код подтверждения: {new_token.token}',
-            #     settings.EMAIL_HOST_USER,
-            #     [email],
-            #     fail_silently=False,
-            # )
+            send_mail(
+                'Подтверждение почты',
+                f'Ваш код подтверждения: {new_token.token}',
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=False,
+            )
             print(new_token.token)
             return Response({"message": "Ok"})
         return Response({"message": "На эту почту уже отправлено подтверждение"})

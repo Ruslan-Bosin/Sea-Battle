@@ -9,7 +9,7 @@ import axios from 'axios';
 function AuthRequired() {
   const [authorized, setAuthorized] = useState(true);
   const api_url = "http://127.0.0.1:8000/api/token_check";
-  const refresh_url = "http://127.0.0.1:8000/api/token/refresh/"
+  const refresh_url = "http://127.0.0.1:8000/api/token/refresh/";
   useEffect (() => {
     const access_token = (localStorage.getItem("accessToken") || "");
     const refresh = (localStorage.getItem("refreshToken") || "")
@@ -32,7 +32,6 @@ function AuthRequired() {
         setAuthorized(false);
       }
     })
-    console.log(authorized);
   }, []);
   return (
       authorized ? <Outlet/> : <Navigate to="/userauth/login"/>

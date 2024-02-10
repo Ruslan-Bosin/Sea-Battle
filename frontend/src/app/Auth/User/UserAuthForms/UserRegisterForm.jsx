@@ -33,11 +33,14 @@ function UserRegisterForm() {
     }
     axios.post(email_token_url, request ).then(response => {
       const data = response.data;
-      if (data.message !== "Ok") {
-        message.error(data.message)
-      } else {
+      if (data.message === "Ok") {
         message.success("Письмо с кодом подтверждения отправлено на вашу почту");
         setCodeDisabled(false);
+      } else if (data.message === "На эту почту уже отправлено подтверждение") {
+        message.warning("На эту почту уже отправлено подтверждение")
+        setCodeDisabled(false);
+      } else {
+        message.error(data.message);
       }
     })
   };
