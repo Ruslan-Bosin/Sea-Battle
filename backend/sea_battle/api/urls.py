@@ -38,5 +38,5 @@ urlpatterns = [
     path("change_prize", views.ChangePrize.as_view()),
     path("create_field", views.CreateField.as_view()),
     path("prize_list", views.GetUserPrizeList.as_view()),
-
+    path("prize_list_admin", views.GetAdminPrizeList.as_view()),
 ]

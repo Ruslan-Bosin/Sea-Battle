@@ -846,3 +846,57 @@ class GetUserPrizeList(APIView):
             "prize_list_with_game": prize_list_with_game,
             "organization": organization
         })
+
+
+
+class GetAdminPrizeList(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        if not user:
+            return Response({"message": "Invalid user ID."})
+        val_sort = request.GET.get('sortValue')
+        filter_sort = request.GET.get('filterValue')
+
+        prize_list_with_game = []
+        admin = auth_users.models.Admins.objects.filter(user=user).first()
+        prize_list = game.models.Prize.objects.filter(created_by=admin)
+
+        for prize in prize_list:
+            cell = game.models.Cell.objects.filter(prize=prize).first()
+            game_of_prize = cell.game if cell else None
+            if game_of_prize:
+                winner = ''
+                if prize.user:
+                    winner = prize.user.username
+                prize_list_with_game.append({
+                    "name": prize.name,
+                    "owner": game_of_prize.created_by.user.username,
+                    "owner_id": game_of_prize.created_by.user.id,
+                    "winner": winner,
+                    "fieldName": game_of_prize.name,
+                    "fieldId": game_of_prize.id,
+                    "description": prize.description,
+                    "avatar": utils.get_absolute_url(reverse_lazy('game:image', kwargs={'prize_id': prize.id})) if prize.avatar else ""
+                })
+        if filter_sort == "won":
+            new_prize_list_with_game = []
+            for prize in prize_list_with_game:
+                if f'{prize["winner"]}' != '':
+                    new_prize_list_with_game.append(prize)
+            prize_list_with_game = new_prize_list_with_game
+        elif filter_sort == "unwon":
+            new_prize_list_with_game = []
+            for prize in prize_list_with_game:
+                print(prize["owner_id"])
+                if f'{prize["winner"]}' == '':
+                    new_prize_list_with_game.append(prize)
+            prize_list_with_game = new_prize_list_with_game
+        if val_sort == "alphabet":
+            prize_list_with_game.sort(key=lambda x: x["name"])
+        elif val_sort == "reverse":
+            prize_list_with_game.sort(key=lambda x: x["name"], reverse=True)
+        return Response({
+            "prize_list_with_game": prize_list_with_game,
+        })
