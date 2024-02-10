@@ -169,6 +169,11 @@ class CustomObtainTokenPairView(TokenObtainPairView):
             response = super(CustomObtainTokenPairView, self).post(request, *args, **kwargs)
             refresh = RefreshToken.for_user(user)
             response.data['refresh'] = str(refresh)
+            admin = auth_users.models.Admins.objects.filter(user=user).first()
+            if admin is None:
+                response.data['role'] = "user"
+            else:
+                response.data['role'] = 'admin'
             return response
         else:
             return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)

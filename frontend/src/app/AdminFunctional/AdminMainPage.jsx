@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, Navigate } from "react-router-dom";
 
 function AdminMainPage() {
-  const [role, SetRole] = useState(null);
-  useEffect(() => {
-    SetRole(localStorage.getItem("role"));
-  })
+  const role = localStorage.getItem('role');
 
-  return (
-    <div>
-      {/* {(<Outlet/>) ? (role === "admin") : } */}
-      <Outlet />
-    </div>
-  );
+
+  if (role === "admin") {
+    return <Outlet/>
+  } else {
+    return <Navigate to="/forbidden"/>
+  }
+
+
+  // return (
+  //   <div>
+  //     {(<Outlet />) ? (role === "admin") : <Navigate to="/forbidden"/>}
+  //     {/* <Outlet /> */}
+  //   </div>
+  // );
 }
 
 export default AdminMainPage;
