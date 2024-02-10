@@ -27,16 +27,21 @@ function UserLoginForm() {
       }
       try {
         const response = await axios.post('http://127.0.0.1:8000/api/token', request_data);
-        const { access, refresh } = response.data;
+        const { access, refresh, role } = response.data;
         console.log(response.data);
-        // Сохраняем токены в localStorage
-        localStorage.setItem('accessToken', access);
-        localStorage.setItem('refreshToken', refresh);
-        message.success('Вы успешно авторизованы!');
-        navigate('/'); // Переход на главную страницу
+        if (role === "user") {
+          // Сохраняем токены в localStorage
+          localStorage.setItem('accessToken', access);
+          localStorage.setItem('refreshToken', refresh);
+          localStorage.setItem('role', 'user');
+          console.log(localStorage.getItem('role'));
+          message.success('Вы успешно авторизованы!');
+          navigate('/'); // Переход на главную страницу
+        } else {
+          message.error('Ошибка авторизации. Пожалуйста, проверьте введенные данные.'); 
+        }
       } catch(error) {
         console.error('Ошибка авторизации:', error);
-        message.error('Ошибка авторизации. Пожалуйста, проверьте введенные данные.');
       }
     }
   
