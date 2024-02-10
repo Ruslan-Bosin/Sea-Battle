@@ -43,7 +43,6 @@ class CellSerializer(serializers.ModelSerializer):
         res = {"coordinate": instance.coord}
 
         if instance.game.editable:
-            print(2333232232322323)
             if instance.forbidden:
                 res["status"] = "Forbidden"
             elif instance.is_prize:
@@ -51,7 +50,6 @@ class CellSerializer(serializers.ModelSerializer):
             elif not instance.is_prize:
                 res["status"] = "Empty"
         else:
-            # print(12312313123)
             if instance.is_prize and instance.used:
                 res["status"] = "Won"
             elif instance.is_prize and not instance.used:
@@ -72,7 +70,6 @@ class UserCellSerializer(serializers.ModelSerializer):
         res = {"coordinate": instance.coord}
         user_id = self.context.get('user_id', 0)
         if instance.is_prize and instance.prize.user:
-            print(instance.prize.user.id == user_id)
             if instance.prize.user.id == user_id:
                 res["status"] = "Won"
             else:
@@ -100,7 +97,6 @@ class PlacementSerializer(serializers.Serializer):
         user_id = context.get('user_id', 0)
         shots = game.models.Shots.objects.filter(user_id=user_id, game=game_instance).first()
         if for_admin:
-            # print(1111111111111111111)
             return {
                 'placements': [CellSerializer(cell).data for cell in queryset],
                 'editable': game_instance.editable,
@@ -129,7 +125,6 @@ class PrizesSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         inforviewer = self.context.get("infoviewer", None)
-        print("inforviewer", inforviewer)
         user_id = self.context.get("user_id", None)
         won_list = self.context.get("won_list", None)
         res = {"id": instance.id, "title": instance.name, "image_url": utils.get_absolute_url(reverse_lazy('game:image', kwargs={'prize_id': instance.id})) if instance.avatar else ""}
@@ -150,8 +145,6 @@ class UserForAdminSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'avatar']
     
     def to_representation(self, instance):
-        print("UserForAdminSerializer")
-        print(instance.__dict__)
         shots = instance.shots.first()
         res = {"id": instance.id, "name": instance.username, "image_url": utils.get_absolute_url(reverse_lazy('authorisation:image', kwargs={'user_id': instance.id})) if instance.avatar else "", "shots_number": shots.quantity if shots is not None else 0}
         return res
@@ -166,8 +159,6 @@ class UserSerializer(serializers.Serializer):
     #     fields = ['id', 'username', 'email', 'avatar']
     
     def to_representation(self, instance):
-        print('instance', instance)
-        print('avatar', instance.avatar)
         resp = {'id': instance.id, 'username': instance.username, 'email': instance.email, 'avatar': utils.get_absolute_url(reverse_lazy('authorisation:image', kwargs={'user_id': instance.id})) if instance.avatar else ''}
         return resp
 

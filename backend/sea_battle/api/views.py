@@ -1,33 +1,19 @@
 import requests
-from django.http import JsonResponse
 from django.urls import reverse_lazy
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django.contrib.auth import authenticate, get_user_model
-from django.contrib.auth.hashers import check_password, make_password
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from django.forms.models import model_to_dict
-from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.views import APIView
-from django.db.models import Count, Q, Sum, Prefetch
-from rest_framework import status
+from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import make_password
+from rest_framework.permissions import AllowAny
+from django.db.models import Sum, Prefetch
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
-from PIL import Image
-from django.core.files.base import ContentFile
-from io import BytesIO
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import UserSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import get_object_or_404
 
 import api.serializers
@@ -77,7 +63,6 @@ class GetAllForInfoView(APIView):
             many=True
         )
         resp = {"editable": game_instance.editable, "statistics": statistic_data,"clientsNumber": len(users_queryset), "clients": users_serializer.data, "prizesNumber": len(prizes_queryset), "prizes": prizes_serializer.data}
-        print(resp)
         return Response(resp, status=status.HTTP_200_OK)
 
 
@@ -92,7 +77,6 @@ class WorkCheck(APIView):
     def post(self, request, *args, **kwargs):
         resp = request.data
         resp["message"] = "works"
-        print(resp)
         return Response(resp)
 
 
@@ -124,8 +108,6 @@ class CreateUserView(TokenObtainPairView):
             return Response({'message': password_status}, status=status.HTTP_400_BAD_REQUEST)
 
         token = auth_users.models.CheckEmailToken.objects.filter(email=email).first()
-        print(token.token, email_token)
-        print(str(token.token) == email_token)
         if token is None or token.expired():
             return Response({'message': 'Срок действия токена истек'}, status=status.HTTP_400_BAD_REQUEST)
         if str(token.token) != email_token:
@@ -190,7 +172,6 @@ class SendEmailToken(APIView):
 
         if token is None or token.expired():
             new_token = auth_users.models.CheckEmailToken.objects.create(email=email)
-            # TODO: раскоментить на проде
             send_mail(
                 'Подтверждение почты',
                 f'Ваш код подтверждения: {new_token.token}',
@@ -198,7 +179,6 @@ class SendEmailToken(APIView):
                 [email],
                 fail_silently=False,
             )
-            print(new_token.token)
             return Response({"message": "Ok"})
         return Response({"message": "На эту почту уже отправлено подтверждение"})
 
@@ -220,7 +200,6 @@ class ResetEmailToken(APIView):
 
         if token is None or token.expired():
             new_token = auth_users.models.ResetEmailTokenModels.objects.create(email=email)
-            # TODO: раскоментить на проде
             send_mail(
                 'Восстановление пароля',
                 f'Ваш код восстановления: {new_token.token}',
@@ -228,7 +207,6 @@ class ResetEmailToken(APIView):
                 [email],
                 fail_silently=False,
             )
-            print(new_token.token)
             return Response({"message": "Ok"})
         return Response({"message": "На эту почту уже отправлено подтверждение"})
 
@@ -254,8 +232,6 @@ class UpdatePassUserView(TokenObtainPairView):
             return Response({'message': password_status}, status=status.HTTP_400_BAD_REQUEST)
 
         token = auth_users.models.ResetEmailTokenModels.objects.filter(email=email).first()
-        print(token.token, email_token)
-        print(str(token.token) == email_token)
         if token is None or token.expired():
             return Response({'message': 'Срок действия токена истек'}, status=status.HTTP_400_BAD_REQUEST)
         if str(token.token) != email_token:
@@ -399,7 +375,6 @@ class GetPrizesFromGame(APIView):
         try:
             game_instance = game.models.Game.objects.get(id=game_id)
             prizes_queryset = game.models.Prize.objects.prefetch_related("cell").filter(cell__game=game_instance)
-            print(prizes_queryset.values())
         except game.models.Game.DoesNotExist:
             return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
         serializer = api.serializers.PrizesSerializer(instance=prizes_queryset, many=True)
@@ -487,7 +462,6 @@ class DeletePrize(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser, FormParser)
     def post(self, request, *args, **kwargs):
-        print(request.data)
         coordinate = int(request.data.get('coordinate'))
         field_id = int(request.data.get('fieldID'))
 
@@ -581,12 +555,10 @@ class GetPrizeAvatar(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, fieldID, coordinate, *args, **kwargs):
-        print(fieldID, coordinate)
         cell = get_object_or_404(game.models.Cell, coord=coordinate, game_id=fieldID)
 
         if cell.is_prize and cell.prize:
             prize_avatar_url = cell.prize.avatar.url if cell.prize.avatar else None
-            print(prize_avatar_url)
             return Response({'prize_avatar_url': prize_avatar_url})
         else:
             return Response({'prize_avatar_url': None})
@@ -599,7 +571,6 @@ class GetPrize(APIView):
     def get(self, request, *args, **kwargs):
         coord = request.GET.get("coord")
         game_id = request.GET.get("game_id")
-        print(coord, game_id)
         cell = get_object_or_404(game.models.Cell, coord=coord, game_id=game_id)
 
         try:
@@ -799,9 +770,6 @@ class GetUserPrizeList(APIView):
             return Response({"message": "Invalid user ID."})
         val_sort = request.GET.get('sortValue')
         filter_sort = request.GET.get('filterValue')
-        print(val_sort, filter_sort)
-        print(val_sort, filter_sort)
-        print(val_sort, filter_sort)
 
         prize_list_with_game = []
         organization = []
@@ -834,7 +802,6 @@ class GetUserPrizeList(APIView):
         if filter_sort != "0":
             new_prize_list_with_game = []
             for prize in prize_list_with_game:
-                print(prize["owner_id"])
                 if f'{prize["owner_id"]}' == filter_sort:
                     new_prize_list_with_game.append(prize)
             prize_list_with_game = new_prize_list_with_game
@@ -889,7 +856,6 @@ class GetAdminPrizeList(APIView):
         elif filter_sort == "unwon":
             new_prize_list_with_game = []
             for prize in prize_list_with_game:
-                print(prize["owner_id"])
                 if f'{prize["winner"]}' == '':
                     new_prize_list_with_game.append(prize)
             prize_list_with_game = new_prize_list_with_game
