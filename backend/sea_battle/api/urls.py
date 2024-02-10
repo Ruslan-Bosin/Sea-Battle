@@ -19,7 +19,6 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('register', views.CreateUserView.as_view()),
     path("work_check", views.WorkCheck.as_view()),
-    path('reset-password/request/', views.PasswordResetRequestView.as_view(), name='password_reset_request'),
     path('upload_prize_avatar/', views.PrizeUploadView.as_view(), name='upload_prize_avatar'),
     path("get_admin_created_games", views.AdminCreatedGamesView.as_view()),
     path("get_user_games", views.GetUserGames.as_view()),
@@ -35,5 +34,6 @@ urlpatterns = [
     path("update_username/", views.UpdateUsername.as_view()),
     path("update_avatar/", views.UpdateUserAvatar.as_view()),
     path("change_prize", views.ChangePrize.as_view()),
+    path("create_field", views.CreateField.as_view()),
 
 ]

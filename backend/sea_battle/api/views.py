@@ -448,30 +448,6 @@ class SendEmailView(APIView):
         return Response({"message": "Ok"}, status=status.HTTP_200_OK)
 
 
-class PasswordResetRequestView(APIView):
-    def post(self, request):
-        email = request.data.get('email')
-        user = get_object_or_404(auth_users.models.User, email=email)
-
-        # Generate a password reset token
-        token = default_token_generator.make_token(user)
-
-        # Build the reset link
-        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-        reset_url = f"http://yourfrontenddomain.com/reset-password/{uidb64}/{token}/"
-
-        # Send reset link to user's email
-        # Use your email sending mechanism (e.g., Django's send_mail)
-        send_mail(
-            'Password Reset',
-            f'Click the following link to reset your password: {reset_url}',
-            'from@example.com',
-            [user.email],
-            fail_silently=False,
-        )
-
-        return Response({'message': 'Password reset link sent successfully.'})
-
 
 class PrizeUploadView(APIView):
     permission_classes = [IsAuthenticated]
@@ -483,6 +459,8 @@ class PrizeUploadView(APIView):
         image_file = request.data.get('avatar')
         coordinate = int(request.data.get('coordinate'))
         field_id = int(request.data.get('fieldID'))
+        if not (title and description):
+            return Response({'message': 'Name or title is missing.'}, status=400)
 
         prize = game.models.Prize.objects.create(name=title, description=description, avatar=image_file)
 
@@ -719,5 +697,18 @@ class ChangePrize(APIView):
         cell.prize = prize
         cell.is_prize = True
         cell.save()
+
+        return Response({'message': 'error'}, status=201)
+
+class CreateField(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        size = int(request.data.get('size'))
+        name_field = request.data.get('name')
+        user = request.user
+        admin = auth_users.models.Admins.objects.filter(user=user).first()
+        new_game = game.models.Game.objects.create(name=name_field, size=size, created_by=admin)
+        new_game.save()
 
         return Response({'message': 'error'}, status=201)

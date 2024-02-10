@@ -30,7 +30,6 @@ function EmptyCell(props) {
   };
 
   const createNewPrizeSumbit = () => {
-    message.info("...create");
 
     console.log(title);
     console.log(description);
@@ -50,6 +49,7 @@ function EmptyCell(props) {
         'Authorization': 'Bearer ' + access_token,
       }
     }).then(response => {
+      message.info("Create prize successful");
       const socket = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + props.fieldID);
       const socket_message = {
         "message": "update_field"
@@ -60,6 +60,7 @@ function EmptyCell(props) {
       }
     }).catch(error => {
       console.log(error);
+      message.error("Name or title is missing");
     })
     setCreateModalOpen(false);
   };
