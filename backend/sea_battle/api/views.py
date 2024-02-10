@@ -106,6 +106,7 @@ class CreateUserView(TokenObtainPairView):
         password = request.data.get('password')
         email_token = request.data.get('email_token')
         admin_code = request.data.get('admin_code')
+        is_admin_reg = request.data.get('is_admin_reg')
 
         if username is None or email is None or password is None:
             return Response({'message': 'This url have 3 required params: username, email, password'}, status=status.HTTP_400_BAD_REQUEST)
@@ -130,13 +131,15 @@ class CreateUserView(TokenObtainPairView):
             return Response({'message': 'Неправильный токен'}, status=status.HTTP_400_BAD_REQUEST)
 
         password = make_password(password)
-        
 
-        if admin_code == settings.ADMIN_CODE:
-            user = auth_users.models.User.objects.create(username=username, email=email, password=password)
-            admin = auth_users.models.Admins.objects.create(user=user)
-            admin.save()
-            user.save()
+        if is_admin_reg:
+            if admin_code == settings.ADMIN_CODE:
+                user = auth_users.models.User.objects.create(username=username, email=email, password=password)
+                admin = auth_users.models.Admins.objects.create(user=user)
+                admin.save()
+                user.save()
+            else:
+                return Response({'message': 'Неправильный код'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             user = auth_users.models.User.objects.create(username=username, email=email, password=password)
             user.save()
@@ -194,6 +197,73 @@ class SendEmailToken(APIView):
         return Response({"message": "На эту почту уже отправлено подтверждение"})
 
 
+class ResetEmailToken(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        if api.validators.validate_email(email):
+            return Response({"message": "Укажите существующий адресс электронной почты"})
+        if len(auth_users.models.User.objects.filter(email=email)) == 0:
+            return Response({'message': 'Пользователь с такой почтой не существует'})
+
+
+
+        token = auth_users.models.ResetEmailTokenModels.objects.filter(email=email).first()
+
+
+        if token is None or token.expired():
+            new_token = auth_users.models.ResetEmailTokenModels.objects.create(email=email)
+            # TODO: раскоментить на проде
+            send_mail(
+                'Восстановление пароля',
+                f'Ваш код восстановления: {new_token.token}',
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=False,
+            )
+            print(new_token.token)
+            return Response({"message": "Ok"})
+        return Response({"message": "На эту почту уже отправлено подтверждение"})
+
+
+class UpdatePassUserView(TokenObtainPairView):
+    permission_classes = [AllowAny]
+    serializer_class = api.serializers.CustomTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        email_token = request.data.get('email_token')
+
+        if email is None or password is None:
+            return Response({'message': 'This url have 2 required params: email, password'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        if len(auth_users.models.User.objects.filter(email=email)) == 0:
+            return Response({'message': 'Пользователь с такой почтой не существует'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        password_validate, password_status = api.validators.validate_password(password)
+
+        if password_validate:
+            return Response({'message': password_status}, status=status.HTTP_400_BAD_REQUEST)
+
+        token = auth_users.models.ResetEmailTokenModels.objects.filter(email=email).first()
+        print(token.token, email_token)
+        print(str(token.token) == email_token)
+        if token is None or token.expired():
+            return Response({'message': 'Срок действия токена истек'}, status=status.HTTP_400_BAD_REQUEST)
+        if str(token.token) != email_token:
+            return Response({'message': 'Неправильный токен'}, status=status.HTTP_400_BAD_REQUEST)
+
+        password = make_password(password)
+        user = auth_users.models.User.objects.filter(email=email).first()
+        user.password = password
+        user.save()
+        response = super(UpdatePassUserView, self).post(request, *args, **kwargs)
+        refresh = RefreshToken.for_user(user)
+        response.data['refresh'] = str(refresh)
+        # return Response({"message": "Ok"}, status=status.HTTP_201_CREATED)
+        return Response(response.data, status=status.HTTP_201_CREATED)
 
 
 class AdminCreatedGamesView(APIView):

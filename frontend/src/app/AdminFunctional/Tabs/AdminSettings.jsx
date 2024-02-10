@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import { useState } from "react";
-import { Card, Avatar, Input, Space, Button, Upload } from "antd";
+import {Card, Avatar, Input, Space, Button, Upload, message} from "antd";
 import { UserOutlined, UploadOutlined, SaveOutlined } from "@ant-design/icons"
 import axios from "axios";
 
@@ -72,6 +72,7 @@ function AdminSettings() {
     axios.post(update_name_url, { new_username: username }, {headers})
       .then(response => {
         console.log(response);
+        message.success("Имя успешно изменено");
       })
       .catch(error => {
         console.error(error);

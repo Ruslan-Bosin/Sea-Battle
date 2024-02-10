@@ -104,3 +104,24 @@ class CheckEmailToken(models.Model):
         if exp:
             self.delete()
         return exp
+
+class ResetEmailTokenModels(models.Model):
+    email = models.EmailField(verbose_name=_('почта'), unique=True)
+    token = models.UUIDField(verbose_name=_('код восстановления'), default=uuid.uuid4)
+    created = models.DateTimeField(
+        verbose_name=_('Дата и время создания'),
+        auto_now_add=True,
+    )
+
+    expire = models.DateTimeField(
+        verbose_name=_('Дата и время истечения'),
+        default=auth_users.utils.get_token_expire,
+    )
+
+    def expired(self) -> bool:
+        tz = timezone(settings.TIME_ZONE)
+        expire = self.expire.replace(tzinfo=utc).astimezone(tz)
+        exp = expire < datetime.now(tz=tz)
+        if exp:
+            self.delete()
+        return exp
