@@ -57,9 +57,9 @@ function InfoViewer(props) {
   useEffect(() => {
     socketRef.current = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + fieldID);
     socketRef.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log('Message from server:', data);
-      if (data.message === "update_info" || data.message === "added_user" || data.message === "update_field") {
+        const data_from_socket = JSON.parse(event.data);
+      console.log('Message from server:', data_from_socket);
+      if (data_from_socket.message === "update_info" || data_from_socket.message === "added_user" || data_from_socket.message === "update_field") {
         setUpdateTrigger(prevTrigger => prevTrigger + 1);
       }
       // Обработайте сообщение от сервера по вашему усмотрению
@@ -79,6 +79,7 @@ function InfoViewer(props) {
     .then((response) => {
       setData(response.data);
       // console.log(data);
+      console.log(response.data);
       console.log(response.data);
     })
     .catch((error) => console.error('Error fetching data:', error));

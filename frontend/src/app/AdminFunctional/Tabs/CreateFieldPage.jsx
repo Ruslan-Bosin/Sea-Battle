@@ -4,6 +4,8 @@ import Header from "../Components/Header/Header";
 import { Card, Typography, InputNumber, Button, Input } from "antd";
 import { PlusOutlined } from "@ant-design/icons"
 import FieldSizePreview from "../Components/FieldsViewer/FieldSizePreview";
+import axios from "axios";
+import {useNavigate} from "react-router-dom";
 const { Text } = Typography;
 
 
@@ -53,8 +55,31 @@ function CreateFieldPage() {
   -> { fieldId }
   */
 
+  const navigate = useNavigate();
+
   const [fieldSize, setFieldSize] = useState(8);
   const [fieldName, setFieldName] = useState("");
+  const access_token = (localStorage.getItem("accessToken") || "");
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + access_token,
+  };
+  const create_field_url = "http://127.0.0.1:8000/api/create_field";
+
+  const createField = () => {
+    const formData = new FormData();
+    formData.append('name', fieldName);
+    formData.append('size', fieldSize);
+
+    axios.post(create_field_url, formData, {headers})
+      .then(response => {
+        console.log(response);
+        navigate("/");
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
 
   return (
     <div style={body_div}>
@@ -69,7 +94,7 @@ function CreateFieldPage() {
             <InputNumber value={fieldSize} style={input} size="small" disabled />
           </div>
           <Input placeholder="Название поля" value={fieldName} onChange={(event) => setFieldName(event.target.value)} />
-          <Button icon={<PlusOutlined />} size="large" type="primary" block>Создать</Button>
+          <Button icon={<PlusOutlined />} onClick={createField} size="large" type="primary" block>Создать</Button>
         </Card>
       </div>
     </div>
