@@ -78,6 +78,11 @@ function AccountButton() {
       navigate("/admin/settings");
     } else if (key === '2') {
       navigate("/admin/support");
+    } else if (key == '3') {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("accessToken");
+      // localStorage.removeItem("role")
+      navigate("/userauth/login");
     }
   };
 
