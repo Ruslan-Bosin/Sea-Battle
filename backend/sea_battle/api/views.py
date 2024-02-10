@@ -5,6 +5,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.forms.models import model_to_dict
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
@@ -782,3 +783,61 @@ class CreateField(APIView):
         new_game.save()
 
         return Response({'message': 'error'}, status=201)
+
+
+class GetUserPrizeList(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        if not user:
+            return Response({"message": "Invalid user ID."})
+        val_sort = request.GET.get('sortValue')
+        filter_sort = request.GET.get('filterValue')
+        print(val_sort, filter_sort)
+        print(val_sort, filter_sort)
+        print(val_sort, filter_sort)
+
+        prize_list_with_game = []
+        organization = []
+        id_orgs = []
+        prize_list = game.models.Prize.objects.filter(user=user)
+        organization.append({
+            "label": "Все",
+            "value": 0,
+        })
+
+        for prize in prize_list:
+            cell = game.models.Cell.objects.filter(prize=prize).first()
+            game_of_prize = cell.game if cell else None
+            if game_of_prize:
+                prize_list_with_game.append({
+                    "name": prize.name,
+                    "owner": game_of_prize.created_by.user.username,
+                    "owner_id": game_of_prize.created_by.user.id,
+                    "fieldName": game_of_prize.name,
+                    "fieldId": game_of_prize.id,
+                    "description": prize.description,
+                    "avatar": utils.get_absolute_url(reverse_lazy('game:image', kwargs={'prize_id': prize.id})) if prize.avatar else ""
+                })
+                if not game_of_prize.created_by.user.id in id_orgs:
+                    organization.append({
+                        "label": game_of_prize.created_by.user.username,
+                        "value": game_of_prize.created_by.user.id,
+                    })
+                    id_orgs.append(game_of_prize.created_by.user.id)
+        if filter_sort != "0":
+            new_prize_list_with_game = []
+            for prize in prize_list_with_game:
+                print(prize["owner_id"])
+                if f'{prize["owner_id"]}' == filter_sort:
+                    new_prize_list_with_game.append(prize)
+            prize_list_with_game = new_prize_list_with_game
+        if val_sort == "alphabet":
+            prize_list_with_game.sort(key=lambda x: x["name"])
+        elif val_sort == "reverse":
+            prize_list_with_game.sort(key=lambda x: x["name"], reverse=True)
+        return Response({
+            "prize_list_with_game": prize_list_with_game,
+            "organization": organization
+        })
