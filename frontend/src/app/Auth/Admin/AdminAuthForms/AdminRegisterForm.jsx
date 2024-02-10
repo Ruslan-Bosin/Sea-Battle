@@ -38,7 +38,7 @@ function AdminRegisterForm() {
     const request = {
       email: email
     }
-    axios.post(email_token_url, request ).then(response => {
+    axios.post(email_token_url, request).then(response => {
       const data = response.data;
       if (data.message === "Ok") {
         message.success("Письмо с кодом подтверждения отправлено на вашу почту");
@@ -65,20 +65,16 @@ function AdminRegisterForm() {
       email_token: code,
       password: password,
       admin_code: secretCode
-     }
-     axios.post(register_url, request).then(response => {
-        message.success("Пользователь успешно создан");
-        const { access, refresh } = response.data;
-        console.log(response.data);
-        console.log(access, refresh);
-        localStorage.setItem("accessToken", access);
-        localStorage.setItem("refreshToken", refresh);
-        console.log("accessToken:", localStorage.getItem("accessToken"));
-        console.log("refreshToken:", localStorage.getItem("refreshToken"));
-        navigate('/admin/allfields');
-     }).catch(error => {
+    }
+    axios.post(register_url, request).then(response => {
+      message.success("Пользователь успешно создан");
+      const { access, refresh } = response.data;
+      localStorage.setItem("accessToken", access);
+      localStorage.setItem("refreshToken", refresh);
+      navigate('/admin/allfields');
+    }).catch(error => {
       message.error(error.response.data.message);
-     })
+    })
   };
 
   const password_tooltip = (

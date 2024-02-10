@@ -25,6 +25,7 @@ import AdminMainPage from "./app/AdminFunctional/AdminMainPage";
 import CreateFieldPage from "./app/AdminFunctional/Tabs/CreateFieldPage";
 import AllFieldsPage from "./app/AdminFunctional/Tabs/AllFieldsPage";
 import EditFieldPage from "./app/AdminFunctional/Tabs/EditFieldPage";
+import AllPrizes from "./app/AdminFunctional/Tabs/AllPrizes";
 
 import AdminSettings from "./app/AdminFunctional/Tabs/AdminSettings";
 import AdminSupport from "./app/AdminFunctional/Tabs/AdminSupport";
@@ -47,16 +48,17 @@ function App() {
         <Route path="/" element={<Primary />} />
 
         <Route element={<AdminMainPage />}>
-          <Route path="/admin/createField" element={<CreateFieldPage />} />
+          <Route path="/admin/createfield" element={<CreateFieldPage />} />
           <Route path="/admin/allfields" element={<AllFieldsPage />} />
           <Route path="/admin/editField/:fieldID" element={<EditFieldPage />} />
+          <Route path="/admin/allprizes" element={<AllPrizes />} />
 
           <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="/admin/support" element={<AdminSupport />} />
         </Route>
 
         <Route element={<UserMainPage />}>
-          <Route path="/user/availableFields" element={<AvailableFields />} />
+          <Route path="/user/availablefields" element={<AvailableFields />} />
           <Route path="/user/game/:fieldID" element={<GamePage />} />
           <Route path="user/myprizes" element={<MyPrizes />} />
 

@@ -25,7 +25,6 @@ function AuthRequired() {
           const new_access = response_data.access;
           localStorage.setItem("accessToken", new_access);
         }).catch(error => {
-          console.log("refresh_error");
           setAuthorized(false);
         })
       } else {

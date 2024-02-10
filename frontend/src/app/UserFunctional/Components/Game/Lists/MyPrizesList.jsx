@@ -6,23 +6,9 @@ const img_fallback = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYA
 
 function MyPrizesList(props) {
 
-  // const fieldID = props.fieldID;
 
   const [modal, contextHolder] = Modal.useModal();
 
-  // const prizes_data = [
-  //   {
-  //     id: "id",
-  //     title: 'Название приза',
-  //     image_url: "",
-  //   },
-  //   {
-  //     id: "id",
-  //     title: 'Название приза',
-  //     image_url: "",
-  //   },
-
-  // ];
   const prizes_data = props.prizes;
 
   const viewPrizeClicked = (item) => {

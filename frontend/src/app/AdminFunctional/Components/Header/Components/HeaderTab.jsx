@@ -37,9 +37,11 @@ function HeaderTab(props) {
   const clicked = () => {
     if (!props.selected) {
       if (props.tabIndex === 1) {
-        navigate("/admin/createField")
+        navigate("/admin/createfield")
       } else if (props.tabIndex === 2) {
         navigate("/admin/allfields")
+      } else if (props.tabIndex === 4) {
+        navigate("/admin/allprizes")
       }
     }
   }

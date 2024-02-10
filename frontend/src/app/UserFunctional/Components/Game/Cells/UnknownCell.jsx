@@ -56,7 +56,6 @@ function UnknownCell(props) {
 
 
   const ModalClosed = () => {
-    console.log("modal_closed");
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       const message = {
         message: "modal_closed",
@@ -67,8 +66,6 @@ function UnknownCell(props) {
   }
 
   const shootClicked = () => {
-    console.log(props.fieldID)
-    console.log(props.coordinate)
     axios.get(get_shots_url, {
       headers: headers,
       params: {
@@ -77,7 +74,6 @@ function UnknownCell(props) {
     })
     .then(response => {
       if (response.data.total_shots === 0) {
-        console.log(response.data);
         message.error("У вас закончились выстрелы...");
       return;
     }
@@ -135,17 +131,13 @@ function UnknownCell(props) {
       axios.get(get_user_url, {headers}).then(response => {
         const user_id = response.data.id;
         setUserid(user_id);
-        console.log(prize_name)
-        console.log(prize_title);
+
         socketRef.current = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + props.fieldID);
         socketRef.current.onopen = function (event) {
-          console.log("Connection opened");
           const socket_message = {
             message: "update_info",
             user_id: user_id
           };
-          // console.log(socket.readyState);
-          console.log("Message to server");
           socketRef.current.send(JSON.stringify(socket_message));
         };
       })

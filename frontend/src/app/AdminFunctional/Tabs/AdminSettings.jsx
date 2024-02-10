@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { Card, Avatar, Input, Space, Button, Upload } from "antd";
 import { UserOutlined, UploadOutlined, SaveOutlined } from "@ant-design/icons"
@@ -27,7 +27,9 @@ const right_block = {
   marginLeft: "10px",
   flexDirection: "column",
   gap: "10px",
-  alignItems: "start"
+  alignItems: "start",
+  maxWidth: "185px",
+  overflowX: "scroll"
 }
 
 function AdminSettings() {
@@ -69,12 +71,11 @@ function AdminSettings() {
 
 
   const saveTitle = () => {
-    axios.post(update_name_url, { new_username: username }, {headers})
+    axios.post(update_name_url, { new_username: username }, { headers })
       .then(response => {
-        console.log(response);
       })
       .catch(error => {
-        console.error(error);
+        console.error("Error: ", error);
       });
 
   }

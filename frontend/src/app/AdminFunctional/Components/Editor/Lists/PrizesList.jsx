@@ -10,7 +10,7 @@ function PrizesList(props) {
     <List itemLayout="horizontal" dataSource={props.data.prizes} renderItem={(item, index) => (
       <List.Item actions={[item.won ? <CheckOutlined /> : <></>]}>
         <List.Item.Meta
-          avatar={<Avatar shape="square" src={item.image_url} />}
+          avatar={<Avatar shape="square" src={item.image_url} style={{ background: "#F5F5F5FF" }} />}
           title={item.title}
         />
       </List.Item>

@@ -41,11 +41,9 @@ function AvailableFields() {
     'Authorization': 'Bearer ' + access_token,
   };
   useEffect(() => {
-    console.log(headers);
     fetch(users_games_url, {headers})
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         setFieldsData(data);
       })
       .catch((error) => console.error('Error fetching data:', error));
@@ -58,8 +56,6 @@ function AvailableFields() {
         const socket = new WebSocket('ws://127.0.0.1:8000/ws/user/new_game/' + user_id);
       
         socket.onmessage = (event) => {
-          console.log("MESSAGE FROM SERVER")
-          console.log(event.data)
           setUpdateTrigger(prevTrigger => prevTrigger + 1);
         };
       })

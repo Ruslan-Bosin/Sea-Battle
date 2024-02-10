@@ -27,23 +27,18 @@ function AccountButton() {
   // const server_
   const [username, setUsername] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  useEffect (() => {
+  useEffect(() => {
     const access_token = (localStorage.getItem("accessToken") || "nothing");
-    console.log(access_token);
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + access_token,
     };
-    console.log(headers);
-    axios.get(get_user_url, {headers}).then(response => {
+    axios.get(get_user_url, { headers }).then(response => {
       const response_data = response.data;
-      console.log(response);
-      console.log(response_data);
       setUsername(response_data.username);
       setImageUrl(response.data.avatar);
-      console.log(imageUrl);
     }).catch(error => {
-      console.log(error);
+      console.log("Error: ", error);
     })
   }, [])
   const [isHover, setIsHover] = useState(false);
@@ -113,9 +108,9 @@ function AccountButton() {
     <Dropdown menu={{ items, onClick, }} trigger={['click']}>
       <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} >
         <Space>
-            {(imageUrl === "") ? (<Avatar icon={<UserOutlined/>} style={icon}/>): (<Avatar src={<img src={imageUrl} alt="avatar" />} style={icon}/>)}
-              {<Text>{ username }</Text>}
-          </Space>
+          {(imageUrl === "") ? (<Avatar icon={<UserOutlined />} style={icon} />) : (<Avatar src={<img src={imageUrl} alt="avatar" />} style={icon} />)}
+          {<Text>{username}</Text>}
+        </Space>
       </div>
     </Dropdown>
   );

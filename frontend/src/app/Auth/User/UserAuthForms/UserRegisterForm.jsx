@@ -61,12 +61,8 @@ function UserRegisterForm() {
    axios.post(register_url, request).then(response => {
       message.success("Пользователь успешно создан");
       const { access, refresh } = response.data;
-      console.log(response.data);
-      console.log(access, refresh);
       localStorage.setItem("accessToken", access);
       localStorage.setItem("refreshToken", refresh);
-      console.log("accessToken:", localStorage.getItem("accessToken"));
-      console.log("refreshToken:", localStorage.getItem("refreshToken"));
       navigate('/');
    }).catch(error => {
     message.error(error.response.data.message);

@@ -1,11 +1,11 @@
 import React from "react";
 import { useState } from "react";
 import Header from "../Components/Header/Header";
-import { Card, Typography, InputNumber, Button, Input } from "antd";
+import { Card, Typography, InputNumber, Button, Input, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons"
 import FieldSizePreview from "../Components/FieldsViewer/FieldSizePreview";
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const { Text } = Typography;
 
 
@@ -71,13 +71,14 @@ function CreateFieldPage() {
     formData.append('name', fieldName);
     formData.append('size', fieldSize);
 
-    axios.post(create_field_url, formData, {headers})
+    axios.post(create_field_url, formData, { headers })
       .then(response => {
-        console.log(response);
-        navigate("/");
+        navigate(`/admin/allfields`);
+        message.success("Поле создано");
       })
       .catch(error => {
-        console.error(error);
+        message.error("Невозможно создать поле");
+        console.error("Error: ", error);
       });
   }
 

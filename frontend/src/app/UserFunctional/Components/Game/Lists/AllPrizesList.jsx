@@ -7,36 +7,7 @@ const img_fallback = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYA
 
 function AllPrizesList(props) {
 
-  // const fieldID = props.fieldID;
-
   const [modal, contextHolder] = Modal.useModal();
-
-  // const prizes_data = [
-  //   {
-  //     id: "id",
-  //     title: 'Название приза',
-  //     image_url: "",
-  //     won: true
-  //   },
-  //   {
-  //     id: "id",
-  //     title: 'Название приза',
-  //     image_url: "",
-  //     won: false
-  //   },
-  //   {
-  //     id: "id",
-  //     title: 'Название приза',
-  //     image_url: "",
-  //     won: true
-  //   },
-  //   {
-  //     id: "id",
-  //     title: 'Название приза',
-  //     image_url: "",
-  //     won: true
-  //   },
-  // ];
 
   const prizes_data = props.all_prizes;
 

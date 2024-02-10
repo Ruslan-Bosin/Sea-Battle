@@ -101,9 +101,8 @@ function InfoViewer(props) {
         }
         if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
           socketRef.current.send(JSON.stringify(socket_message));
-          console.log("Message to server");
         } else {
-            socketRef.current.onopen = function(event) {
+          socketRef.current.onopen = function (event) {
             socketRef.current.send(JSON.stringify(socket_message));
           }
         }
@@ -116,13 +115,11 @@ function InfoViewer(props) {
               message: "new_game"
             }
             socket.send(JSON.stringify(message_to_user_socket));
-            console.log("SEND TO USER NEW GAME");
           }
         })
       }
     })
-    console.log("Попробовать добавить пользователя и вывести message о результате");
-    console.log(inputValue);
+
 
     setIsModalOpen(false);
     setInputValue("");
@@ -165,7 +162,6 @@ function InfoViewer(props) {
     socketRef.current = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + fieldID);
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log('Message from server:', data);
       if (data.message === "update_info" || data.message === "added_user" || data.message === "update_field") {
         setUpdateTrigger(prevTrigger => prevTrigger + 1);
       }
@@ -177,7 +173,6 @@ function InfoViewer(props) {
     axios.get(get_statistic, { headers, params }).then(response => {
       const data = response.data;
       setInfo(data);
-      console.log(data);
       setData(data);
     })
   }, [updateTrigger])
@@ -204,9 +199,9 @@ function InfoViewer(props) {
       <Card title="Статистика" style={alert}>
         <Progress style={progress} strokeColor="#ffc53d" percent={Math.floor((data.statistics.missedCount * 100) / (data.statistics.allCells))} status="active" />
         <Text type="secondary" style={progress_title}>Промахов: {data.statistics.missedCount}</Text>
-        <Progress style={progress} strokeColor="#ff4d4f" percent={(0) ? (data.statistics.prizesCount === 0): Math.floor(((data.statistics.wonCount * 100) / (data.statistics.prizesCount)))} status="active" />
+        <Progress style={progress} strokeColor="#ff4d4f" percent={(0) ? (data.statistics.prizesCount === 0) : Math.floor(((data.statistics.wonCount * 100) / (data.statistics.prizesCount)))} status="active" />
         <Text type="secondary" style={progress_title}>Выиграно: {data.statistics.wonCount}</Text>
-        <Progress style={progress} percent={(0) ? (data.statistics.prizesCount === 0): Math.floor(((data.statistics.unwonCount * 100) / (data.statistics.prizesCount)))} status="active" />
+        <Progress style={progress} percent={(0) ? (data.statistics.prizesCount === 0) : Math.floor(((data.statistics.unwonCount * 100) / (data.statistics.prizesCount)))} status="active" />
         <Text type="secondary" style={progress_title}>Осталось: {data.statistics.unwonCount}</Text>
       </Card>
       <Collapse style={alert} accordion items={collapse_items} />

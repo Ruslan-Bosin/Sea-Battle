@@ -12,7 +12,6 @@ const body_div = {
 }
 
 function MiniField(props) {
-  console.log(props);
   const fieldID = props.FieldId;
   const fieldData = {
       size: props.size,

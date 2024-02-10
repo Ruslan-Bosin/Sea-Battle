@@ -8,7 +8,6 @@ import MissedMiniCell from "./MiniCells/MissedMiniCell"
 function MiniFieldCell(props) {
 
   const status = props.status;
-  console.log(props.status);
   if (status === "Untouched") { return <UnknownMiniCell {...props} /> }
   else if (status === "Unwon") { return <UnwonMiniCells {...props} /> }
   else if (status === "Won") { return <WonMiniCell {...props} /> }

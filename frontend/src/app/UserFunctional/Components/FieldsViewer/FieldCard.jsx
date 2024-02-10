@@ -4,6 +4,7 @@ import { GiftOutlined } from "@ant-design/icons"
 import MiniField from "./MiniField";
 import axios from "axios"
 
+
 const { Title, Text } = Typography;
 
 //Styles
@@ -40,8 +41,15 @@ const additional_info = {
   fontSize: "10px"
 }
 
+const link = {
+  color: "inherit",
+  textDecoration: "inherit",
+  cursor: "inherit"
+}
+
 
 function FieldCard(props) {
+
   const fieldId = props.fieldId;
   const [updateTrigger, setUpdateTrigger] = useState(0);
   const game_info_url = "http://127.0.0.1:8000/api/get_cells_from_game";
@@ -60,7 +68,7 @@ function FieldCard(props) {
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.message === "update_info" || data.message === "update_field") {
-        setUpdateTrigger(prevTrigger => prevTrigger + 1); 
+        setUpdateTrigger(prevTrigger => prevTrigger + 1);
       }
       // Обработайте сообщение от сервера по вашему усмотрению
     };
@@ -76,28 +84,28 @@ function FieldCard(props) {
     const params = {
       'game': fieldId
     }
-    axios.get(game_info_url, {params, headers})
-    .then((response) => {
-      const data = response.data;
-      setFieldData(data);
-      console.log(data);
-    })
-    .catch((error) => console.error('Error fetching data:', error));
-    }, [updateTrigger])
-
+    axios.get(game_info_url, { params, headers })
+      .then((response) => {
+        const data = response.data;
+        setFieldData(data);
+      })
+      .catch((error) => console.error('Error fetching data:', error));
+  }, [updateTrigger])
 
 
   return (
-    <div style={body_div}>
-      <Card hoverable bodyStyle={card_body_style}>
-        <MiniField data={fieldData.placements} size={fieldData.size} editable={fieldData.editable} fieldID={fieldId} />
-        <Title style={title} level={5} maxLength="2">{ fieldData.FieldName }</Title>
-        <Text type="secondary" style={text} > Осталось шотов: { fieldData.Shots } </Text>
-        <div style={additional_info}>
-          Осталось призов: { fieldData.GiftMax - fieldData.GiftOut } из { fieldData.GiftMax }<GiftOutlined />
-        </div>
-      </Card>
-    </div>
+    <a style={link} href={"/user/game/" + fieldId}>
+      <div style={body_div}>
+        <Card hoverable bodyStyle={card_body_style}>
+          <MiniField data={fieldData.placements} size={fieldData.size} editable={fieldData.editable} fieldID={fieldId} />
+          <Title style={title} level={5} maxLength="2">{fieldData.FieldName}</Title>
+          <Text type="secondary" style={text} > Осталось шотов: {fieldData.Shots} </Text>
+          <div style={additional_info}>
+            Осталось призов: {fieldData.GiftMax - fieldData.GiftOut} из {fieldData.GiftMax}<GiftOutlined />
+          </div>
+        </Card>
+      </div>
+    </a>
   );
 }
 
