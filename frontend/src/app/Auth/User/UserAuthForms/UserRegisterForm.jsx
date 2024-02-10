@@ -31,7 +31,7 @@ function UserRegisterForm() {
     const request = {
       email: email
     }
-    axios.post(email_token_url, request ).then(response => {
+    axios.post(email_token_url, request).then(response => {
       const data = response.data;
       if (data.message === "Ok") {
         message.success("Письмо с кодом подтверждения отправлено на вашу почту");
@@ -46,28 +46,24 @@ function UserRegisterForm() {
   };
 
   const registerClicked = () => {
-    /*
-    Запрос POST:
-    { name, email, code, password }
-    -> { message, token(s) }
-    в message подробно указаь ошибку или успешнсть (если пароль слабый тоже тут писать)
-    */
-   const request = {
-    email: email,
-    username: name,
-    email_token: code,
-    password: password,
-    is_admin_reg: false
-   }
-   axios.post(register_url, request).then(response => {
+
+    const request = {
+      email: email,
+      username: name,
+      email_token: code,
+      password: password,
+      is_admin_reg: false
+    }
+    axios.post(register_url, request).then(response => {
       message.success("Пользователь успешно создан");
       const { access, refresh } = response.data;
       localStorage.setItem("accessToken", access);
       localStorage.setItem("refreshToken", refresh);
+      localStorage.setItem("role", "user");
       navigate('/');
-   }).catch(error => {
-    message.error(error.response.data.message);
-   })
+    }).catch(error => {
+      message.error(error.response.data.message);
+    })
   };
 
   const password_tooltip = (
