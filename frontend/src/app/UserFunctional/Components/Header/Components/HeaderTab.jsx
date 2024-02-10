@@ -39,6 +39,8 @@ function HeaderTab(props) {
     if (!props.selected) {
       if (props.tabIndex === 1) {
         navigate("/user/AvailableFields")
+      } else if (props.tabIndex === 3) {
+        navigate("/user/myprizes")
       }
     }
   }
