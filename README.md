@@ -7,7 +7,7 @@
     - Перейдите в папку frontend: `cd backend`
     - Создайте виртуальное окружение: `python -m venv venv` (используйте python3 на macOS)
     - Перейдите в venv: `cd venv`
-    - Активируйте venv: `source bin/activate`
+    - Активируйте venv: `Scripts\activate.bat` на windows или `source bin/activate` на macOS
     - Перейдите обратно в папку frontend: `cd ..`
     - Установите зависимости: `pip install -r requirements.txt` (используйте pip3 на macOS)
     - Перейдите в sea_battle: `cd sea_battle`
