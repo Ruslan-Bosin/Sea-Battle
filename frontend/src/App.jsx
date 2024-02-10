@@ -2,6 +2,8 @@ import { Routes, Route } from "react-router-dom"
 
 // Auth - user
 import AuthRequired from './app/Auth/AuthRequired';
+import RoleRoute from "./app/Auth/RoleRoute";
+
 
 import UserAuth from './app/Auth/User/UserAuth';
 import UserLoginForm from './app/Auth/User/UserAuthForms/UserLoginForm';
@@ -44,7 +46,7 @@ function App() {
       <Route element={<AuthRequired />}>
         <Route path="/" element={<Primary />} />
 
-        <Route element={<AdminMainPage />}>
+        <Route element={<RoleRoute allowedRole="admin"/>}>
           <Route path="/admin/createField" element={<CreateFieldPage />} />
           <Route path="/admin/allfields" element={<AllFieldsPage />} />
           <Route path="/admin/editField/:fieldID" element={<EditFieldPage />} />
@@ -53,7 +55,7 @@ function App() {
           <Route path="/admin/support" element={<AdminSupport />} />
         </Route>
 
-        <Route element={<UserMainPage />}>
+        <Route element={<RoleRoute allowedRole="user" />}>
           <Route path="/user/availableFields" element={<AvailableFields />} />
           <Route path="/user/game/:fieldID" element={<GamePage />} />
 

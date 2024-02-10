@@ -74,6 +74,11 @@ function AccountButton() {
       navigate("/user/settings");
     } else if (key === '2') {
       navigate("/user/support");
+    } else if (key === '3') {
+      console.log("logout");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      navigate("/userauth/login");
     }
   };
 

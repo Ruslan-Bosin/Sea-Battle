@@ -21,7 +21,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['user_id'] = user.id
         return token
 
-
 class ShotsSerializer(serializers.Serializer):
     quantity = serializers.IntegerField()
     user_id = serializers.IntegerField()

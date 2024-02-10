@@ -28,6 +28,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import get_object_or_404
+from rest_framework_simplejwt.tokens import AccessToken
 
 import api.serializers
 import game.models
@@ -50,6 +51,19 @@ class GetUserFromToken(APIView):
             instance=user
         )
         return Response(resp.data)
+
+class GetUserRole(APIView):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        admin = auth_users.models.Admins.objects.filter(user=user).first()
+        resp = {}
+        if admin is None:
+            resp["role"] = "user"
+        else:
+            resp["role"] = "admin"
+        
+        return Response(resp)
+
 
 
 

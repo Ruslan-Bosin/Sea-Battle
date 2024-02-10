@@ -26,6 +26,7 @@ urlpatterns = [
     path("pass_reset", views.GetUserFromPassToken.as_view()),
     path("token_check", views.CheckToken.as_view()),
     path("get_user", views.GetUserFromToken.as_view()),
+    path("get_user_role", views.GetUserRole.as_view()),
     path("update_quantity/", views.UpdateCellAfterShoot.as_view()),
     path("get_prize/", views.GetPrize.as_view()),
     path("send_email_token", views.SendEmailToken.as_view()),
