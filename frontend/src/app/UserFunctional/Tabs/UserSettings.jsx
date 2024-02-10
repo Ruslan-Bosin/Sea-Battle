@@ -59,6 +59,7 @@ function UserSettings() {
     axios.post(update_name_url, { new_username: username }, {headers})
       .then(response => {
         console.log(response);
+        message.success("Имя успешно изменено");
       })
       .catch(error => {
         console.error(error);

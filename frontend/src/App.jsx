@@ -34,6 +34,7 @@ import UserMainPage from "./app/UserFunctional/UserMainPage";
 
 import AvailableFields from "./app/UserFunctional/Tabs/AvailableFields";
 import GamePage from "./app/UserFunctional/Tabs/GamePage";
+import MyPrizes from "./app/UserFunctional/Tabs/MyPrizes";
 
 import UserSettings from "./app/UserFunctional/Tabs/UserSettings";
 import UserSupport from "./app/UserFunctional/Tabs/UserSupport"
@@ -57,6 +58,7 @@ function App() {
         <Route element={<UserMainPage />}>
           <Route path="/user/availableFields" element={<AvailableFields />} />
           <Route path="/user/game/:fieldID" element={<GamePage />} />
+          <Route path="user/myprizes" element={<MyPrizes />} />
 
           <Route path="/user/settings" element={<UserSettings />} />
           <Route path="/user/support" element={<UserSupport />} />

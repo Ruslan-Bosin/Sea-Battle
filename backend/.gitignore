@@ -6,6 +6,16 @@ __pycache__/
 # C extensions
 *.so
 
+# Other
+.idea
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+sea_battle/media/prize_avatars/*
+sea_battle/media/user_avatars/*
+
 # Distribution / packaging
 .Python
 build/

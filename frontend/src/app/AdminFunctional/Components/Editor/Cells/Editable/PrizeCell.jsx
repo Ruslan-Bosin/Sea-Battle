@@ -51,34 +51,36 @@ function PrizeCell(props) {
     'coord': props.coordinate
   };
   const socket_message = {
-      message: "update_field",
+    message: "update_field",
   };
   const [updateTrigger, setUpdateTrigger] = useState(0);
 
   useEffect(() => {
     socketRef.current = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + props.fieldID);
-    axios.get(cell_prize_info, {params, headers})
-    .then((response) => {
-      setData(response.data);
-    })
-    .catch((error) => console.error('Error fetching data:', error));
+    axios.get(cell_prize_info, { params, headers })
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => console.error('Error fetching data:', error));
   }, [updateTrigger])
 
   const deletePrize = () => {
     const formData = new FormData();
     formData.append('coordinate', props.coordinate);
     formData.append('fieldID', props.fieldID);
-    axios.post('http://127.0.0.1:8000/api/delete_prize', formData, {headers: {
+    axios.post('http://127.0.0.1:8000/api/delete_prize', formData, {
+      headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': 'Bearer ' + access_token,
-      }})
+      }
+    })
       .then(() => {
         setModalOpen(false);
         if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
           socketRef.current.send(JSON.stringify(socket_message));
           console.log("Message to server");
         } else {
-            socketRef.current.onopen = function(event) {
+          socketRef.current.onopen = function (event) {
             socketRef.current.send(JSON.stringify(socket_message));
           }
         }
@@ -96,10 +98,12 @@ function PrizeCell(props) {
     formData.append('description', description);
     formData.append('imageFile', imageFile);
 
-    axios.post('http://127.0.0.1:8000/api/change_prize', formData, {headers: {
+    axios.post('http://127.0.0.1:8000/api/change_prize', formData, {
+      headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': 'Bearer ' + access_token,
-      }})
+      }
+    })
       .then(() => {
         setModalOpen(false);
         setUpdateTrigger(prevTrigger => prevTrigger + 1);
@@ -131,11 +135,11 @@ function PrizeCell(props) {
   const popover_content = (
     <div>
       <Space direction="vertical">
-        <Image preview={true} src={data.prize_avatar_url} width="2  00px" height="200px" fallback={img_fallback}/>
-        <Space style={{width: "100%"}}>
+        <Image style={{ objectFit: "cover" }} preview={true} src={data.prize_avatar_url} width="200px" height="200px" fallback={img_fallback} />
+        <Space style={{ width: "100%" }}>
           <Button type="dashed" onClick={() => setModalOpen(true)}>Изменить</Button>
           <Popconfirm title="Вы точно хотите удалить?" okText="Да" cancelText="Нет" onConfirm={deletePrize}>
-           <Button danger type="text">Удалить</Button>
+            <Button danger type="text">Удалить</Button>
           </Popconfirm>
         </Space>
       </Space>

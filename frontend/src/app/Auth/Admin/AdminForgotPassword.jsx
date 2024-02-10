@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Card, Button, Input, Space, Tooltip } from "antd";
+import {Card, Button, Input, Space, Tooltip, message} from "antd";
 import { MailOutlined, CodeOutlined, LockOutlined, InfoCircleOutlined, LoginOutlined } from "@ant-design/icons";
+import {useNavigate} from "react-router-dom";
+import axios from "axios";
 // import { useNavigate } from "react-router-dom";
 
 //Styles
@@ -20,65 +22,101 @@ const full_width = { width: "100%" }
 
 function AdminForgotPassword() {
 
-    const [email, setEmail] = useState("");
-    const [code, setCode] = useState("");
-    const [codeDisabled, setCodeDisabled] = useState(true);
-    const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-    const checkEmailClicked = () => {
-        /*
-        Запрос POST:
-        { email }
-        -> { message }
-        в message указаь ошибку или успешнсть
-        */
-    };
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [codeDisabled, setCodeDisabled] = useState(true);
+  const [password, setPassword] = useState("");
+  const email_token_url = 'http://127.0.0.1:8000/api/reset_email_token';
+  const update_url = 'http://127.0.0.1:8000/api/update_pass';
 
-    const recoverClicked = () => {
-        /*
-        Запрос POST:
-        { email, code, password }
-        -> { message, token(s) }
-        в message подробно указаь ошибку или успешнсть (если пароль слабый тоже тут писать)
-        */
-    };
+  const checkEmailClicked = () => {
+    const request = {
+      email: email
+    }
+    axios.post(email_token_url, request ).then(response => {
+      const data = response.data;
+      if (data.message === "Ok") {
+        message.success("Письмо с кодом подтверждения отправлено на вашу почту");
+        setCodeDisabled(false);
+      } else if (data.message === "Пользователь с такой почтой не существует") {
+        message.warning("Пользователь с такой почтой не существует")
+        setCodeDisabled(false);
+      } else if (data.message === "На эту почту уже отправлено подтверждение") {
+        message.warning("На эту почту уже отправлено подтверждение")
+        setCodeDisabled(false);
+      } else {
+        message.error(data.message);
+      }
+    })
+  };
 
-    const password_tooltip = (
-        <>
-            Пароль должен:<br />
-            - быть не короче 8 символов<br />
-            - содержать цифры<br />
-            - содержать заглавные и строчные буквы
-        </>
-    )
+  const recoverClicked = () => {
+    /*
+    Запрос POST:
+    { email, code, password }
+    -> { message, token(s) }
+    в message подробно указаь ошибку или успешнсть (если пароль слабый тоже тут писать)
+    */
+    const request = {
+    email: email,
+    email_token: code,
+    password: password
+   }
+   axios.post(update_url, request).then(response => {
+      message.success("Пароль успешно обновлен");
+      const { access, refresh } = response.data;
+      console.log(response.data);
+      console.log(access, refresh);
+      localStorage.setItem("accessToken", access);
+      localStorage.setItem("refreshToken", refresh);
+      console.log("accessToken:", localStorage.getItem("accessToken"));
+      console.log("refreshToken:", localStorage.getItem("refreshToken"));
+      navigate('/');
+   }).catch(error => {
+    message.error(error.response.data.message);
+   })
 
-    return (
-        <div style={body_div}>
-            <Card title="Новый пароль" hoverable style={card_style} extra={<a href="/adminauth/login">назад</a>}>
-                <Space direction="vertical" size="middle" style={full_width}>
+  };
 
-                    <Space.Compact style={full_width}>
-                        <Input placeholder="Почта" prefix={<MailOutlined />} value={email} onChange={event => setEmail(event.target.value)} />
-                        <Button onClick={checkEmailClicked}>Проверить</Button>
-                    </Space.Compact>
+  const password_tooltip = (
+    <>
+      Пароль должен:<br />
+      - быть не короче 8 символов<br />
+      - содержать цифры<br />
+      - содержать заглавные и строчные буквы
+    </>
+  )
 
-                    <Input placeholder="Код для проверки почты" disabled={codeDisabled} prefix={<CodeOutlined />} value={code} onChange={event => setCode(event.target.value)} />
+  return (
+    <div style={body_div}>
+      <Card title="Новый пароль" hoverable style={card_style} extra={<a href="/userauth/login">назад</a>}>
+        <Space direction="vertical" size="middle" style={full_width}>
 
-                    <Space.Compact style={full_width}>
-                        <Input.Password placeholder="Пароль" prefix={<LockOutlined />} value={password} onChange={event => setPassword(event.target.value)} />
-                        <Tooltip title={password_tooltip}>
-                            <Button icon={<InfoCircleOutlined />} />
-                        </Tooltip>
-                    </Space.Compact>
+          <Space.Compact style={full_width}>
+            <Input placeholder="Почта" prefix={<MailOutlined />} value={email} onChange={event => setEmail(event.target.value)} />
+            <Button onClick={checkEmailClicked}>Проверить</Button>
+          </Space.Compact>
 
-                    <Button type="primary" icon={<LoginOutlined />} size="large" style={full_width} onClick={recoverClicked}>Обновить и войти</Button>
+          <Input placeholder="Код для проверки почты" disabled={codeDisabled} prefix={<CodeOutlined />} value={code} onChange={event => setCode(event.target.value)} />
 
-                </Space>
-            </Card>
-        </div>
-    );
+          <Space.Compact style={full_width}>
+            <Input.Password placeholder="Пароль" prefix={<LockOutlined />} value={password} onChange={event => setPassword(event.target.value)} />
+            <Tooltip title={password_tooltip}>
+              <Button icon={<InfoCircleOutlined />} />
+            </Tooltip>
+          </Space.Compact>
+
+          <Button type="primary" icon={<LoginOutlined />} size="large" style={full_width} onClick={recoverClicked}>Обновить и войти</Button>
+
+        </Space>
+      </Card>
+    </div>
+  );
 
 };
+
 
 
 export default AdminForgotPassword;

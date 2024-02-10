@@ -23,7 +23,7 @@ function UserRegisterForm() {
   const [code, setCode] = useState("");
   const [codeDisabled, setCodeDisabled] = useState(true);
   const [password, setPassword] = useState("");
-  const email_token_url = 'http://127.0.0.1:8000/api/send_email_token'
+  const email_token_url = 'http://127.0.0.1:8000/api/send_email_token';
   const register_url = 'http://127.0.0.1:8000/api/register';
 
 
@@ -56,7 +56,8 @@ function UserRegisterForm() {
     email: email,
     username: name,
     email_token: code,
-    password: password
+    password: password,
+    is_admin_reg: false
    }
    axios.post(register_url, request).then(response => {
       message.success("Пользователь успешно создан");
