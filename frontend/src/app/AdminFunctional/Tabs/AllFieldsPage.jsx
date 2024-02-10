@@ -16,7 +16,7 @@ const body_div = {
 }
 
 const all_fields_block = {
-  flexGrow: 1, 
+  flexGrow: 1,
   padding: "2%",
   display: "flex",
   flexWrap: "Wrap",
@@ -71,10 +71,9 @@ function AllFieldsPage() {
   }
   */
   useEffect(() => {
-    fetch(created_by_admin_url, {headers})
+    fetch(created_by_admin_url, { headers })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         setFieldsData(data);
       })
       .catch((error) => console.error('Error fetching data:', error));
@@ -84,10 +83,10 @@ function AllFieldsPage() {
 
   return (
     <div style={body_div}>
-      <Header selectedTab={2} showEditorTab={false}/>
-      {(fieldsNumber === 0) ? (<NoFields/>) : (
+      <Header selectedTab={2} showEditorTab={false} />
+      {(fieldsNumber === 0) ? (<NoFields />) : (
         <div style={all_fields_block}>
-          
+
           {fieldsData.map((field) => (
             <FieldCard
               key={field.id} // Убедитесь, что каждая карточка имеет уникальный ключ

@@ -1,6 +1,6 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
-import {Card, Avatar, Input, Space, Button, Upload, message} from "antd";
+import { Card, Avatar, Input, Space, Button, Upload, message } from "antd";
 import { UserOutlined, UploadOutlined, SaveOutlined } from "@ant-design/icons"
 import axios from "axios";
 
@@ -27,7 +27,9 @@ const right_block = {
   marginLeft: "10px",
   flexDirection: "column",
   gap: "10px",
-  alignItems: "start"
+  alignItems: "start",
+  maxWidth: "185px",
+  overflowX: "scroll"
 }
 
 function UserSettings() {
@@ -56,13 +58,13 @@ function UserSettings() {
 
 
   const saveTitle = () => {
-    axios.post(update_name_url, { new_username: username }, {headers})
+    axios.post(update_name_url, { new_username: username }, { headers })
       .then(response => {
         console.log(response);
         message.success("Имя успешно изменено");
       })
       .catch(error => {
-        console.error(error);
+        console.error("Error: " + error);
       });
 
   }
@@ -97,7 +99,7 @@ function UserSettings() {
               <Input placeholder="Имя" value={username} onChange={(event) => setUsername(event.target.value)} />
               <Button icon={<SaveOutlined />} onClick={saveTitle}></Button>
             </Space.Compact>
-            <Upload accept=".png,.jpg" maxCount={1} customRequest={({ file }) => { setNewImageFile(file); setUploadDisabled(false) }} >
+            <Upload previewFile={false} accept=".png,.jpg" maxCount={1} customRequest={({ file }) => { setNewImageFile(file); setUploadDisabled(false) }} showUploadList={true}>
               <Button icon={<UploadOutlined />} >Выбрать аватар</Button>
             </Upload>
             <Button disabled={uploadDisabled} type="primary" onClick={saveImage} icon={<SaveOutlined />}>Загрузить</Button>

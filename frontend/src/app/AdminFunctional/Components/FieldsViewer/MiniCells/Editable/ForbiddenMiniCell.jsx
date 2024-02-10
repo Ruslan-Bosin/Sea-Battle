@@ -5,7 +5,6 @@ import { CloseOutlined, } from "@ant-design/icons";
 const body_div = {
   background: "#F5F5F5FF",
   borderRadius: "5px",
-  padding: "5px",
   cursor: "pointer",
   display: "flex",
   justifyContent: "center",

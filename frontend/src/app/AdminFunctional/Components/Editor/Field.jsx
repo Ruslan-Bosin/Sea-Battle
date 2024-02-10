@@ -52,8 +52,6 @@ function Field(props) {
     .then((response) => {
       const data = response.data;
       setFieldData(data);
-      console.log(data);
-      console.log(fieldData);
     })
     .catch((error) => console.error('Error fetching data:', error));
     }, [updateTrigger])

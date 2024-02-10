@@ -31,12 +31,6 @@ function EmptyCell(props) {
 
   const createNewPrizeSumbit = () => {
 
-    console.log(title);
-    console.log(description);
-    console.log(imageFile);
-    console.log(props.coordinate);
-    console.log(props.fieldID);
-
     const formData = new FormData()
     formData.append('avatar', imageFile);
     formData.append('name', title);
@@ -56,10 +50,9 @@ function EmptyCell(props) {
       }
       socket.onopen = function (event) {
         socket.send(JSON.stringify(socket_message));
-        console.log("message to server")
       }
     }).catch(error => {
-      console.log(error);
+      console.log("Error: " + error);
       message.error("Name or title is missing");
     })
     setCreateModalOpen(false);

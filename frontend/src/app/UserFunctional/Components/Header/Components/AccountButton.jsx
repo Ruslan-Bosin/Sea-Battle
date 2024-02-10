@@ -34,12 +34,10 @@ function AccountButton() {
     };
     axios.get(get_user_url, {headers}).then(response => {
       const response_data = response.data;
-      console.log(response);
-      console.log(response_data);
       setUsername(response_data.username);
       setImageUrl(response.data.avatar);
     }).catch(error => {
-      console.log(error);
+      console.log("Error: " + error);
     })
   })
   const [isHover, setIsHover] = useState(false);

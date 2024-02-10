@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Typography } from "antd";
 // import { Image } from "antd";
 import { GiftOutlined } from "@ant-design/icons"
@@ -40,85 +40,15 @@ const additional_info = {
   fontSize: "10px"
 }
 
+const link = {
+  color: "inherit",
+  textDecoration: "inherit",
+  cursor: "inherit"
+}
 
 function FieldCard(props) {
-  const fieldId = props.FieldId
-  console.log(fieldId);
-  /*
-  Запрос POST (c token-ом)
-  { fieldId }
-  -> (пример)
-  {
-      size: 4,
-      editable: true,
-      placements: [
-        {
-          coordinate: 1,
-          status: "Empty"
-        },
-        {
-          coordinate: 2,
-          status: "Forbidden"
-        },
-        {
-          coordinate: 3,
-          status: "Empty"
-        },
-        {
-          coordinate: 4,
-          status: "Empty"
-        },
-        {
-          coordinate: 5,
-          status: "Forbidden"
-        },
-        {
-          coordinate: 6,
-          status: "Prize"
-        },
-        {
-          coordinate: 7,
-          status: "Forbidden"
-        },
-        {
-          coordinate: 8,
-          status: "Empty"
-        },
-        {
-          coordinate: 9,
-          status: "Prize"
-        },
-        {
-          coordinate: 10,
-          status: "Forbidden"
-        },
-        {
-          coordinate: 11,
-          status: "Empty"
-        },
-        {
-          coordinate: 12,
-          status: "Empty"
-        },
-        {
-          coordinate: 13,
-          status: "Empty"
-        },
-        {
-          coordinate: 14,
-          status: "Prize"
-        },
-        {
-          coordinate: 15,
-          status: "Prize"
-        },
-        {
-          coordinate: 16,
-          status: "Prize"
-        },
-      ]
-    }
-  */
+
+  const fieldId = props.FieldId;
 
   const [updateTrigger, setUpdateTrigger] = useState(0);
   const game_info_url = "http://127.0.0.1:8000/api/get_cells_from_game";
@@ -137,7 +67,7 @@ function FieldCard(props) {
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.message === "update_info" || data.message === "update_field") {
-        setUpdateTrigger(prevTrigger => prevTrigger + 1); 
+        setUpdateTrigger(prevTrigger => prevTrigger + 1);
       }
       // Обработайте сообщение от сервера по вашему усмотрению
     };
@@ -153,27 +83,27 @@ function FieldCard(props) {
     const params = {
       'game': fieldId
     }
-    axios.get(game_info_url, {params, headers})
-    .then((response) => {
-      const data = response.data;
-      setFieldData(data);
-      console.log(data);
-      console.log(fieldData);
-    })
-    .catch((error) => console.error('Error fetching data:', error));
-    }, [updateTrigger])
+    axios.get(game_info_url, { params, headers })
+      .then((response) => {
+        const data = response.data;
+        setFieldData(data);
+      })
+      .catch((error) => console.error('Error fetching data:', error));
+  }, [updateTrigger])
 
   return (
-    <div style={body_div}>
-      <Card hoverable bodyStyle={card_body_style}>
-        <MiniField placements={fieldData.placements} size={fieldData.size} editable={fieldData.editable}/>
-        <Title style={title} level={5} maxLength="2">{ fieldData.FieldName }</Title>
-        <Text type="secondary" style={text}>Количество игроков: { fieldData.Players }</Text>
-        <div style={additional_info}>
-          Выбито: {fieldData.GiftOut} из {fieldData.GiftMax}<GiftOutlined />
-        </div>
-      </Card>
-    </div>
+    <a style={link} href={"/admin/editfield/" + fieldId}>
+      <div style={body_div}>
+        <Card hoverable bodyStyle={card_body_style} >
+          <MiniField placements={fieldData.placements} size={fieldData.size} editable={fieldData.editable} />
+          <Title style={title} level={5} maxLength="2">{fieldData.FieldName}</Title>
+          <Text type="secondary" style={text}>Количество игроков: {fieldData.Players}</Text>
+          <div style={additional_info}>
+            Выбито: {fieldData.GiftOut} из {fieldData.GiftMax}<GiftOutlined />
+          </div>
+        </Card>
+      </div>
+    </a>
   );
 }
 

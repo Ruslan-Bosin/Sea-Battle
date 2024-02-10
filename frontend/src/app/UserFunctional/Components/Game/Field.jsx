@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import FieldCell from "./FieldCell";
 import axios from "axios";
@@ -87,26 +87,24 @@ function Field(props) {
       ]
     }
   );
-  
+
   useEffect(() => {
     const socket = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + fieldID);
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log(data);
       const sender_id = data.sender_id;
       const access_token = (localStorage.getItem("accessToken") || "");
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + access_token,
       };
-      axios.get(get_user_url, {headers}).then(response => {
+      axios.get(get_user_url, { headers }).then(response => {
         const response_data = response.data;
         if ((response_data.id !== sender_id) || (response_data.id === sender_id && data.message === "modal_closed")) {
           setUpdateTrigger(prevTrigger => prevTrigger + 1);
-          console.log('This is sender');
         }
       })
-      console.log('Message from server:', data);
+      // console.log('Message from server:', data);
       // Обработайте сообщение от сервера по вашему усмотрению
     };
   }, [])
@@ -120,16 +118,13 @@ function Field(props) {
     const params = {
       'game': fieldID
     }
-    axios.get(game_info_url, {params, headers})
-    .then((response) => {
-      const data = response.data;
-      setFieldData(data);
-      console.log(data);
-
-      console.log(fieldData);
-    })
-    .catch((error) => console.error('Error fetching data:', error));
-    }, [updateTrigger])
+    axios.get(game_info_url, { params, headers })
+      .then((response) => {
+        const data = response.data;
+        setFieldData(data);
+      })
+      .catch((error) => console.error('Error fetching data:', error));
+  }, [updateTrigger])
 
   // Styles with state
   const field_div = {
