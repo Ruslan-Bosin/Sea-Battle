@@ -17,7 +17,7 @@ import AdminForgotPassword from "./app/Auth/Admin/AdminForgotPassword"
 // Utilitarian
 import Primary from './app/UtilitarianPages/Primary';
 import NotFound from './app/UtilitarianPages/NotFound';
-import Unauthorised from "./app/UtilitarianPages/Unauthorised";
+import Forbidden from "./app/UtilitarianPages/Forbidden";
 
 // Admin Functional
 import AdminMainPage from "./app/AdminFunctional/AdminMainPage";
