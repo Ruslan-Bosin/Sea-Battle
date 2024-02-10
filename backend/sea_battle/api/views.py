@@ -106,6 +106,7 @@ class CreateUserView(TokenObtainPairView):
         password = request.data.get('password')
         email_token = request.data.get('email_token')
         admin_code = request.data.get('admin_code')
+        reg_type = request.data.get('type')
 
         if username is None or email is None or password is None:
             return Response({'message': 'This url have 3 required params: username, email, password'}, status=status.HTTP_400_BAD_REQUEST)
@@ -128,11 +129,14 @@ class CreateUserView(TokenObtainPairView):
             return Response({'message': 'Срок действия токена истек'}, status=status.HTTP_400_BAD_REQUEST)
         if str(token.token) != email_token:
             return Response({'message': 'Неправильный токен'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if admin_code != settings.ADMIN_CODE and reg_type == "admin":
+            return Response({'message': 'Неправтльный админ код'})
 
         password = make_password(password)
         
 
-        if admin_code == settings.ADMIN_CODE:
+        if admin_code == settings.ADMIN_CODE and reg_type == "admin":
             user = auth_users.models.User.objects.create(username=username, email=email, password=password)
             admin = auth_users.models.Admins.objects.create(user=user)
             admin.save()
@@ -140,6 +144,7 @@ class CreateUserView(TokenObtainPairView):
         else:
             user = auth_users.models.User.objects.create(username=username, email=email, password=password)
             user.save()
+
         response = super(CreateUserView, self).post(request, *args, **kwargs)
         refresh = RefreshToken.for_user(user)
         response.data['refresh'] = str(refresh)
@@ -161,10 +166,12 @@ class CustomObtainTokenPairView(TokenObtainPairView):
         if api.validators.validate_email(email):
             return Response({"message": "invalid email"}, status=status.HTTP_400_BAD_REQUEST)
         user = authenticate(request, username=email, password=password)
+        admin = auth_users.models.Admins.objects.filter(user=user).first()
         if user is not None:
             response = super(CustomObtainTokenPairView, self).post(request, *args, **kwargs)
             refresh = RefreshToken.for_user(user)
             response.data['refresh'] = str(refresh)
+            response.data['role'] = "admin" if admin is not None else "user"
             return response
         else:
             return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)

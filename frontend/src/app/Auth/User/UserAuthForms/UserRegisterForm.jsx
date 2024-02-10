@@ -56,7 +56,8 @@ function UserRegisterForm() {
     email: email,
     username: name,
     email_token: code,
-    password: password
+    password: password,
+    type: "user"
    }
    axios.post(register_url, request).then(response => {
       message.success("Пользователь успешно создан");

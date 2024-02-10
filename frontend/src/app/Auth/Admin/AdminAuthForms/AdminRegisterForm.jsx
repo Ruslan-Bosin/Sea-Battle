@@ -64,7 +64,8 @@ function AdminRegisterForm() {
       username: title,
       email_token: code,
       password: password,
-      admin_code: secretCode
+      admin_code: secretCode,
+      type: "admin"
      }
      axios.post(register_url, request).then(response => {
         message.success("Пользователь успешно создан");
