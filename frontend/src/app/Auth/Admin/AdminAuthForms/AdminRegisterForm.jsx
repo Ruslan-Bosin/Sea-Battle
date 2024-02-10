@@ -72,10 +72,11 @@ function AdminRegisterForm() {
       const { access, refresh } = response.data;
       localStorage.setItem("accessToken", access);
       localStorage.setItem("refreshToken", refresh);
+      localStorage.setItem("role", "admin");
       navigate('/admin/allfields');
     }).catch(error => {
       message.error(error.response.data.message);
-     })
+    })
   };
 
   const password_tooltip = (

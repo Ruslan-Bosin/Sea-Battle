@@ -3,9 +3,6 @@ import { Navigate, Outlet } from "react-router-dom";
 import axios from 'axios';
 
 
-
-
-
 function AuthRequired() {
   const [authorized, setAuthorized] = useState(true);
   const api_url = "http://127.0.0.1:8000/api/token_check";

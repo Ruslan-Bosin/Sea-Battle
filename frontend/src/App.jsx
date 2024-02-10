@@ -44,8 +44,9 @@ function App() {
   return (
     <Routes>
 
+      <Route path="/" element={<Primary />} />
+
       <Route element={<AuthRequired />}>
-        <Route path="/" element={<Primary />} />
 
         <Route element={<AdminMainPage />}>
           <Route path="/admin/createfield" element={<CreateFieldPage />} />
@@ -70,6 +71,7 @@ function App() {
       <Route element={<UserAuth />}>
         <Route path="/userauth/login" element={<UserLoginForm />} />
         <Route path="/userauth/register" element={<UserRegisterForm />} />
+
       </Route>
 
       <Route path="/userauth/forgotpassword" element={<UserForgotPassword />} />
@@ -80,6 +82,7 @@ function App() {
       </Route>
 
       <Route path="/adminauth/forgotpassword" element={<AdminForgotPassword />} />
+
       <Route path="/forbidden" element={<Forbidden />} />
       <Route path="/*" element={<NotFound />} />
 
