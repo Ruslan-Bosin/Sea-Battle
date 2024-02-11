@@ -43,7 +43,7 @@ function EmptyCell(props) {
         'Authorization': 'Bearer ' + access_token,
       }
     }).then(response => {
-      message.info("Create prize successful");
+      message.info("Приз успешно добавлен");
       const socket = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + props.fieldID);
       const socket_message = {
         "message": "update_field"

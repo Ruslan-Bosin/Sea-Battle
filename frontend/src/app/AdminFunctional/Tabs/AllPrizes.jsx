@@ -116,7 +116,7 @@ function AllPrizes() {
         <List style={full_width} itemLayout="horizontal" dataSource={data} renderItem={(item, index) => (
           <List.Item style={full_width}>
             <Card bodyStyle={card_body} style={full_width} title={item.name} extra={<p>{item.winner} : <a href={"/admin/editfield/" + item.fieldId}>{item.fieldName}</a></p>}>
-              <Image style={image} width={200} height={200} src="error" fallback={img_fallback} />
+              <Image style={image} width={200} height={200} src={item.avatar} fallback={img_fallback} />
               <Paragraph >{item.description}</Paragraph>
             </Card>
           </List.Item>

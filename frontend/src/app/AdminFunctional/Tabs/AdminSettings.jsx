@@ -105,7 +105,7 @@ function AdminSettings() {
     <div style={body_div}>
       <Card title="Настройки" hoverable bodyStyle={card_content} style={card_style} extra={<a href="/">на главную</a>}>
         <Space size="middle">
-          <Avatar shape="square" size={150} src={"http://127.0.0.1:8000" + imageFile} icon={<UserOutlined />} />
+          <Avatar shape="square" size={150} src={imageFile} icon={<UserOutlined />} />
           <div style={right_block}>
             <Space.Compact>
               <Input placeholder="Имя" value={username} onChange={(event) => setUsername(event.target.value)} />

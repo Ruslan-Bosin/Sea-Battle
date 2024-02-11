@@ -509,10 +509,12 @@ class PrizeUploadView(APIView):
         image_file = request.data.get('avatar')
         coordinate = int(request.data.get('coordinate'))
         field_id = int(request.data.get('fieldID'))
+        user = request.user
+        admin = auth_users.models.Admins.objects.filter(user=user).first()
         if not (title and description):
             return Response({'message': 'Name or title is missing.'}, status=400)
 
-        prize = game.models.Prize.objects.create(name=title, description=description, avatar=image_file)
+        prize = game.models.Prize.objects.create(name=title, description=description, avatar=image_file, created_by=admin)
 
         cell = get_object_or_404(game.models.Cell, game_id=field_id, coord=coordinate)
         cell.prize = prize
