@@ -1,12 +1,15 @@
 import React from "react";
 import { useState } from "react";
 import Header from "../Components/Header/Header";
-import { Card, Typography, InputNumber, Button, Input, message } from "antd";
-import { PlusOutlined } from "@ant-design/icons"
+import { Card, Typography, InputNumber, Button, Input, message, Space, Modal, Segmented } from "antd";
+import { PlusOutlined, BookOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons"
 import FieldSizePreview from "../Components/FieldsViewer/FieldSizePreview";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Markdown from 'react-markdown';
+
 const { Text } = Typography;
+const { TextArea } = Input;
 
 
 // Styles
@@ -46,14 +49,12 @@ const input = {
   width: "50px"
 }
 
+const full_width = {
+  width: "100%"
+}
+
 
 function CreateFieldPage() {
-
-  /*
-  Запрос POST (с token-ом)
-  { size }
-  -> { fieldId }
-  */
 
   const navigate = useNavigate();
 
@@ -82,6 +83,15 @@ function CreateFieldPage() {
       });
   }
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [guideText, setGuideText] = useState("Эта игра строится по принципу морского боя, за совершённые покупки на ваш аккаунт начисляются «выстрелы». На виртуальном поле находятся клетки: пустые и содержащие призы. Ваша задача выбрать клетку в которой находится приз, призы не могут стоять в соседних клетках. Дважды «стрелять» одну и ту же клетку запрещено. На поле находитесь не вы одни, поэтому поторопитесь, призы ограничены.")
+  const handleOk = () => {
+    // guideText
+    setIsModalOpen(false);
+  }
+
+  const [tab, setTab] = useState("edit");
+
   return (
     <div style={body_div}>
       <Header selectedTab={1} showEditorTab={false} />
@@ -94,11 +104,18 @@ function CreateFieldPage() {
             <Text>на</Text>
             <InputNumber value={fieldSize} style={input} size="small" disabled />
           </div>
-          <Input placeholder="Название поля" value={fieldName} onChange={(event) => setFieldName(event.target.value)} />
+          <Space.Compact style={full_width}>
+            <Input maxLength={20} placeholder="Название поля" value={fieldName} onChange={(event) => setFieldName(event.target.value)} />
+            <Button onClick={() => { setIsModalOpen(true) }}><BookOutlined /></Button>
+          </Space.Compact>
           <Button icon={<PlusOutlined />} onClick={createField} size="large" type="primary" block>Создать</Button>
         </Card>
       </div>
-    </div>
+      <Modal width="50%" title="Инструкция" open={isModalOpen} onOk={handleOk} onCancel={() => { setIsModalOpen(false) }} cancelText="Отмена" okText="Сохранить">
+        <Segmented style={{ marginBottom: "10px" }} onChange={(value) => setTab(value)} block options={[{ label: 'Редактировать', value: 'edit', icon: <EditOutlined /> }, { label: 'Предпросмотр', value: 'preview', icon: <EyeOutlined /> },]} />
+        {(tab === "edit") ? <TextArea rows={10} value={guideText} style={{ marginBottom: "30px" }} showCount maxLength={1200} onChange={(event) => { setGuideText(event.target.value) }} placeholder="Введите инструкцию: вы можете использовать разметку markdown" /> : <Markdown>{guideText}</Markdown>}
+      </Modal>
+    </div >
   );
 }
 

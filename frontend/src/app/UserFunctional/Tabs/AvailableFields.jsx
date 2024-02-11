@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../Components/Header/Header";
-import NoFields from "../Components/FieldsViewer/NoFields";
+import NoData from "../Components/FieldsViewer/NoData";
 import FieldCard from "../Components/FieldsViewer/FieldCard";
 import axios from "axios"
 
@@ -41,7 +41,7 @@ function AvailableFields() {
     'Authorization': 'Bearer ' + access_token,
   };
   useEffect(() => {
-    fetch(users_games_url, {headers})
+    fetch(users_games_url, { headers })
       .then((response) => response.json())
       .then((data) => {
         setFieldsData(data);
@@ -49,16 +49,16 @@ function AvailableFields() {
       .catch((error) => console.error('Error fetching data:', error));
   }, [updateTrigger]);
 
-    useEffect(() => {
-      axios.get(get_user_url, { headers }).then(response => {
-        const data = response.data;
-        const user_id = data.id;
-        const socket = new WebSocket('ws://127.0.0.1:8000/ws/user/new_game/' + user_id);
-      
-        socket.onmessage = (event) => {
-          setUpdateTrigger(prevTrigger => prevTrigger + 1);
-        };
-      })
+  useEffect(() => {
+    axios.get(get_user_url, { headers }).then(response => {
+      const data = response.data;
+      const user_id = data.id;
+      const socket = new WebSocket('ws://127.0.0.1:8000/ws/user/new_game/' + user_id);
+
+      socket.onmessage = (event) => {
+        setUpdateTrigger(prevTrigger => prevTrigger + 1);
+      };
+    })
 
   }, [])
 
@@ -67,17 +67,13 @@ function AvailableFields() {
   return (
     <div style={body_div}>
       <Header selectedTab={1} showEditorTab={false} />
-      {(fieldsNumber === 0) ? (<NoFields />) : (
+      {(fieldsNumber === 0) ? (<NoData text="Нет полей"/>) : (
         <div style={all_fields_block}>
 
           {fieldsData.map((field) => (
             <FieldCard
               key={field.id}
-              fieldId={field.id} // Убедитесь, что каждая карточка имеет уникальный ключ// Замените на свои данные из API
-              // FieldName={field.name}
-              // Shots={field.shots_quantity} // Замените на свои данные из API
-              // PrizesMax={field.prizes_max}
-              // PrizesOut={field.prizes_out}
+              fieldId={field.id}
             />
           ))}
 

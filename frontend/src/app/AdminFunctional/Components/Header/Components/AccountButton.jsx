@@ -15,16 +15,9 @@ const icon = {
 
 function AccountButton() {
 
-  /*
-  Запрос GET (c token-ом)
-  -> { title, avatar }
-  */
-  // 
-
   const navigate = useNavigate();
 
   const get_user_url = "http://127.0.0.1:8000/api/get_user";
-  // const server_
   const [username, setUsername] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   useEffect(() => {
@@ -100,16 +93,18 @@ function AccountButton() {
     cursor: "pointer"
   }
 
-  // src={<img src={url} alt="avatar" />} for Avatar icon
-
-
+  const limitText = (text) => {
+    if (text.length >= 15) {
+      return text.substr(0, 15) + "...";
+    } else { return text }
+  }
 
   return (
     <Dropdown menu={{ items, onClick, }} trigger={['click']}>
       <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} >
         <Space>
           {(imageUrl === "") ? (<Avatar icon={<UserOutlined />} style={icon} />) : (<Avatar src={<img src={imageUrl} alt="avatar" />} style={icon} />)}
-          {<Text>{username}</Text>}
+          {<Text>{limitText(username)}</Text>}
         </Space>
       </div>
     </Dropdown>

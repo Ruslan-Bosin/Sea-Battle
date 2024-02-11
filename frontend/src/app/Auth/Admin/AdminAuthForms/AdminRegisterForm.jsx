@@ -29,12 +29,6 @@ function AdminRegisterForm() {
   const register_url = 'http://127.0.0.1:8000/api/register'
 
   const checkEmailClicked = () => {
-    /*
-    Запрос POST:
-    { email }
-    -> { message }
-    в message указаь ошибку или успешнсть
-    */
     const request = {
       email: email
     }
@@ -53,12 +47,6 @@ function AdminRegisterForm() {
   };
 
   const registerClicked = () => {
-    /*
-    Запрос POST:
-    { title, email, code, password, secretCode }
-    -> { message, token(s) }
-    в message подробно указаь ошибку или успешнсть (если пароль слабый тоже тут писать)
-    */
     const request = {
       email: email,
       username: title,
@@ -68,7 +56,7 @@ function AdminRegisterForm() {
       is_admin_reg: true
     }
     axios.post(register_url, request).then(response => {
-      message.success("Пользователь успешно создан");
+      message.success("Аккаунт успешно создан");
       const { access, refresh } = response.data;
       localStorage.setItem("accessToken", access);
       localStorage.setItem("refreshToken", refresh);

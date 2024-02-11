@@ -5,6 +5,7 @@ import { Segmented, Card, Progress, Typography, Modal, Button } from "antd";
 import AllPrizesList from "./Lists/AllPrizesList"
 import MyPrizesList from "./Lists/MyPrizesList";
 import axios from "axios";
+import Markdown from 'react-markdown'
 
 
 const { Text } = Typography;
@@ -41,9 +42,6 @@ function InfoViewer(props) {
   const fieldID = props.fieldID;
   const [updateTrigger, setUpdateTrigger] = useState(0);
   const socketRef = useRef(null);
-
-
-  const [isHover, setIsHover] = useState(false);
 
   const [data, setData] = useState({
     field_info: [],
@@ -87,10 +85,11 @@ function InfoViewer(props) {
   const showGuide = () => {
     modal.info({
       title: 'Инструкция',
+      width: "50%",
       content: <div>
-        <Text>
-          Эта игра строится по принципу морского боя, за совершённые покупки на ваш аккаунт начисляются «выстрелы». На виртуальном поле находятся клетки: пустые и содержащие призы. Ваша задача выбрать клетку в которой находится приз, призы не могут стоять в соседних клетках. Дважды «стрелять» одну и ту же клетку запрещено. На поле находитесь не вы одни, поэтому поторопитесь, призы ограничены.
-        </Text>
+        <Markdown>
+          Эта игра строится по **принципу** морского боя, за совершённые покупки на ваш аккаунт начисляются «выстрелы». На виртуальном поле находятся клетки: пустые и содержащие призы. Ваша задача выбрать клетку в которой находится приз, призы не могут стоять в соседних клетках. Дважды «стрелять» одну и ту же клетку запрещено. На поле находитесь не вы одни, поэтому поторопитесь, призы ограничены.
+        </Markdown>
       </div>
     });
   }

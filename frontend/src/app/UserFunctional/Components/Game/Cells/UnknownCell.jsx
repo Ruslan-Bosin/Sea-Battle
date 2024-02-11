@@ -72,108 +72,109 @@ function UnknownCell(props) {
         game_id: props.fieldID,
       },
     })
-    .then(response => {
-      if (response.data.total_shots === 0) {
-        message.error("У вас закончились выстрелы...");
-      return;
-    }
+      .then(response => {
+        if (response.data.total_shots === 0) {
+          message.error("У нет выстрелов...");
+          return;
+        }
 
-      let secondsToGo_initial = 5;
-      let secondsToGo = secondsToGo_initial;
-      const instance = modal.info({
-        centered: true,
-        footer: null,
-        icon: null,
-        title: 'Заряжаем выстрел!',
-        closeIcon: true,
-        closable: true,
-        destroyOnClose: true,
-        afterClose: () => { if (secondsToGo === -1) { check_prize() } },
-        content: <div style={timer_modal}>
-          <Progress type="circle" percent={100 * ((secondsToGo_initial - secondsToGo) / secondsToGo_initial)} />
-          <Text>Выстрел будет произведён через {secondsToGo} сек.</Text>
-        </div>,
-      });
-      const timer = setInterval(() => {
-        secondsToGo -= 1;
-        instance.update({
+        let secondsToGo_initial = 5;
+        let secondsToGo = secondsToGo_initial;
+        const instance = modal.info({
+          centered: true,
+          footer: null,
+          icon: null,
+          title: 'Заряжаем выстрел!',
+          closeIcon: true,
+          closable: true,
+          destroyOnClose: true,
+          afterClose: () => { if (secondsToGo === -1) { check_prize() } },
           content: <div style={timer_modal}>
             <Progress type="circle" percent={100 * ((secondsToGo_initial - secondsToGo) / secondsToGo_initial)} />
             <Text>Выстрел будет произведён через {secondsToGo} сек.</Text>
           </div>,
         });
-      }, 1000);
-      setTimeout(() => {
-        clearInterval(timer);
-        instance.destroy();
-      }, (secondsToGo + 1) * 1000);
-    })
-    .catch(error => {
-      console.error('Error fetching data:', error);
-    });
+        const timer = setInterval(() => {
+          secondsToGo -= 1;
+          instance.update({
+            content: <div style={timer_modal}>
+              <Progress type="circle" percent={100 * ((secondsToGo_initial - secondsToGo) / secondsToGo_initial)} />
+              <Text>Выстрел будет произведён через {secondsToGo} сек.</Text>
+            </div>,
+          });
+        }, 1000);
+        setTimeout(() => {
+          clearInterval(timer);
+          instance.destroy();
+        }, (secondsToGo + 1) * 1000);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
 
 
   };
 
   const check_prize = () => {
-      axios.post(
-        updateQuantityUrl,
-        { game_id: props.fieldID, coord: props.coordinate},
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + access_token,
-          },
-        }
-      )
+    axios.post(
+      updateQuantityUrl,
+      { game_id: props.fieldID, coord: props.coordinate },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + access_token,
+        },
+      }
+    )
       .then(response => {
-      const { prize_name, prize_title, prize_avatar_url, error } = response.data;
-      axios.get(get_user_url, {headers}).then(response => {
-        const user_id = response.data.id;
-        setUserid(user_id);
+        const { prize_name, prize_title, prize_avatar_url, error } = response.data;
+        axios.get(get_user_url, { headers }).then(response => {
+          const user_id = response.data.id;
+          setUserid(user_id);
 
-        socketRef.current = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + props.fieldID);
-        socketRef.current.onopen = function (event) {
-          const socket_message = {
-            message: "update_info",
-            user_id: user_id
+          socketRef.current = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + props.fieldID);
+          socketRef.current.onopen = function (event) {
+            const socket_message = {
+              message: "update_info",
+              user_id: user_id
+            };
+            socketRef.current.send(JSON.stringify(socket_message));
           };
-          socketRef.current.send(JSON.stringify(socket_message));
-        };
-      })
+        })
 
-      if (prize_name && prize_title) {
-        modal.success({
-          centered: true,
-          title: 'Победа!',
-          width: "50%",
-          closeIcon: true,
-          closable: true,
-          destroyOnClose: true,
-          afterClose: ModalClosed,
-          content: <div style={{ display: "flex", flexDirection: "column" }}>
-            <Text>Вы выиграли: <Text strong>{prize_name}</Text></Text>
-            <Image style={{ objectFit: "cover", aspectRatio: "3 / 2" }} preview={true} src={prize_avatar_url} width="100%" fallback={img_fallback} />
-            <Paragraph ellipsis={{ rows: 2, expandable: true, symbol: 'покказать всё' }} type="secondary"><Text type="default">Описание: </Text>{prize_title}</Paragraph>
-          </div>,
-        });
-      } else {
-        modal.error({
-          centered: true,
-          title: 'Промах!',
-          width: "50%",
-          closeIcon: true,
-          closable: true,
-          destroyOnClose: true,
-          afterClose: ModalClosed,
-          content: <div style={{ display: "flex", flexDirection: "column" }}>
-            <Text>В этот раз вам не повезло 😔...<br />Попробуйте ещё раз!</Text>
-          </div>,
-        });
-      }})
-  .catch(error => {
-    console.error('Error updating quantity:', error);
-  });
+        if (prize_name && prize_title) {
+          modal.success({
+            centered: true,
+            title: 'Победа!',
+            width: "50%",
+            closeIcon: true,
+            closable: true,
+            destroyOnClose: true,
+            afterClose: ModalClosed,
+            content: <div style={{ display: "flex", flexDirection: "column" }}>
+              <Text>Вы выиграли: <Text strong>{prize_name}</Text></Text>
+              <Image style={{ objectFit: "cover", aspectRatio: "3 / 2" }} preview={true} src={prize_avatar_url} width="100%" fallback={img_fallback} />
+              <Paragraph ellipsis={{ rows: 2, expandable: true, symbol: 'покказать всё' }} type="secondary"><Text type="default">Описание: </Text>{prize_title}</Paragraph>
+            </div>,
+          });
+        } else {
+          modal.error({
+            centered: true,
+            title: 'Промах!',
+            width: "50%",
+            closeIcon: true,
+            closable: true,
+            destroyOnClose: true,
+            afterClose: ModalClosed,
+            content: <div style={{ display: "flex", flexDirection: "column" }}>
+              <Text>В этот раз вам не повезло 😔...<br />Попробуйте ещё раз!</Text>
+            </div>,
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Error updating quantity:', error);
+      });
   };
 
   return (

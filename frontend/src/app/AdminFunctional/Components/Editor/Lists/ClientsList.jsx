@@ -1,7 +1,8 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
-import { List, Avatar, Modal, InputNumber, message } from "antd"
-import { PlusSquareOutlined, UserOutlined } from "@ant-design/icons"
+import { List, Avatar, Modal, InputNumber, message, Popconfirm } from "antd"
+import { PlusSquareOutlined, UserOutlined, CloseOutlined, CloseCircleFilled } from "@ant-design/icons"
+import NoData from "../../FieldsViewer/NoData";
 import axios from "axios"
 
 // Styles
@@ -13,11 +14,6 @@ const icon = {
 
 function ClientList(props) {
 
-  /*
-  Запрос POST (c token-ом)
-  { fieldId, userId, addCount }
-  -> { message }
-  */
   const socketRef = useRef(null);
   const fieldID = props.fieldID;
   const add_shots_url = "http://127.0.0.1:8000/api/add_shots"
@@ -60,49 +56,28 @@ function ClientList(props) {
     setCurrentClientId(-1);
   };
 
+  const removeClientClicked = (id) => {
+    // console.log(id);
+  };
+
 
   useEffect(() => {
     socketRef.current = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + fieldID);
   }, [])
 
-  const [clients_data, setClients_data] = useState([
-    {
-      id: "id1",
-      name: 'Имя клииента',
-      image_url: "",
-      shots_number: 1
-    },
-    {
-      id: "id2",
-      name: 'Имя клииента',
-      image_url: "",
-      shots_number: 1
-    },
-    {
-      id: "id3",
-      name: 'Имя клииента',
-      image_url: "",
-      shots_number: 1
-    },
-    {
-      id: "id4",
-      name: 'Имя клииента',
-      image_url: "",
-      shots_number: 1
-    },
-  ]);
-
   return (
     <div>
-      <List itemLayout="horizontal" dataSource={props.data.clients} renderItem={(item, index) => (
-        <List.Item actions={[<PlusSquareOutlined onClick={() => { setCurrentClientId(item.id); showModal(); }} />]}>
-          <List.Item.Meta
-            avatar={<Avatar icon={<UserOutlined />} style={icon} src={item.image_url} />}
-            title={item.name}
-            description={`Выстрелов: ${item.shots_number}`}
-          />
-        </List.Item>
-      )} />
+      {(props.data.clients.length === 0) ? (<NoData text="Нет клиентов" />) : (
+        <List itemLayout="horizontal" dataSource={props.data.clients} renderItem={(item, index) => (
+          <List.Item actions={[<Popconfirm icon={<CloseCircleFilled style={{ color: "red" }} />} okButtonProps={{ danger: true }} onConfirm={() => removeClientClicked(item.id)} cancelText="Отменить" okText="Да, удалить" title="Удалить клиента?"><CloseOutlined /></Popconfirm>, <PlusSquareOutlined onClick={() => { setCurrentClientId(item.id); showModal(); }} />]}>
+            <List.Item.Meta
+              avatar={<Avatar icon={<UserOutlined />} style={icon} src={item.image_url} />}
+              title={item.name}
+              description={`Выстрелов: ${item.shots_number}`}
+            />
+          </List.Item>
+        )} />
+      )}
       <Modal title="Добавить выстрелы" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} okText="Добавить" cancelText="Отмена">
         <InputNumber addonBefore="+" defaultValue={1} min={1} value={inputNumberValue} onChange={(value) => setInputNumberValue(value)} />
       </Modal>

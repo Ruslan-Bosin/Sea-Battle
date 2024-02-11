@@ -4,7 +4,7 @@ import { StopTwoTone } from "@ant-design/icons";
 // Styles
 const body_div = {
   background: "#F5F5F5FF",
-  borderRadius: "10px",
+  borderRadius: "5px",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
