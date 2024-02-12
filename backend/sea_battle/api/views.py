@@ -109,9 +109,9 @@ class CreateUserView(TokenObtainPairView):
 
         token = auth_users.models.CheckEmailToken.objects.filter(email=email).first()
         if token is None or token.expired():
-            return Response({'message': 'Срок действия токена истек'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Срок действия кода потверждения почты истек'}, status=status.HTTP_400_BAD_REQUEST)
         if str(token.token) != email_token:
-            return Response({'message': 'Неправильный токен'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Неправильный код подтверждения почты'}, status=status.HTTP_400_BAD_REQUEST)
 
         password = make_password(password)
 
@@ -122,7 +122,7 @@ class CreateUserView(TokenObtainPairView):
                 admin.save()
                 user.save()
             else:
-                return Response({'message': 'Неправильный код'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message': 'Неправильный секретный код'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             user = auth_users.models.User.objects.create(username=username, email=email, password=password)
             user.save()
@@ -192,6 +192,13 @@ class ResetEmailToken(APIView):
             return Response({"message": "Укажите существующий адресс электронной почты"})
         if len(auth_users.models.User.objects.filter(email=email)) == 0:
             return Response({'message': 'Пользователь с такой почтой не существует'})
+        is_admin = request.data.get("is_admin")
+        user = auth_users.models.User.objects.filter(email=email).first()
+        admin = auth_users.models.Admins.objects.filter(user=user).first()
+        if is_admin and not admin:
+            return Response({'message': 'Админа с такой почтой нет'})
+        if not is_admin and admin:
+            return Response({'message': 'Юзера с такой почтой нет'})
 
 
 
@@ -233,9 +240,9 @@ class UpdatePassUserView(TokenObtainPairView):
 
         token = auth_users.models.ResetEmailTokenModels.objects.filter(email=email).first()
         if token is None or token.expired():
-            return Response({'message': 'Срок действия токена истек'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Срок действия кода восстановления истек'}, status=status.HTTP_400_BAD_REQUEST)
         if str(token.token) != email_token:
-            return Response({'message': 'Неправильный токен'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Неправильный код восстановления'}, status=status.HTTP_400_BAD_REQUEST)
 
         password = make_password(password)
         user = auth_users.models.User.objects.filter(email=email).first()
@@ -509,6 +516,8 @@ class AddUser(APIView):
             return Response({"message": "wrong email"})
         if game_instance.users.all().filter(email=email).first() is not None:
             return Response({"message": "this user is already added"})
+        if auth_users.models.Admins.objects.filter(user=user_instance).first():
+            return Response({"message": "Can`t add admin"})
         game_instance.users.add(user_instance)
         game_instance.save()
         return Response({"message": "Ok"})
@@ -566,7 +575,7 @@ class PrizeUploadView(APIView):
         field_id = int(request.data.get('fieldID'))
         user = request.user
         admin = auth_users.models.Admins.objects.filter(user=user).first()
-        if not (title and description):
+        if not title:
             return Response({'message': 'Name or title is missing.'}, status=400)
 
         prize = game.models.Prize.objects.create(name=title, description=description, avatar=image_file, created_by=admin)
@@ -652,10 +661,12 @@ class SupportRequest(APIView):
 
         url = "https://discord.com/api/webhooks/1205224642566950923/nuCofYE5XzEzeREpNzxslsi4LeEgSlQVyxc1DMEo5CaqAKP9rua20ST82A5CLq8Bk4BE"
         data = {
+            "avatar_url": "https://cdn.icon-icons.com/icons2/558/PNG/512/support-avatar_icon-icons.com_53645.png",
             "username": "Support",
-            "content": "Question",
+            "content": f"**Запрос от:** {request.user.email}\n"
+                       f"**Контактный email:** {request.data.get('mail')}\n"
+                       f"**ID пользователя:** {request.user.id}",
             "embeds": [{
-                "title": request.data.get('mail'),
                 "description": request.data.get('description')
             }]
         }

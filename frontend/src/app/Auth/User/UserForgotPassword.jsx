@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Card, Button, Input, Space, Tooltip, message } from "antd";
 import { MailOutlined, CodeOutlined, LockOutlined, InfoCircleOutlined, LoginOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "../../Services/axios-config"
 
 //Styles
@@ -22,8 +22,9 @@ const full_width = { width: "100%" }
 function UserForgotPassword() {
 
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState((searchParams.get("email") || ""));
   const [code, setCode] = useState("");
   const [codeDisabled, setCodeDisabled] = useState(true);
   const [password, setPassword] = useState("");
@@ -32,9 +33,10 @@ function UserForgotPassword() {
 
   const checkEmailClicked = () => {
     const request = {
-      email: email
+      email: email,
+      is_admin: false
     }
-    axios.post(email_token_url, request).then(response => {
+    axios.post(email_token_url, request, ).then(response => {
       const data = response.data;
       if (data.message === "Ok") {
         message.success("Письмо с кодом подтверждения отправлено на вашу почту");
@@ -42,6 +44,10 @@ function UserForgotPassword() {
       } else if (data.message === "На эту почту уже отправлено подтверждение") {
         message.warning("На эту почту уже отправлено подтверждение")
         setCodeDisabled(false);
+      } else if (data.message === "Пользователь с такой почтой не существует") {
+        message.warning("Пользователь с такой почтой не существует")
+      } else if (data.message === "Юзера с такой почтой нет") {
+        message.warning("Юзера с такой почтой нет")
       } else {
         message.error(data.message);
       }

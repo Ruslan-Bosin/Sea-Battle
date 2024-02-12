@@ -46,23 +46,13 @@ function UserLoginForm() {
     }
   }
 
-  /* 
-  Запрос POST:
-  { email, password }
-  -> { message, token(s) }
-  в message указать ошибки при валидации почты или пароля
-  или успешность входа
-  */
-  // navigate("/");
-
-
   return (
     <div style={body_div}>
       <Space direction="vertical" size="middle" style={space_divider}>
         <Input placeholder="Почта" prefix={<MailOutlined />} value={email} onChange={event => setEmail(event.target.value)} />
         <Input.Password placeholder="Пароль" prefix={<LockOutlined />} value={password} onChange={event => setPassword(event.target.value)} />
         <Button type="primary" icon={<LoginOutlined />} size="large" style={full_width} onClick={loginClicked}>Войти</Button>
-        <Button type="link" size="small" style={full_width} href="/userauth/forgotpassword">не помню пароль</Button>
+        <Button type="link" size="small" style={full_width} href={"/userauth/forgotpassword?email=" + email}>не помню пароль</Button>
       </Space>
     </div>
   )

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Card, Button, Input, Space, Tooltip, message } from "antd";
 import { MailOutlined, CodeOutlined, LockOutlined, InfoCircleOutlined, LoginOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "../../Services/axios-config"
 
 //Styles
@@ -22,8 +22,9 @@ const full_width = { width: "100%" }
 function AdminForgotPassword() {
 
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState((searchParams.get("email") || ""));
   const [code, setCode] = useState("");
   const [codeDisabled, setCodeDisabled] = useState(true);
   const [password, setPassword] = useState("");
@@ -32,7 +33,8 @@ function AdminForgotPassword() {
 
   const checkEmailClicked = () => {
     const request = {
-      email: email
+      email: email,
+      is_admin: true
     }
     axios.post(email_token_url, request).then(response => {
       const data = response.data;
@@ -44,6 +46,8 @@ function AdminForgotPassword() {
       } else if (data.message === "На эту почту уже отправлено подтверждение") {
         message.warning("На эту почту уже отправлено подтверждение")
         setCodeDisabled(false);
+      } else if (data.message === "Админа с такой почтой нет") {
+        message.warning("Админа с такой почтой нет")
       } else {
         message.error(data.message);
       }
