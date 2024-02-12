@@ -74,7 +74,7 @@ function UnknownCell(props) {
     })
       .then(response => {
         if (response.data.total_shots === 0) {
-          message.error("У нет выстрелов...");
+          message.error("У вас нет выстрелов...");
           return;
         }
 
@@ -142,7 +142,7 @@ function UnknownCell(props) {
           };
         })
 
-        if (prize_name && prize_title) {
+        if (prize_name) {
           modal.success({
             centered: true,
             title: 'Победа!',
