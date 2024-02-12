@@ -9,11 +9,6 @@ const { Dragger } = Upload;
 
 function EmptyCell(props) {
 
-  /* Запрос POST (c token-ом)
-  { prizeTitle, prizeDescription, prizeImage }
-  -> { message }
-  */
-
   const [isHover, setIsHover] = useState(false);
   const handleMouseEnter = () => { setIsHover(true); };
   const handleMouseLeave = () => { setIsHover(false); };
@@ -53,7 +48,7 @@ function EmptyCell(props) {
       }
     }).catch(error => {
       console.log("Error: " + error);
-      message.error("Имя или описание не заполнено");
+      message.error("Имя не заполнено");
     })
     setCreateModalOpen(false);
   };
