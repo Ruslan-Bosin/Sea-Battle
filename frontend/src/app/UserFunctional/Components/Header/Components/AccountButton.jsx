@@ -98,15 +98,18 @@ function AccountButton() {
     cursor: "pointer"
   }
 
-  // src={<img src={url} alt="avatar" />} for Avatar icon
+  const limitText = (text) => {
+    if (text.length >= 15) {
+      return text.substr(0, 15) + "...";
+    } else { return text }
+  }
 
   return (
     <Dropdown menu={{ items, onClick, }} trigger={['click']}>
       <div style={body_div} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} >
         <Space>
-            {/* <Avatar icon={<UserOutlined/>} style={icon}/> */}
             {(imageUrl === "") ? (<Avatar icon={<UserOutlined/>} style={icon}/>): (<Avatar src={<img src={imageUrl} alt="avatar" />} style={icon}/>)}
-              {<Text>{ username }</Text>}
+              {<Text>{ limitText(username) }</Text>}
           </Space>
       </div>
     </Dropdown>

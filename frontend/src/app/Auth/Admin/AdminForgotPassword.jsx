@@ -1,21 +1,21 @@
 import React, { useState } from "react";
-import {Card, Button, Input, Space, Tooltip, message} from "antd";
+import { Card, Button, Input, Space, Tooltip, message } from "antd";
 import { MailOutlined, CodeOutlined, LockOutlined, InfoCircleOutlined, LoginOutlined } from "@ant-design/icons";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "../../Services/axios-config"
 
 //Styles
 const body_div = {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
+  position: "absolute",
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center"
 }
 const card_style = {
-    width: "400px",
-    minWidth: "250px"
+  width: "400px",
+  minWidth: "250px"
 }
 const full_width = { width: "100%" }
 
@@ -34,14 +34,13 @@ function AdminForgotPassword() {
     const request = {
       email: email
     }
-    axios.post(email_token_url, request ).then(response => {
+    axios.post(email_token_url, request).then(response => {
       const data = response.data;
       if (data.message === "Ok") {
         message.success("Письмо с кодом подтверждения отправлено на вашу почту");
         setCodeDisabled(false);
       } else if (data.message === "Пользователь с такой почтой не существует") {
         message.warning("Пользователь с такой почтой не существует")
-        setCodeDisabled(false);
       } else if (data.message === "На эту почту уже отправлено подтверждение") {
         message.warning("На эту почту уже отправлено подтверждение")
         setCodeDisabled(false);
@@ -58,30 +57,23 @@ function AdminForgotPassword() {
   };
 
   const recoverClicked = () => {
-    /*
-    Запрос POST:
-    { email, code, password }
-    -> { message, token(s) }
-    в message подробно указаь ошибку или успешнсть (если пароль слабый тоже тут писать)
-    */
     const request = {
-    email: email,
-    email_token: code,
-    password: password
-   }
-   axios.post(update_url, request).then(response => {
+      email: email,
+      email_token: code,
+      password: password
+    }
+    axios.post(update_url, request).then(response => {
       message.success("Пароль успешно обновлен");
       const { access, refresh } = response.data;
       console.log(response.data);
       console.log(access, refresh);
       localStorage.setItem("accessToken", access);
       localStorage.setItem("refreshToken", refresh);
-      console.log("accessToken:", localStorage.getItem("accessToken"));
-      console.log("refreshToken:", localStorage.getItem("refreshToken"));
+      localStorage.setItem("role", "admin");
       navigate('/');
-   }).catch(error => {
-    message.error(error.response.data.message);
-   })
+    }).catch(error => {
+      message.error(error.response.data.message);
+    })
 
   };
 
@@ -96,7 +88,7 @@ function AdminForgotPassword() {
 
   return (
     <div style={body_div}>
-      <Card title="Новый пароль" hoverable style={card_style} extra={<a href="/userauth/login">назад</a>}>
+      <Card title="Новый пароль" hoverable style={card_style} extra={<a href="/adminauth/login">назад</a>}>
         <Space direction="vertical" size="middle" style={full_width}>
 
           <Space.Compact style={full_width}>

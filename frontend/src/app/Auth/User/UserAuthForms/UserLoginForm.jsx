@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Input, Button, Space, message } from "antd";
+import { Input, Button, Space, message, Typography } from "antd";
 import { MailOutlined, LockOutlined, LoginOutlined } from "@ant-design/icons"
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
@@ -21,38 +21,39 @@ function UserLoginForm() {
   const [password, setPassword] = useState("");
 
   const loginClicked = async () => {
-      const request_data = {
-        email: email,
-        password: password
-      }
-      try {
-        const response = await axios.post('http://127.0.0.1:8000/api/token', request_data);
-        const { access, refresh, role } = response.data;
-        console.log(response.data);
-        if (role === "user") {
-          // Сохраняем токены в localStorage
-          localStorage.setItem('accessToken', access);
-          localStorage.setItem('refreshToken', refresh);
-          localStorage.setItem('role', 'user');
-          message.success('Вы успешно авторизованы!');
-          navigate('/'); // Переход на главную страницу
-        } else {
-          message.error('Ошибка авторизации. Пожалуйста, проверьте введенные данные.');
-        }
-      } catch(error) {
-        console.error('Ошибка авторизации:', error);
+    message.info(<Typography.Text>Вы использовали данные админа для входа в клиент-аккаунт. <a href="/adminauth/login">Перейти в авторизацию админа</a></Typography.Text>);
+    const request_data = {
+      email: email,
+      password: password
+    }
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/token', request_data);
+      const { access, refresh, role } = response.data;
+      console.log(response.data);
+      if (role === "user") {
+        // Сохраняем токены в localStorage
+        localStorage.setItem('accessToken', access);
+        localStorage.setItem('refreshToken', refresh);
+        localStorage.setItem('role', 'user');
+        message.success('Вы успешно авторизованы!');
+        navigate('/'); // Переход на главную страницу
+      } else {
         message.error('Ошибка авторизации. Пожалуйста, проверьте введенные данные.');
       }
+    } catch (error) {
+      console.error('Ошибка авторизации:', error);
+      message.error('Ошибка авторизации. Пожалуйста, проверьте введенные данные.');
     }
-  
-    /* 
-    Запрос POST:
-    { email, password }
-    -> { message, token(s) }
-    в message указать ошибки при валидации почты или пароля
-    или успешность входа
-    */
-    // navigate("/");
+  }
+
+  /* 
+  Запрос POST:
+  { email, password }
+  -> { message, token(s) }
+  в message указать ошибки при валидации почты или пароля
+  или успешность входа
+  */
+  // navigate("/");
 
 
   return (

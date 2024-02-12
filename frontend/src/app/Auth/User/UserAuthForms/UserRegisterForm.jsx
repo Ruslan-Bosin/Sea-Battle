@@ -55,7 +55,7 @@ function UserRegisterForm() {
       is_admin_reg: false
     }
     axios.post(register_url, request).then(response => {
-      message.success("Пользователь успешно создан");
+      message.success("Аккаунт успешно создан");
       const { access, refresh } = response.data;
       localStorage.setItem("accessToken", access);
       localStorage.setItem("refreshToken", refresh);

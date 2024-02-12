@@ -10,10 +10,10 @@ const empty = {
   justifyContent: "center"
 }
 
-function NoFields() {
+function NoData(props) {
   return (
-      <Empty description="Нет полей" image={Empty.PRESENTED_IMAGE_SIMPLE} style={empty} />
+      <Empty description={props.text} image={Empty.PRESENTED_IMAGE_SIMPLE} style={empty} />
   );
 }
 
-export default NoFields;
+export default NoData;

@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../Components/Header/Header";
-import NoFields from "../Components/FieldsViewer/NoFields";
+import NoData from "../Components/FieldsViewer/NoData";
 import FieldCard from "../Components/FieldsViewer/FieldCard";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -43,36 +43,6 @@ function AllFieldsPage() {
     'Authorization': 'Bearer ' + access_token,
   };
 
-
-  /*
-  Запрос GET (c token-ом)
-  -> (пример) {
-    fieldsNumber: 3,
-    fields: [
-      {
-        id: 1,
-        title: "BlaBlaBla",
-        "usersCount": 0,
-        "prizesWon": 0,
-        "prizesCount": 0
-      },
-      {
-        id: 34,
-        title: "GGBET",
-        "usersCount": 3,
-        "prizesWon": 10,
-        "prizesCount": 20
-      },
-      {
-        id: 35,
-        title: "SKLSJF",
-        "usersCount": 23,
-        "prizesWon": 99,
-        "prizesCount": 100
-      },
-    ]
-  }
-  */
   useEffect(() => {
     axios.get(created_by_admin_url, { headers })
       .then((response) => {
@@ -93,12 +63,12 @@ function AllFieldsPage() {
   return (
     <div style={body_div}>
       <Header selectedTab={2} showEditorTab={false} />
-      {(fieldsNumber === 0) ? (<NoFields />) : (
+      {(fieldsNumber === 0) ? (<NoData text={<p>У вас ещё нет полей<br /><a href="/admin/createfield" style={{ opacity: "50%" }}>Cоздать поле</a></p>} />) : (
         <div style={all_fields_block}>
 
           {fieldsData.map((field) => (
             <FieldCard
-              key={field.id} // Убедитесь, что каждая карточка имеет уникальный ключ
+              key={field.id}
               FieldId={field.id}
             />
           ))}

@@ -32,7 +32,8 @@ function HeaderTab(props) {
     WebkitUserSelect: "none",
     msTouchSelect: "none",
     borderRadius: "5px",
-    cursor: "pointer"
+    cursor: "pointer",
+    minHeight: "28px"
   }
 
   const clicked = () => {
@@ -42,6 +43,8 @@ function HeaderTab(props) {
       } else if (props.tabIndex === 3) {
         navigate("/user/myprizes")
       }
+    } else {
+      window.location.reload(false);
     }
   }
 

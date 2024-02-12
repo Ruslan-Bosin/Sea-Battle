@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Card, Button, Input, Space, Tooltip, message} from "antd";
+import { Card, Button, Input, Space, Tooltip, message } from "antd";
 import { MailOutlined, CodeOutlined, LockOutlined, InfoCircleOutlined, LoginOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import axios from "../../Services/axios-config"
@@ -34,7 +34,7 @@ function UserForgotPassword() {
     const request = {
       email: email
     }
-    axios.post(email_token_url, request ).then(response => {
+    axios.post(email_token_url, request).then(response => {
       const data = response.data;
       if (data.message === "Ok") {
         message.success("Письмо с кодом подтверждения отправлено на вашу почту");
@@ -55,30 +55,23 @@ function UserForgotPassword() {
   };
 
   const recoverClicked = () => {
-    /*
-    Запрос POST:
-    { email, code, password }
-    -> { message, token(s) }
-    в message подробно указаь ошибку или успешнсть (если пароль слабый тоже тут писать)
-    */
     const request = {
-    email: email,
-    email_token: code,
-    password: password
-   }
-   axios.post(update_url, request).then(response => {
+      email: email,
+      email_token: code,
+      password: password
+    }
+    axios.post(update_url, request).then(response => {
       message.success("Пароль успешно обновлен");
       const { access, refresh } = response.data;
       console.log(response.data);
       console.log(access, refresh);
       localStorage.setItem("accessToken", access);
       localStorage.setItem("refreshToken", refresh);
-      console.log("accessToken:", localStorage.getItem("accessToken"));
-      console.log("refreshToken:", localStorage.getItem("refreshToken"));
+      localStorage.setItem("role", "user");
       navigate('/');
-   }).catch(error => {
-    message.error(error.response.data.message);
-   })
+    }).catch(error => {
+      message.error(error.response.data.message);
+    })
 
   };
 

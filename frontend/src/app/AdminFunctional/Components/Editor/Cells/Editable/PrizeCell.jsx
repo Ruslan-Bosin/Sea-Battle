@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { InboxOutlined, GiftTwoTone } from "@ant-design/icons";
+import { InboxOutlined, GiftTwoTone, CloseCircleFilled } from "@ant-design/icons";
 import { Modal, Input, Space, Upload, message, Popover, Image, Button, Popconfirm } from "antd";
 import axios from "axios";
 
@@ -10,23 +10,6 @@ const img_fallback = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYA
 
 function PrizeCell(props) {
   const socketRef = useRef(null);
-
-  /*
-  Запрос POST (c token-ом)
-  { fieldID, coordinate }
-  -> { prizeTitle, prizeImage }
-
-  Запрос POST (c token-ом)
-  { fieldID, coordinate } -> { message } - удаление приза
-
-  Запрос GET (c token-ом)
-  { fieldID, coordinate }
-  -> { prizeTitle, prizeDescription }
-
-  Запрос POST (c token-ом )
-  { fieldID, coordinate }
-  -> { prizeTitle, prizeDescription, prizeImage }
-  */
 
   const [isHover, setIsHover] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -137,8 +120,8 @@ function PrizeCell(props) {
         <Image style={{ objectFit: "cover" }} preview={true} src={data.prize_avatar_url} width="200px" height="200px" fallback={img_fallback} />
         <Space style={{ width: "100%" }}>
           <Button type="dashed" onClick={() => setModalOpen(true)}>Изменить</Button>
-          <Popconfirm title="Вы точно хотите удалить?" okText="Да" cancelText="Нет" onConfirm={deletePrize}>
-            <Button danger type="text">Удалить</Button>
+          <Popconfirm icon={<CloseCircleFilled style={{ color: "red" }} />} okButtonProps={{ danger: true }} title="Вы точно хотите удалить?" okText="Да, удалить" cancelText="Отменить" onConfirm={deletePrize}>
+            <Button danger type="dashed">Удалить</Button>
           </Popconfirm>
         </Space>
       </Space>
@@ -160,7 +143,7 @@ function PrizeCell(props) {
             <p className="ant-upload-drag-icon">
               <InboxOutlined />
             </p>
-            <p className="ant-upload-text">Щелкните или перетащите для добавления фото</p>
+            <p className="ant-upload-text">Щелкните или перетащите для установки нового фото</p>
             <p className="ant-upload-hint">
               Вы можете загрузить фото не больше 2 мегабайт с расширением png или jpg
             </p>

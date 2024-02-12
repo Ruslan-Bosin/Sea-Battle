@@ -99,7 +99,7 @@ function FieldCard(props) {
         <Card hoverable bodyStyle={card_body_style}>
           <MiniField data={fieldData.placements} size={fieldData.size} editable={fieldData.editable} fieldID={fieldId} />
           <Title style={title} level={5} maxLength="2">{fieldData.FieldName}</Title>
-          <Text type="secondary" style={text} > Осталось шотов: {fieldData.Shots} </Text>
+          <Text type="secondary" style={text} > Осталось выстрелов: {fieldData.Shots} </Text>
           <div style={additional_info}>
             Осталось призов: {fieldData.GiftMax - fieldData.GiftOut} из {fieldData.GiftMax}<GiftOutlined />
           </div>

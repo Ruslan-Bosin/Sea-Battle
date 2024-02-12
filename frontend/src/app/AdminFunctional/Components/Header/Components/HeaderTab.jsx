@@ -31,7 +31,8 @@ function HeaderTab(props) {
     WebkitUserSelect: "none",
     msTouchSelect: "none",
     borderRadius: "5px",
-    cursor: "pointer"
+    cursor: "pointer",
+    minHeight: "28px"
   }
 
   const clicked = () => {
@@ -43,6 +44,8 @@ function HeaderTab(props) {
       } else if (props.tabIndex === 4) {
         navigate("/admin/allprizes")
       }
+    } else {
+      window.location.reload(false);
     }
   }
 
