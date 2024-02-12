@@ -109,7 +109,7 @@ class CreateUserView(TokenObtainPairView):
 
         token = auth_users.models.CheckEmailToken.objects.filter(email=email).first()
         if token is None or token.expired():
-            return Response({'message': 'Срок действия токена истек'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Срок действия кода потверждения почты истек'}, status=status.HTTP_400_BAD_REQUEST)
         if str(token.token) != email_token:
             return Response({'message': 'Неправильный код подтверждения почты'}, status=status.HTTP_400_BAD_REQUEST)
 
