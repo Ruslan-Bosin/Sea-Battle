@@ -21,3 +21,6 @@
 > * Рекомендовано использовать python 3.10
 > * Если используете macOS: убедитесь, что активировали `Install Certificates.command` в папке с python, чтобы избежать ошибки ssl
 > * По любым вопросам вы поможете написать нам: https://t.me/SoCuteBoy
+> * Документация по проекту: https://docs.google.com/document/d/1Rd32M7F_dqbrQk0Sqa67o7z2g6YrQA0n/edit?usp=sharing&ouid=106435258248534397148&rtpof=true&sd=true
+> * Видео работы на площадке ВК: https://vk.com/video358414591_456239051?list=ln-zksE4mVK4XzHMYeEOR
+> * Видео работы на площадке YouTube: https://youtu.be/SCWPPOLr_eI

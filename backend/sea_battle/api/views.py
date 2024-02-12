@@ -421,7 +421,6 @@ class MakeShot(APIView):
             return Response(data)
         shot.quantity -= 1
         shot.touched = True
-        print(shot)
         shot.save()
         return Response(ok_data)
 
@@ -438,7 +437,6 @@ class RemoveClientFromGame(APIView):
         if not game_instance.editable:
             return Response({"message": "Пока игра идет пользователей нельзя удалять"})
         shot = game.models.Shots.objects.filter(user=user_instance, game=game_instance).first()
-        print("SHOT", shot)
         ok_data = {"message": "Ok"}
         if shot is not None:
             if shot.touched:
@@ -454,7 +452,6 @@ class RemoveGameView(APIView):
         game_id = request.data.get("game_id")
         
         game_instance = game.models.Game.objects.filter(id=game_id).first()
-        print(game_instance)
         if game_instance is None:
             return Response({"message": "game does not exists"})
         if not game_instance.editable:
