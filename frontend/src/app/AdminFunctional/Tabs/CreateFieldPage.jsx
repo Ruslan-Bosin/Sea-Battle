@@ -78,7 +78,9 @@ function CreateFieldPage() {
         message.success("Поле создано");
       })
       .catch(error => {
-        if (error.message === "refresh failed") {
+        if (error.message === 'Name is missing.') {
+          message.error("Невозможно создать поле без имени");
+        } else if (error.message === "refresh failed") {
           navigate(error.loginUrl);
         } else {
           message.error("Невозможно создать поле");

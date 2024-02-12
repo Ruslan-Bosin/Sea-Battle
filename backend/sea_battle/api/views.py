@@ -520,7 +520,7 @@ class PrizeUploadView(APIView):
         user = request.user
         admin = auth_users.models.Admins.objects.filter(user=user).first()
         if not title:
-            return Response({'message': 'Name or title is missing.'}, status=400)
+            return Response({'message': 'Name is missing.'}, status=400)
 
         prize = game.models.Prize.objects.create(name=title, description=description, avatar=image_file, created_by=admin)
 
@@ -765,6 +765,8 @@ class CreateField(APIView):
     def post(self, request, *args, **kwargs):
         size = int(request.data.get('size'))
         name_field = request.data.get('name')
+        if not name_field:
+            return Response({'message': 'Name is missing.'}, status=400)
         user = request.user
         admin = auth_users.models.Admins.objects.filter(user=user).first()
         new_game = game.models.Game.objects.create(name=name_field, size=size, created_by=admin)
