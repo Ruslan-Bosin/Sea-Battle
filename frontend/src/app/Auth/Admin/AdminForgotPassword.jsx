@@ -33,7 +33,8 @@ function AdminForgotPassword() {
 
   const checkEmailClicked = () => {
     const request = {
-      email: email
+      email: email,
+      is_admin: true
     }
     axios.post(email_token_url, request).then(response => {
       const data = response.data;
@@ -45,6 +46,8 @@ function AdminForgotPassword() {
       } else if (data.message === "На эту почту уже отправлено подтверждение") {
         message.warning("На эту почту уже отправлено подтверждение")
         setCodeDisabled(false);
+      } else if (data.message === "Админа с такой почтой нет") {
+        message.warning("Админа с такой почтой нет")
       } else {
         message.error(data.message);
       }

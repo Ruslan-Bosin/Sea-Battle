@@ -38,6 +38,7 @@ function PrizeCell(props) {
   };
   const [updateTrigger, setUpdateTrigger] = useState(0);
 
+
   useEffect(() => {
     socketRef.current = new WebSocket('ws://127.0.0.1:8000/ws/cell_update/' + props.fieldID);
     axios.get(cell_prize_info, { params, headers })
@@ -137,8 +138,8 @@ function PrizeCell(props) {
       </Popover>
       <Modal zIndex={1031} open={modalOpen} title="Изменение приза" cancelText="Отмена" okText="Обновить" onCancel={() => setModalOpen(false)} onOk={onChangesSubmition}>
         <Space size="small" direction="vertical" style={{ width: "100%" }}>
-          <Input value={title} placeholder="Название приза" onChange={(event) => setTitle(event.target.value)} />
-          <TextArea value={description} placeholder="Описание приза" autoSize={{ minRows: 2, maxRows: 6, }} onChange={(event) => setDescription(event.target.value)} />
+          <Input value={data.prize_name} placeholder="Название приза" onChange={(event) => setTitle(event.target.value)} />
+          <TextArea value={data.prize_title} placeholder="Описание приза" autoSize={{ minRows: 2, maxRows: 6, }} onChange={(event) => setDescription(event.target.value)} />
           <Dragger accept=".png,.jpg" maxCount={1} customRequest={({ file }) => { setImageFile(file) }}>
             <p className="ant-upload-drag-icon">
               <InboxOutlined />

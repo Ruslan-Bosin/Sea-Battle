@@ -43,6 +43,7 @@ function AdminLoginForm() {
       }
     } catch (error) {
       console.error('Ошибка авторизации:', error);
+      message.error('Ошибка авторизации. Пожалуйста, проверьте введенные данные.');
     }
   }
 

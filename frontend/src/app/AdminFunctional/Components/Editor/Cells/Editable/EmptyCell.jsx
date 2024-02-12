@@ -53,7 +53,7 @@ function EmptyCell(props) {
       }
     }).catch(error => {
       console.log("Error: " + error);
-      message.error("Name or title is missing");
+      message.error("Имя или описание не заполнено");
     })
     setCreateModalOpen(false);
   };
