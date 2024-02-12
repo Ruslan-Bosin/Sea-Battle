@@ -35,6 +35,12 @@ class Game(LifecycleModel):
         help_text=_("название поля"),
         max_length=16
     )
+    description = models.TextField(
+        verbose_name=_("описание"),
+        help_text=_("описани поля"),
+        max_length=1200,
+        default=""
+    )
     size = models.IntegerField(
         verbose_name=_("размер"),
         help_text=_("размер поля"),
@@ -122,6 +128,11 @@ class Shots(models.Model):
         on_delete=models.CASCADE,
     )
 
+    touched = models.BooleanField(
+        verbose_name=_("тронутый"),
+        help_text=_("Использовал ли пользователь хоть один выстрел в игре"),
+        default=False
+    )
     class Meta:
         verbose_name_plural = _("выстрелы")
 
