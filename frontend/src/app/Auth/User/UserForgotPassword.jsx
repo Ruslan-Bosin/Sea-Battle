@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Card, Button, Input, Space, Tooltip, message } from "antd";
 import { MailOutlined, CodeOutlined, LockOutlined, InfoCircleOutlined, LoginOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "../../Services/axios-config"
 
 //Styles
@@ -22,8 +22,9 @@ const full_width = { width: "100%" }
 function UserForgotPassword() {
 
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState((searchParams.get("email") || ""));
   const [code, setCode] = useState("");
   const [codeDisabled, setCodeDisabled] = useState(true);
   const [password, setPassword] = useState("");

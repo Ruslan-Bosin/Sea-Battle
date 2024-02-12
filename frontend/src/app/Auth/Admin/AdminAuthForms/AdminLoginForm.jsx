@@ -39,9 +39,9 @@ function AdminLoginForm() {
         message.success('Вы успешно авторизованы!');
         navigate('/'); // Переход на главную страницу
       } else {
-        message.error('Ошибка авторизации. Пожалуйста, проверьте введенные данные.'); 
+        message.error('Ошибка авторизации. Пожалуйста, проверьте введенные данные.');
       }
-    } catch(error) {
+    } catch (error) {
       console.error('Ошибка авторизации:', error);
     }
   }
@@ -52,7 +52,7 @@ function AdminLoginForm() {
         <Input placeholder="Почта" prefix={<MailOutlined />} value={email} onChange={event => setEmail(event.target.value)} />
         <Input.Password placeholder="Пароль" prefix={<LockOutlined />} value={password} onChange={event => setPassword(event.target.value)} />
         <Button type="primary" icon={<LoginOutlined />} size="large" style={full_width} onClick={loginClicked}>Войти</Button>
-        <Button type="link" size="small" style={full_width} href="/adminauth/forgotpassword">не помню пароль</Button>
+        <Button type="link" size="small" style={full_width} href={"/adminauth/forgotpassword?email=" + email}>не помню пароль</Button>
       </Space>
     </div>
   )
