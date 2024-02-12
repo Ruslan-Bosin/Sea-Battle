@@ -71,6 +71,7 @@ function CreateFieldPage() {
     const formData = new FormData();
     formData.append('name', fieldName);
     formData.append('size', fieldSize);
+    formData.append('description', guideText)
 
     axios.post(create_field_url, formData, { headers })
       .then(response => {

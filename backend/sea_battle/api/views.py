@@ -62,7 +62,7 @@ class GetAllForInfoView(APIView):
             instance=users_queryset,
             many=True
         )
-        resp = {"editable": game_instance.editable, "statistics": statistic_data,"clientsNumber": len(users_queryset), "clients": users_serializer.data, "prizesNumber": len(prizes_queryset), "prizes": prizes_serializer.data}
+        resp = {"name": game_instance.name, "description": game_instance.description, "editable": game_instance.editable, "statistics": statistic_data, "clientsNumber": len(users_queryset), "clients": users_serializer.data, "prizesNumber": len(prizes_queryset), "prizes": prizes_serializer.data}
         return Response(resp, status=status.HTTP_200_OK)
 
 
@@ -319,6 +319,7 @@ class UpdateCellAfterShoot(APIView):
         try:
             shot = game.models.Shots.objects.get(user=user, game__id=game_id)
             shot.quantity -= 1
+            shot.touched = True
             shot.save()
             if cell.is_prize and cell.prize:
                 prize_avatar_url = utils.get_absolute_url(
@@ -419,9 +420,64 @@ class MakeShot(APIView):
         if shot.quantity == 0:
             return Response(data)
         shot.quantity -= 1
+        shot.touched = True
+        print(shot)
         shot.save()
         return Response(ok_data)
 
+
+class RemoveClientFromGame(APIView):
+    def post(self, request):
+        user_id, game_id = request.data.get("user_id"), request.data.get("game_id")
+        game_instance = game.models.Game.objects.filter(id=game_id).first()
+        user_instance = auth_users.models.User.objects.filter(id=user_id).first()
+        if game_instance is None:
+            return Response({"message": "Invalid game_id"})
+        if user_instance is None:
+            return Response({"message": "Invalid user_id"})
+        if not game_instance.editable:
+            return Response({"message": "Пока игра идет пользователей нельзя удалять"})
+        shot = game.models.Shots.objects.filter(user=user_instance, game=game_instance).first()
+        print("SHOT", shot)
+        ok_data = {"message": "Ok"}
+        if shot is not None:
+            if shot.touched:
+                return Response({"message": "Этот пользователь совершил выстрел"})
+            else:        
+                shot.delete()
+        user_instance.games.remove(game_instance)
+        return Response(ok_data)
+    
+class RemoveGameView(APIView):
+
+    def post(self, request):
+        game_id = request.data.get("game_id")
+        
+        game_instance = game.models.Game.objects.filter(id=game_id).first()
+        print(game_instance)
+        if game_instance is None:
+            return Response({"message": "game does not exists"})
+        if not game_instance.editable:
+            return Response({"message": "Игра уже идет"})
+        game_instance.delete()
+        return Response({"message": "Ok"})
+    
+class EditField(APIView):
+
+    def post(self, request):
+        game_id = request.data.get("game_id")
+        new_name = request.data.get("name")
+        new_description = request.data.get("description")
+        game_instance = game.models.Game.objects.filter(id=game_id).first()
+        if game_instance is None:
+            return Response({"message": "game does not exists"})
+        if new_name == "":
+            return Response({"message": "Нельзя сделать название игры пустым"})
+        game_instance.name = new_name
+        game_instance.description = new_description
+        game_instance.save()
+        return Response({"message": "Ok"})
+        
 
 class AddShots(APIView):
     def post(self, request):
@@ -520,7 +576,7 @@ class PrizeUploadView(APIView):
         user = request.user
         admin = auth_users.models.Admins.objects.filter(user=user).first()
         if not title:
-            return Response({'message': 'Name is missing.'}, status=400)
+            return Response({'message': 'Name or title is missing.'}, status=400)
 
         prize = game.models.Prize.objects.create(name=title, description=description, avatar=image_file, created_by=admin)
 
@@ -646,6 +702,7 @@ class GetUserInfoViewer(APIView):
 
         field_info = {
             "name": game_instance.name,
+            "description": game_instance.description,
             "creator": game_instance.created_by.user.username if game_instance.created_by else None,
         }
 
@@ -765,11 +822,12 @@ class CreateField(APIView):
     def post(self, request, *args, **kwargs):
         size = int(request.data.get('size'))
         name_field = request.data.get('name')
+        description = request.data.get('description')
         if not name_field:
             return Response({'message': 'Name is missing.'}, status=400)
         user = request.user
         admin = auth_users.models.Admins.objects.filter(user=user).first()
-        new_game = game.models.Game.objects.create(name=name_field, size=size, created_by=admin)
+        new_game = game.models.Game.objects.create(name=name_field, description=description, size=size, created_by=admin)
         new_game.save()
 
         return Response({'message': 'error'}, status=201)

@@ -39,6 +39,8 @@ function InfoViewer(props) {
   const add_user_url = "http://127.0.0.1:8000/api/add_user_to_game";
   const get_statistic = "http://127.0.0.1:8000/api/get_game_info_admin";
   const get_user_url = "http://127.0.0.1:8000/api/get_user";
+  const upfate_field_url = "http://127.0.0.1:8000/api/editfield"
+  const delete_field_url = "http://127.0.0.1:8000/api/remove_game"
   const params = {
     game: fieldID
   }
@@ -103,15 +105,74 @@ function InfoViewer(props) {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const showSettingsModal = () => { setIsSettingsModalOpen(true); };
   const [inputFieldNameValue, setInputFieldNameValue] = useState(""); // загрузить в useEffect
+  const [guideText, setGuideText] = useState("");
   const handleSettingsOk = () => {
-    // inputFieldNameValue
-    setIsSettingsModalOpen(false);
+    const request_data = {
+      game_id: fieldID,
+      name: inputFieldNameValue,
+      description: guideText
+    }
+    axios.post(upfate_field_url, request_data, {headers}).then(response => {
+      const data = response.data;
+      if (data.message !== "Ok") {
+       message.error(data.message); 
+      } else {
+        const socket_message = {
+          message: "added_user",
+        }
+        if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+          socketRef.current.send(JSON.stringify(socket_message));
+        } else {
+          socketRef.current.onopen = function (event) {
+            socketRef.current.send(JSON.stringify(socket_message));
+          }
+        }
+        message.success("Данные поля успешно изменены")
+        setIsSettingsModalOpen(false);
+      }
+    }).catch(error => {
+      if (error.message === "refresh failed") {
+        navigate(error.loginUrl);
+      } else {
+        console.log(error);
+      }
+    })
+
   };
   const deleteFieldClicked = () => {
-
+    const request_data = {
+      game_id: fieldID
+    }
+    axios.post(delete_field_url, request_data, {headers}).then(response => {
+      const data = response.data;
+      if (data.message !== "Ok") {
+        message.error(data.message)
+      } else {
+        const socket_message = {
+          message: "added_user",
+        }
+        if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+          socketRef.current.send(JSON.stringify(socket_message));
+        } else {
+          socketRef.current.onopen = function (event) {
+            socketRef.current.send(JSON.stringify(socket_message));
+          }
+        }
+        message.success("Поле удалено");
+        navigate("/admin/allfields");
+      }
+    }).catch(error => {
+      if (error.message === "refresh failed") {
+        navigate(error.loginUrl);
+      } else {
+        console.log(error);
+      }
+    })
   };
 
   const [data, setData] = useState({
+    name: "",
+    description: "",
     editable: true,
     statistics: {
       shootsNumber: 1,
@@ -142,6 +203,8 @@ function InfoViewer(props) {
       const data = response.data;
       setInfo(data);
       setData(data);
+      setInputFieldNameValue(data.name);
+      setGuideText(data.description);
     }).catch(error => {
       if (error.message === "refresh failed") {
         navigate(error.loginUrl);
@@ -165,7 +228,6 @@ function InfoViewer(props) {
     },
   ]
 
-  const [guideText, setGuideText] = useState("");
 
   const [tab, setTab] = useState("edit");
 
@@ -194,7 +256,7 @@ function InfoViewer(props) {
           <Segmented onChange={(value) => setTab(value)} block options={[{ label: 'Редактировать', value: 'edit', icon: <EditOutlined /> }, { label: 'Предпросмотр', value: 'preview', icon: <EyeOutlined /> },]} />
           {(tab === "edit") ? <TextArea rows={10} value={guideText} showCount maxLength={1200} onChange={(event) => { setGuideText(event.target.value) }} placeholder="Введите инструкцию: вы можете использовать разметку markdown" /> : <Markdown>{guideText}</Markdown>}
           <Popconfirm icon={<CloseCircleFilled style={{ color: "red" }} />} okButtonProps={{ danger: true }} title="Удалить?" description="Вы уверены, что хотите удалить поле вместе с призами и клиентами привязанными к нему" okText="Да, удалить" cancelText="Отменить" onConfirm={deleteFieldClicked}>
-            <Button type="dashed" danger={true}>Удалиить поле</Button>
+            <Button type="dashed" danger={true}>Удалить поле</Button>
           </Popconfirm>
         </Space>
       </Modal>

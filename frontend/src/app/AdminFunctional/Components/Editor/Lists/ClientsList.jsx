@@ -4,6 +4,7 @@ import { List, Avatar, Modal, InputNumber, message, Popconfirm } from "antd"
 import { PlusSquareOutlined, UserOutlined, CloseOutlined, CloseCircleFilled } from "@ant-design/icons"
 import NoData from "../../FieldsViewer/NoData";
 import axios from "axios"
+import { Navigate, useNavigate } from "react-router";
 
 // Styles
 const icon = {
@@ -13,10 +14,16 @@ const icon = {
 }
 
 function ClientList(props) {
-
+  const navigate = useNavigate();
   const socketRef = useRef(null);
   const fieldID = props.fieldID;
   const add_shots_url = "http://127.0.0.1:8000/api/add_shots"
+  const remove_user_url = "http://127.0.0.1:8000/api/remove_user_from_game"
+  const access_token = (localStorage.getItem("accessToken") || "");
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + access_token,
+  }
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentClientId, setCurrentClientId] = useState(-1);
   const [inputNumberValue, setInputNumberValue] = useState(1);
@@ -30,14 +37,10 @@ function ClientList(props) {
       user: userId,
       game: fieldID
     }
-    const access_token = (localStorage.getItem("accessToken") || "");
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + access_token,
-    }
     axios.post(add_shots_url, request_data, { headers }).then(response => {
       const data = response.data;
-      if (data.message != "Ok") {
+      if (data.message !== "Ok") {
+        message.error(data.message)
       } else {
         const socket_message = {
           message: "added_user",
@@ -50,6 +53,12 @@ function ClientList(props) {
           }
         }
       }
+    }).catch(error => {
+      if (error.message === "refresh failed") {
+        navigate(error.loginUrl);
+      } else {
+        console.log(error);
+      }
     })
     setIsModalOpen(false);
     setInputNumberValue(1);
@@ -57,6 +66,35 @@ function ClientList(props) {
   };
 
   const removeClientClicked = (id) => {
+    const request_data = {
+      user_id: id,
+      game_id: fieldID
+    }
+    axios.post(remove_user_url, request_data, {headers}).then(response => {
+      const data = response.data;
+      if (data.message !== "Ok") {
+        console.log(data);
+        message.error(data.message);
+      } else {
+        message.success("Пользователь удален.");
+        const socket_message = {
+          message: "added_user",
+        }
+        if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+          socketRef.current.send(JSON.stringify(socket_message));
+        } else {
+          socketRef.current.onopen = function (event) {
+            socketRef.current.send(JSON.stringify(socket_message));
+          }
+        }
+      }
+    }).catch(error => {
+      if (error.message === "refresh failed") {
+        navigate(error.loginUrl);
+      } else {
+        console.log(error);
+      }
+    })
     // console.log(id);
   };
 
