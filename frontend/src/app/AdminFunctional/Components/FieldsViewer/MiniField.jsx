@@ -1,7 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
 import MiniFieldCell from "./MiniFieldCell";
-import axios from "axios"
 
 // Styles
 const body_div = {

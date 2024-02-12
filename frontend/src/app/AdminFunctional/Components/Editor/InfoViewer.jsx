@@ -3,7 +3,8 @@ import { useState } from "react";
 import { Alert, Card, Progress, Typography, Collapse, Button, Modal, Input, message } from "antd"
 import ClientList from "./Lists/ClientsList";
 import PrizesList from "./Lists/PrizesList";
-import axios from "axios"
+import { useNavigate } from "react-router-dom";
+import axios from "../../../Services/axios-config"
 
 const { Text } = Typography;
 
@@ -26,7 +27,7 @@ const progress_title = { fontSize: "10px" };
 const button = { width: "90%", margin: "0% 5%", marginBottom: "5%" }
 
 function InfoViewer(props) {
-
+  const navigate = useNavigate();
   /*
   Запрос через сокет (c token-ом)
   { fieldId }
@@ -118,6 +119,12 @@ function InfoViewer(props) {
           }
         })
       }
+    }).catch(error => {
+      if (error.message === "refresh failed") {
+        navigate(error.loginUrl);
+      } else {
+        console.log(error);
+      }
     })
 
 
@@ -174,6 +181,12 @@ function InfoViewer(props) {
       const data = response.data;
       setInfo(data);
       setData(data);
+    }).catch(error => {
+      if (error.message === "refresh failed") {
+        navigate(error.loginUrl);
+      } else {
+        console.log(error);
+      }
     })
   }, [updateTrigger])
 

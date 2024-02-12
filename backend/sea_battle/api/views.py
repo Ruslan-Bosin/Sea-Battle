@@ -349,7 +349,6 @@ class GetShots(APIView):
         return Response(response_data)
 
 class GetCellsFromGame(APIView):
-    permission_classes = [AllowAny]
     def get(self, request):
         game_id = request.GET.get('game')
         user_id = request.user.id

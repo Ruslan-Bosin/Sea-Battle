@@ -4,6 +4,7 @@ import { UnorderedListOutlined, ShoppingOutlined, BookOutlined } from "@ant-desi
 import { Segmented, Card, Progress, Typography, Modal, Button } from "antd";
 import AllPrizesList from "./Lists/AllPrizesList"
 import MyPrizesList from "./Lists/MyPrizesList";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 
@@ -37,6 +38,7 @@ const shoots_count = {
 }
 
 function InfoViewer(props) {
+  const navigate = useNavigate();
   const [modal, contextHolder] = Modal.useModal();
   const fieldID = props.fieldID;
   const [updateTrigger, setUpdateTrigger] = useState(0);
@@ -79,7 +81,13 @@ function InfoViewer(props) {
         setData(response.data);
 
       })
-      .catch((error) => console.error('Error fetching data:', error));
+      .catch(error => {
+        if (error.message === "refresh failed") {
+          navigate(error.loginUrl);
+        } else {
+          console.error("Error: ", error);
+        }
+      });
   }, [updateTrigger])
 
   const [tab, setTab] = useState("all");

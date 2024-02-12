@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react";
 import Header from "../Components/Header/Header";
 import NoFields from "../Components/FieldsViewer/NoFields";
 import FieldCard from "../Components/FieldsViewer/FieldCard";
-import axios from "axios"
+import axios from "../../Services/axios-config"
+import { useNavigate } from "react-router-dom";
 
 //Styles
 const body_div = {
@@ -30,6 +31,7 @@ const space_fill = {
 }
 
 function AvailableFields() {
+  const navigate = useNavigate();
   const [fieldsData, setFieldsData] = useState([]);
   const [updateTrigger, setUpdateTrigger] = useState(0);
 
@@ -41,12 +43,18 @@ function AvailableFields() {
     'Authorization': 'Bearer ' + access_token,
   };
   useEffect(() => {
-    fetch(users_games_url, {headers})
-      .then((response) => response.json())
-      .then((data) => {
+    axios.get(users_games_url, {headers})
+      .then((response) => {
+        const data = response.data;
         setFieldsData(data);
       })
-      .catch((error) => console.error('Error fetching data:', error));
+      .catch(error => {
+        if (error.message === "refresh failed") {
+          navigate(error.loginUrl);
+        } else {
+          console.error("Error: ", error);
+        }
+      });
   }, [updateTrigger]);
 
     useEffect(() => {
@@ -58,6 +66,12 @@ function AvailableFields() {
         socket.onmessage = (event) => {
           setUpdateTrigger(prevTrigger => prevTrigger + 1);
         };
+      }).catch(error => {
+        if (error.message === "refresh failed") {
+          navigate(error.loginUrl);
+        } else {
+          console.error("Error: ", error);
+        }
       })
 
   }, [])

@@ -3,6 +3,8 @@ import Header from "../Components/Header/Header";
 import NoFields from "../Components/FieldsViewer/NoFields";
 import FieldCard from "../Components/FieldsViewer/FieldCard";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "../../Services/axios-config"
 
 
 //Styles
@@ -32,6 +34,7 @@ const space_fill = {
 
 function AllFieldsPage() {
   const [fieldsData, setFieldsData] = useState([]);
+  const navigate = useNavigate()
 
   const created_by_admin_url = "http://127.0.0.1:8000/api/get_admin_created_games";
   const access_token = (localStorage.getItem("accessToken"));
@@ -71,12 +74,18 @@ function AllFieldsPage() {
   }
   */
   useEffect(() => {
-    fetch(created_by_admin_url, { headers })
-      .then((response) => response.json())
-      .then((data) => {
+    axios.get(created_by_admin_url, { headers })
+      .then((response) => {
+        const data = response.data
         setFieldsData(data);
       })
-      .catch((error) => console.error('Error fetching data:', error));
+      .catch(error => {
+        if (error.message === "refresh failed") {
+          navigate(error.loginUrl);
+        } else {
+          console.log(error);
+        }
+      });
   }, []);
 
   const fieldsNumber = fieldsData.length;

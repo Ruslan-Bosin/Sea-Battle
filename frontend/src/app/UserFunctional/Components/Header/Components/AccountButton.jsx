@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Avatar, Typography, Space, Dropdown } from "antd"
 import { UserOutlined, IdcardOutlined, MessageOutlined, LogoutOutlined } from "@ant-design/icons"
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../../../../Services/axios-config"
 const { Text } = Typography;
 
 //Styles
@@ -30,8 +30,13 @@ function AccountButton() {
       const response_data = response.data;
       setUsername(response_data.username);
       setImageUrl(response.data.avatar);
+      console.log(response.data);
     }).catch(error => {
-      console.log("Error: " + error);
+      if (error.message === "refresh failed") {
+        navigate(error.loginUrl);
+      } else {
+        console.error("Error: ", error);
+      }
     })
   })
   const [isHover, setIsHover] = useState(false);

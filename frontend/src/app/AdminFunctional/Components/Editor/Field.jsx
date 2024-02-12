@@ -1,7 +1,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import FieldCell from "./FieldCell";
-import axios from "axios"
+import { useNavigate } from "react-router-dom";
+import axios from "../../../Services/axios-config"
 
 // Styles
 const body_div = {
@@ -13,6 +14,7 @@ const body_div = {
 }
 
 function Field(props) {
+  const navigate = useNavigate();
   /* Запрос через сокет (c token-ом)
   { fieldID }
   -> json как в fieldData и message */
@@ -53,7 +55,13 @@ function Field(props) {
       const data = response.data;
       setFieldData(data);
     })
-    .catch((error) => console.error('Error fetching data:', error));
+    .catch((error) => {
+      if (error.message === "refresh failed") {
+        navigate(error.loginUrl);
+      } else {
+        console.log(error);
+      }
+    });
     }, [updateTrigger])
 
   // Styles with state

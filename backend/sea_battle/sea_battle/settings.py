@@ -38,7 +38,7 @@ ADMIN_CODE = os.getenv("ADMIN_CODE", "admin")
 PASSWORD_RESET_TIME = os.getenv("PASSWORD_RESET_TIME", 5)
 
 ACTIVATION_URL_EXPIRE_TIME = os.getenv(
-    'ACTIVATION_URL_EXPIRE_TIME', '00 12:00:00'
+    'ACTIVATION_URL_EXPIRE_TIME', '00 00:30:00'
 )
 
 AUTH_USER_MODEL = "auth_users.User"
@@ -46,10 +46,6 @@ AUTH_USER_MODEL = "auth_users.User"
 AUTHENTICATION_BACKENDS = (
         'django.contrib.auth.backends.ModelBackend',
     )
-
-# AUTHENTICATION_BACKENDS = (
-#         'django.contrib.auth.backends.ModelBackend',
-#     )
 
 
 REST_FRAMEWORK = {
@@ -77,8 +73,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1), # hours=1 seconds=3
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1), # days=1 sconds=5
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=60),
     'ROTATE_REFRESH_TOKENS': False,

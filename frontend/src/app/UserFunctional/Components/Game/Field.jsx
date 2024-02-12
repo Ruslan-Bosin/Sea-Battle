@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import FieldCell from "./FieldCell";
-import axios from "axios";
+import axios from "../../../Services/axios-config";
+import { useNavigate } from "react-router-dom";
 
 // Styles
 const body_div = {
@@ -13,6 +14,7 @@ const body_div = {
 }
 
 function Field(props) {
+  const navigate = useNavigate();
   const get_user_url = "http://127.0.0.1:8000/api/get_user"
   const fieldID = props.fieldID;
   const [updateTrigger, setUpdateTrigger] = useState(0);
@@ -103,6 +105,12 @@ function Field(props) {
         if ((response_data.id !== sender_id) || (response_data.id === sender_id && data.message === "modal_closed")) {
           setUpdateTrigger(prevTrigger => prevTrigger + 1);
         }
+      }).catch(error => {
+        if (error.message === "refresh failed") {
+          navigate(error.loginUrl);
+        } else {
+          console.error("Error: ", error);
+        }
       })
       // console.log('Message from server:', data);
       // Обработайте сообщение от сервера по вашему усмотрению
@@ -123,7 +131,13 @@ function Field(props) {
         const data = response.data;
         setFieldData(data);
       })
-      .catch((error) => console.error('Error fetching data:', error));
+      .catch(error => {
+        if (error.message === "refresh failed") {
+          navigate(error.loginUrl);
+        } else {
+          console.error("Error: ", error);
+        }
+      });
   }, [updateTrigger])
 
   // Styles with state

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {Card, Button, Input, Space, Tooltip, message} from "antd";
 import { MailOutlined, CodeOutlined, LockOutlined, InfoCircleOutlined, LoginOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../../Services/axios-config"
 
 //Styles
 const body_div = {
@@ -39,14 +39,17 @@ function UserForgotPassword() {
       if (data.message === "Ok") {
         message.success("Письмо с кодом подтверждения отправлено на вашу почту");
         setCodeDisabled(false);
-      } else if (data.message === "Пользователь с такой почтой не существует") {
-        message.warning("Пользователь с такой почтой не существует")
-        setCodeDisabled(false);
       } else if (data.message === "На эту почту уже отправлено подтверждение") {
         message.warning("На эту почту уже отправлено подтверждение")
         setCodeDisabled(false);
       } else {
         message.error(data.message);
+      }
+    }).catch(error => {
+      if (error.message === "refresh failed") {
+        navigate(error.loginUrl);
+      } else {
+        console.error("Error: ", error);
       }
     })
   };

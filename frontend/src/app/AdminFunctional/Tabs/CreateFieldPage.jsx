@@ -4,7 +4,7 @@ import Header from "../Components/Header/Header";
 import { Card, Typography, InputNumber, Button, Input, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons"
 import FieldSizePreview from "../Components/FieldsViewer/FieldSizePreview";
-import axios from "axios";
+import axios from "../../Services/axios-config"
 import { useNavigate } from "react-router-dom";
 const { Text } = Typography;
 
@@ -77,8 +77,12 @@ function CreateFieldPage() {
         message.success("Поле создано");
       })
       .catch(error => {
-        message.error("Невозможно создать поле");
-        console.error("Error: ", error);
+        if (error.message === "refresh failed") {
+          navigate(error.loginUrl);
+        } else {
+          message.error("Невозможно создать поле");
+          console.error("Error: ", error);
+        }
       });
   }
 

@@ -3,7 +3,10 @@ import { Card, Typography } from "antd";
 // import { Image } from "antd";
 import { GiftOutlined } from "@ant-design/icons"
 import MiniField from "./MiniField";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import axios from "../../../Services/axios-config"
+
+
 const { Title, Text } = Typography;
 
 //Styles
@@ -47,7 +50,7 @@ const link = {
 }
 
 function FieldCard(props) {
-
+  const navigate = useNavigate();
   const fieldId = props.FieldId;
 
   const [updateTrigger, setUpdateTrigger] = useState(0);
@@ -88,7 +91,13 @@ function FieldCard(props) {
         const data = response.data;
         setFieldData(data);
       })
-      .catch((error) => console.error('Error fetching data:', error));
+      .catch((error) => {
+        if (error.message === "refresh failed") {
+          navigate(error.loginUrl);
+        } else {
+          console.error('Error fetching data:', error)
+        }
+      });
   }, [updateTrigger])
 
   return (

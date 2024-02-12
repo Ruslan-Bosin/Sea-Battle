@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import {Card, Button, Input, Space, Tooltip, message} from "antd";
 import { MailOutlined, CodeOutlined, LockOutlined, InfoCircleOutlined, LoginOutlined } from "@ant-design/icons";
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import axios from "../../Services/axios-config"
 
 //Styles
 const body_div = {
@@ -48,6 +47,12 @@ function AdminForgotPassword() {
         setCodeDisabled(false);
       } else {
         message.error(data.message);
+      }
+    }).catch(error => {
+      if (error.message === "refresh failed") {
+        navigate(error.loginUrl);
+      } else {
+        console.error("Error: ", error);
       }
     })
   };

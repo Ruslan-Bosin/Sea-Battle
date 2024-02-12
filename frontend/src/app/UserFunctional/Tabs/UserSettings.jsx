@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { Card, Avatar, Input, Space, Button, Upload, message } from "antd";
 import { UserOutlined, UploadOutlined, SaveOutlined } from "@ant-design/icons"
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import axios from "../../Services/axios-config"
 
 
 //Styles
@@ -33,7 +34,7 @@ const right_block = {
 }
 
 function UserSettings() {
-
+  const navigate = useNavigate();
   const [imageFile, setImageFile] = useState("");
   const [newImageFile, setNewImageFile] = useState("");
   const [username, setUsername] = useState("Не загрузилось имя");
@@ -53,6 +54,12 @@ function UserSettings() {
 
       setUsername(response.data.username);
       setImageFile(response.data.avatar);
+    }).catch(error => {
+      if (error.message === "refresh failed") {
+        navigate(error.loginUrl);
+      } else {
+        console.error("Error: ", error);
+      }
     })
   }, [])
 
@@ -64,7 +71,11 @@ function UserSettings() {
         message.success("Имя успешно изменено");
       })
       .catch(error => {
-        console.error("Error: " + error);
+        if (error.message === "refresh failed") {
+          navigate(error.loginUrl);
+        } else {
+          console.error("Error: ", error);
+        }
       });
 
   }
@@ -84,7 +95,11 @@ function UserSettings() {
         window.location.reload();
       })
       .catch(error => {
-        console.error(error);
+        if (error.message === "refresh failed") {
+          navigate(error.loginUrl);
+        } else {
+          console.error("Error: ", error);
+        }
       });
   }
 

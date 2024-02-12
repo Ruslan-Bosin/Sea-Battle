@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { Card, Input, Button, Space, message } from "antd";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../../Services/axios-config"
 const { TextArea } = Input;
 
 
@@ -46,7 +46,11 @@ function UserSupport() {
         navigate("/");
       })
       .catch(error => {
-        console.error('Ошибка:', error);
+        if (error.message === "refresh failed") {
+          navigate(error.loginUrl);
+        } else {
+          console.error("Error: ", error);
+        }
       });
   };
 
