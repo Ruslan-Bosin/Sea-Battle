@@ -84,9 +84,11 @@ def generate_unique_token():
     return token
 
 
+def get_random_token():
+    return str(uuid.uuid4())[:6]
 class CheckEmailToken(models.Model):
     email = models.EmailField(verbose_name=_('почта'), unique=True)
-    token = models.UUIDField(verbose_name=_('код активации'), default=uuid.uuid4)
+    token = models.CharField(verbose_name=_('код активации'), max_length=6, default=get_random_token, unique=True)
     created = models.DateTimeField(
         verbose_name=_('Дата и время создания'),
         auto_now_add=True,
@@ -105,9 +107,10 @@ class CheckEmailToken(models.Model):
             self.delete()
         return exp
 
+
 class ResetEmailTokenModels(models.Model):
     email = models.EmailField(verbose_name=_('почта'), unique=True)
-    token = models.UUIDField(verbose_name=_('код восстановления'), default=uuid.uuid4)
+    token = models.CharField(verbose_name=_('код восстановления'), max_length=6, default=get_random_token, unique=True)
     created = models.DateTimeField(
         verbose_name=_('Дата и время создания'),
         auto_now_add=True,

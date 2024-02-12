@@ -21,7 +21,6 @@ function UserLoginForm() {
   const [password, setPassword] = useState("");
 
   const loginClicked = async () => {
-    message.info(<Typography.Text>Вы использовали данные админа для входа в клиент-аккаунт. <a href="/adminauth/login">Перейти в авторизацию админа</a></Typography.Text>);
     const request_data = {
       email: email,
       password: password
@@ -38,7 +37,7 @@ function UserLoginForm() {
         message.success('Вы успешно авторизованы!');
         navigate('/'); // Переход на главную страницу
       } else {
-        message.error('Ошибка авторизации. Пожалуйста, проверьте введенные данные.');
+        message.info(<Typography.Text>Вы использовали данные админа для входа в клиент-аккаунт. <a href="/adminauth/login">Перейти в авторизацию админа</a></Typography.Text>);
       }
     } catch (error) {
       console.error('Ошибка авторизации:', error);
